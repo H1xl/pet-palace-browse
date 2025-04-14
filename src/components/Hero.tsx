@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
+import { Link } from 'react-router-dom';
 
 const Hero = () => {
   return (
@@ -15,8 +16,8 @@ const Hero = () => {
               От корма премиум-класса до игрушек и аксессуаров — мы заботимся о здоровье и счастье ваших любимцев.
             </p>
             <div className="flex space-x-4 animate-fade-in" style={{ animationDelay: '0.4s' }}>
-              <Button className="bg-pet-blue hover:bg-blue-600 text-white">
-                Каталог товаров
+              <Button className="bg-pet-blue hover:bg-blue-600 text-white" asChild>
+                <Link to="/catalog">Каталог товаров</Link>
               </Button>
               <Button variant="outline" className="border-pet-blue text-pet-blue hover:bg-pet-light-blue">
                 Специальные предложения
@@ -27,8 +28,8 @@ const Hero = () => {
             <div className="relative">
               <div className="absolute -top-4 -left-4 w-24 h-24 bg-pet-orange rounded-full opacity-25"></div>
               <img 
-                src="https://images.unsplash.com/photo-1535268647677-300dbf3d78d1?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=600&h=500&q=80" 
-                alt="Счастливый питомец" 
+                src="https://images.unsplash.com/photo-1597662942557-4087865b7a80?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=600&h=500&q=80" 
+                alt="Счастливые питомцы" 
                 className="rounded-lg shadow-2xl relative z-10"
                 width="500"
                 height="400"

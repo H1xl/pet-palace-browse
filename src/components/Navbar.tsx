@@ -4,14 +4,17 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Search, ShoppingCart, Menu, X } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import { Link, useNavigate } from 'react-router-dom';
 
 interface NavbarProps {
   cartItemCount: number;
+  currentPage?: string;
 }
 
-const Navbar = ({ cartItemCount }: NavbarProps) => {
+const Navbar = ({ cartItemCount, currentPage = '' }: NavbarProps) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchValue, setSearchValue] = useState('');
+  const navigate = useNavigate();
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -21,6 +24,14 @@ const Navbar = ({ cartItemCount }: NavbarProps) => {
     e.preventDefault();
     console.log('Searching for:', searchValue);
     // Implement search functionality
+  };
+
+  const getNavLinkClass = (page: string) => {
+    return `transition-colors ${
+      currentPage === page
+        ? "text-pet-blue font-medium border-b-2 border-pet-blue"
+        : "text-gray-700 hover:text-pet-blue"
+    }`;
   };
 
   return (
@@ -35,16 +46,16 @@ const Navbar = ({ cartItemCount }: NavbarProps) => {
             >
               {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
-            <a href="/" className="flex items-center">
+            <Link to="/" className="flex items-center">
               <span className="text-2xl font-bold text-pet-blue">Pet<span className="text-pet-orange">Palace</span></span>
-            </a>
+            </Link>
           </div>
 
           <div className="hidden lg:flex items-center space-x-6">
-            <a href="/" className="text-gray-700 hover:text-pet-blue transition-colors">Главная</a>
-            <a href="#" className="text-gray-700 hover:text-pet-blue transition-colors">Каталог</a>
-            <a href="#" className="text-gray-700 hover:text-pet-blue transition-colors">О нас</a>
-            <a href="#" className="text-gray-700 hover:text-pet-blue transition-colors">Контакты</a>
+            <Link to="/" className={getNavLinkClass("home")}>Главная</Link>
+            <Link to="/catalog" className={getNavLinkClass("catalog")}>Каталог</Link>
+            <Link to="/about" className={getNavLinkClass("about")}>О нас</Link>
+            <Link to="/contacts" className={getNavLinkClass("contacts")}>Контакты</Link>
           </div>
 
           <div className="flex items-center gap-4">
@@ -74,10 +85,10 @@ const Navbar = ({ cartItemCount }: NavbarProps) => {
         {isMenuOpen && (
           <div className="lg:hidden mt-4 py-4 border-t">
             <div className="flex flex-col space-y-4">
-              <a href="/" className="text-gray-700 hover:text-pet-blue transition-colors">Главная</a>
-              <a href="#" className="text-gray-700 hover:text-pet-blue transition-colors">Каталог</a>
-              <a href="#" className="text-gray-700 hover:text-pet-blue transition-colors">О нас</a>
-              <a href="#" className="text-gray-700 hover:text-pet-blue transition-colors">Контакты</a>
+              <Link to="/" className={`${getNavLinkClass("home")} py-1`}>Главная</Link>
+              <Link to="/catalog" className={`${getNavLinkClass("catalog")} py-1`}>Каталог</Link>
+              <Link to="/about" className={`${getNavLinkClass("about")} py-1`}>О нас</Link>
+              <Link to="/contacts" className={`${getNavLinkClass("contacts")} py-1`}>Контакты</Link>
               <form onSubmit={handleSearch} className="flex md:hidden relative">
                 <Input 
                   type="text" 
