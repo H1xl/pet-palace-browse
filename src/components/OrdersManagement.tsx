@@ -202,17 +202,8 @@ const OrdersManagement: React.FC = () => {
                                   const target = e.target as HTMLImageElement;
                                   target.onerror = null;
                                   target.style.display = 'none';
-                                  const IconComponent = getCategoryIcon(item.product.petType);
-                                  target.parentElement?.appendChild((() => {
-                                    const el = document.createElement('div');
-                                    el.className = 'w-full h-full flex items-center justify-center';
-                                    el.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-400"></svg>`;
-                                    return el;
-                                  })());
-                                  const svgElement = target.parentElement?.querySelector('svg');
-                                  if (svgElement) {
-                                    svgElement.outerHTML = getCategoryIconSVG(item.product.petType);
-                                  }
+                                  const svgContent = getCategoryIconSVG(item.product.petType);
+                                  target.parentElement?.insertAdjacentHTML('beforeend', `<div class="w-full h-full flex items-center justify-center">${svgContent}</div>`);
                                 }}
                               />
                             </div>

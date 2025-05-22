@@ -175,7 +175,9 @@ const Cart = () => {
                                 const target = e.target as HTMLImageElement;
                                 target.onerror = null;
                                 target.style.display = 'none';
-                                target.parentElement?.innerHTML = getCategoryIcon(item.petType);
+                                if (target.parentElement) {
+                                  target.parentElement.innerHTML = getCategoryIcon(item.petType);
+                                }
                               }}
                             />
                           ) : (
