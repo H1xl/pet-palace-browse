@@ -2,9 +2,16 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Search, ShoppingCart, Menu, X } from 'lucide-react';
+import { Search, ShoppingCart, Menu, X, User, LogOut } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Link, useNavigate } from 'react-router-dom';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 interface NavbarProps {
   cartItemCount: number;
@@ -15,6 +22,10 @@ const Navbar = ({ cartItemCount, currentPage = '' }: NavbarProps) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchValue, setSearchValue] = useState('');
   const navigate = useNavigate();
+
+  // Get current user from localStorage
+  const currentUser = localStorage.getItem('currentUser');
+  const isLoggedIn = !!currentUser;
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -34,6 +45,12 @@ const Navbar = ({ cartItemCount, currentPage = '' }: NavbarProps) => {
     }`;
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem('currentUser');
+    navigate('/');
+    window.location.reload(); // Reload to update auth state
+  };
+
   return (
     <nav className="bg-white shadow-md py-4 px-6 sticky top-0 z-50">
       <div className="container mx-auto">
@@ -47,7 +64,7 @@ const Navbar = ({ cartItemCount, currentPage = '' }: NavbarProps) => {
               {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
             <Link to="/" className="flex items-center">
-              <span className="text-2xl font-bold text-pet-blue">Pet<span className="text-pet-orange">Palace</span></span>
+              <span className="text-2xl font-bold text-pet-blue">Сытый<span className="text-pet-orange">зверь</span></span>
             </Link>
           </div>
 
@@ -55,7 +72,6 @@ const Navbar = ({ cartItemCount, currentPage = '' }: NavbarProps) => {
             <Link to="/" className={getNavLinkClass("home")}>Главная</Link>
             <Link to="/catalog" className={getNavLinkClass("catalog")}>Каталог</Link>
             <Link to="/about" className={getNavLinkClass("about")}>О нас</Link>
-            <Link to="/contacts" className={getNavLinkClass("contacts")}>Контакты</Link>
           </div>
 
           <div className="flex items-center gap-4">
@@ -72,12 +88,49 @@ const Navbar = ({ cartItemCount, currentPage = '' }: NavbarProps) => {
               </button>
             </form>
 
-            <Button variant="ghost" className="relative">
-              <ShoppingCart size={24} />
-              {cartItemCount > 0 && (
-                <Badge className="absolute -top-2 -right-2 bg-pet-orange">{cartItemCount}</Badge>
-              )}
-            </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="relative" aria-label="Меню пользователя">
+                  <User size={24} />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56">
+                {isLoggedIn ? (
+                  <>
+                    <div className="px-2 py-1.5 text-sm font-semibold">
+                      Аккаунт: {currentUser}
+                    </div>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem asChild>
+                      <Link to="/profile" className="cursor-pointer w-full">
+                        Личный кабинет
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link to="/cart" className="cursor-pointer w-full flex justify-between items-center">
+                        <span>Корзина</span>
+                        {cartItemCount > 0 && (
+                          <Badge className="bg-pet-orange">{cartItemCount}</Badge>
+                        )}
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-red-500 flex items-center">
+                      <LogOut size={16} className="mr-2" />
+                      <span>Выйти</span>
+                    </DropdownMenuItem>
+                  </>
+                ) : (
+                  <>
+                    <DropdownMenuItem asChild>
+                      <Link to="/login" className="cursor-pointer w-full">
+                        Войти
+                      </Link>
+                    </DropdownMenuItem>
+                  </>
+                )}
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
 
@@ -88,7 +141,6 @@ const Navbar = ({ cartItemCount, currentPage = '' }: NavbarProps) => {
               <Link to="/" className={`${getNavLinkClass("home")} py-1`}>Главная</Link>
               <Link to="/catalog" className={`${getNavLinkClass("catalog")} py-1`}>Каталог</Link>
               <Link to="/about" className={`${getNavLinkClass("about")} py-1`}>О нас</Link>
-              <Link to="/contacts" className={`${getNavLinkClass("contacts")} py-1`}>Контакты</Link>
               <form onSubmit={handleSearch} className="flex md:hidden relative">
                 <Input 
                   type="text" 

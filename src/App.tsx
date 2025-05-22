@@ -8,8 +8,10 @@ import Index from "./pages/Index";
 import Catalog from "./pages/Catalog";
 import About from "./pages/About";
 import NotFound from "./pages/NotFound";
+import Login from "./pages/Login";
+import Profile from "./pages/Profile";
+import Cart from "./pages/Cart";
 
-// Это константа для настройки цветов, соответствующих общему дизайну
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -22,6 +24,9 @@ const App = () => (
           <Route path="/" element={<Index />} />
           <Route path="/catalog" element={<Catalog />} />
           <Route path="/about" element={<About />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/cart" element={<Cart />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
