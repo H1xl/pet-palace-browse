@@ -3,7 +3,7 @@ import React from 'react';
 import { Product } from '@/types/product';
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ShoppingCart, User } from 'lucide-react';
+import { ShoppingCart, User, ImageOff } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
 
 interface ProductCardProps {
@@ -45,18 +45,28 @@ const ProductCard = ({ product, onAddToCart, getCategoryIconSVG }: ProductCardPr
               const target = e.target as HTMLImageElement;
               target.onerror = null;
               target.style.display = 'none';
-              if (getCategoryIconSVG && target.parentElement) {
-                target.parentElement.innerHTML = getCategoryIconSVG(product.petType);
+              const container = target.parentElement;
+              if (container) {
+                if (getCategoryIconSVG) {
+                  container.innerHTML = getCategoryIconSVG(product.petType);
+                } else {
+                  // Fallback to using ImageOff if no categoryIcon is available
+                  const fallbackDiv = document.createElement('div');
+                  fallbackDiv.className = 'w-full h-full flex items-center justify-center text-gray-400';
+                  fallbackDiv.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="2" y1="2" x2="22" y2="22"></line><path d="M10.41 10.41a2 2 0 1 0 3.18 3.18"></path><circle cx="12" cy="12" r="9"></circle></svg>';
+                  container.appendChild(fallbackDiv);
+                }
               }
             }}
           />
         ) : (
-          getCategoryIconSVG && (
-            <div 
-              className="w-full h-full flex items-center justify-center" 
-              dangerouslySetInnerHTML={{ __html: getCategoryIconSVG(product.petType) }} 
-            />
-          )
+          <div className="w-full h-full flex items-center justify-center text-gray-400">
+            {getCategoryIconSVG ? (
+              <div dangerouslySetInnerHTML={{ __html: getCategoryIconSVG(product.petType) }} />
+            ) : (
+              <ImageOff size={48} />
+            )}
+          </div>
         )}
         
         <div className="absolute top-2 left-2 flex flex-col gap-1">

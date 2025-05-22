@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Product } from '@/types/product';
 import { products as initialProducts } from '@/data/products';
-import { Search, Edit2, Cat, Dog, Bird, Fish, Mouse, Package2 } from 'lucide-react';
+import { Search, Edit2, Cat, Dog, Bird, Fish, Mouse, Package2, ArrowLeft } from 'lucide-react';
 import ProductEditor from './ProductEditor';
 import { useToast } from "@/hooks/use-toast";
 
@@ -48,6 +48,15 @@ const ProductsManagement: React.FC = () => {
       title: "Изменения сохранены",
       description: `Товар "${updatedProduct.name}" успешно обновлен.`,
     });
+    
+    // Save to localStorage
+    localStorage.setItem('savedProducts', JSON.stringify(
+      products.map(product => product.id === updatedProduct.id ? updatedProduct : product)
+    ));
+  };
+
+  const handleCancel = () => {
+    setSelectedProduct(null);
   };
 
   const filteredProducts = products.filter(product => 
@@ -59,11 +68,18 @@ const ProductsManagement: React.FC = () => {
   return (
     <div className="space-y-6">
       {selectedProduct ? (
-        <ProductEditor 
-          product={selectedProduct}
-          onSave={handleProductUpdate}
-          onCancel={() => setSelectedProduct(null)}
-        />
+        <div className="container mx-auto py-8">
+          <Button variant="ghost" onClick={handleCancel} className="mb-4">
+            <ArrowLeft size={16} className="mr-2" />
+            Вернуться к списку товаров
+          </Button>
+
+          <ProductEditor 
+            product={selectedProduct}
+            onSave={handleProductUpdate}
+            onCancel={handleCancel}
+          />
+        </div>
       ) : (
         <Card>
           <CardHeader>
