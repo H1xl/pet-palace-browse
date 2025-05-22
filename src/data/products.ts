@@ -287,5 +287,82 @@ export const products: Product[] = [
     discount: 10,
     new: true,
     petType: "cats"
+  },
+  {
+    id: "27",
+    name: "Сумка-переноска для собак малых пород",
+    description: "Стильная и удобная сумка-переноска для собак малых пород с вентиляционными отверстиями.",
+    price: 1800,
+    image: "",
+    category: "Аксессуары",
+    discount: 0,
+    new: false,
+    petType: "dogs"
+  },
+  {
+    id: "28",
+    name: "Лакомство для кошек «Вкусные палочки»",
+    description: "Вкусное и полезное лакомство для кошек с добавлением витаминов.",
+    price: 150,
+    image: "",
+    category: "Лакомства",
+    discount: 0,
+    new: false,
+    petType: "cats"
+  },
+  {
+    id: "29",
+    name: "Клетка для хомяка «Замок»",
+    description: "Просторная клетка для хомяка с горками, туннелями и колесом.",
+    price: 1200,
+    image: "",
+    category: "Клетки",
+    discount: 10,
+    new: false,
+    petType: "rodent"
+  },
+  {
+    id: "30",
+    name: "Кормушка для птиц автоматическая",
+    description: "Автоматическая кормушка для птиц с регулируемой подачей корма.",
+    price: 650,
+    image: "",
+    category: "Кормушки",
+    discount: 0,
+    new: true,
+    petType: "birds"
+  },
+  {
+    id: "31",
+    name: "Термометр для аквариума электронный",
+    description: "Точный электронный термометр для контроля температуры воды в аквариуме.",
+    price: 350,
+    image: "",
+    category: "Аксессуары",
+    discount: 0,
+    new: false,
+    petType: "fish"
+  },
+  {
+    id: "32",
+    name: "Игрушка для собак «Говорящий мяч»",
+    description: "Интерактивная игрушка для собак, издающая звуки при движении.",
+    price: 480,
+    image: "",
+    category: "Игрушки",
+    discount: 0,
+    new: true,
+    petType: "dogs"
+  },
+  {
+    id: "33",
+    name: "Миска для кошек с защитой от переедания",
+    description: "Специальная миска для кошек, замедляющая прием пищи и предотвращающая переедание.",
+    price: 690,
+    image: "",
+    category: "Миски",
+    discount: 5,
+    new: false,
+    petType: "cats"
   }
 ];

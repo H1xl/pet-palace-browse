@@ -1,129 +1,103 @@
 
 import React from 'react';
-import { Card, CardContent, CardFooter } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { ShoppingCart, Heart, Cat, Dog, Bird, Fish, Mouse, Package2 } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
 import { Product } from '@/types/product';
-import { toast } from '@/components/ui/use-toast';
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { ShoppingCart, User } from 'lucide-react';
+import { useToast } from "@/hooks/use-toast";
 
 interface ProductCardProps {
   product: Product;
   onAddToCart: (product: Product) => void;
+  getCategoryIconSVG?: (petType: string) => string;
 }
 
-const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart }) => {
+const ProductCard = ({ product, onAddToCart, getCategoryIconSVG }: ProductCardProps) => {
+  const { toast } = useToast();
+  const currentUser = localStorage.getItem('currentUser');
+  
   const handleAddToCart = () => {
-    onAddToCart(product);
-    toast({
-      title: "Товар добавлен в корзину",
-      description: `${product.name} добавлен в вашу корзину.`,
-    });
-  };
-
-  const handleAddToWishlist = () => {
-    toast({
-      title: "Товар добавлен в избранное",
-      description: `${product.name} добавлен в ваш список желаний.`,
-    });
-  };
-
-  const getCategoryIcon = (petType: string) => {
-    switch (petType) {
-      case 'cat':
-      case 'cats':
-        return <Cat size={48} className="text-gray-400" />;
-      case 'dog':
-      case 'dogs':
-        return <Dog size={48} className="text-gray-400" />;
-      case 'bird':
-      case 'birds':
-        return <Bird size={48} className="text-gray-400" />;
-      case 'fish':
-        return <Fish size={48} className="text-gray-400" />;
-      case 'rodent':
-        return <Mouse size={48} className="text-gray-400" />;
-      default:
-        return <Package2 size={48} className="text-gray-400" />;
+    if (!currentUser) {
+      toast({
+        title: "Необходима авторизация",
+        description: "Чтобы добавить товар в корзину, необходимо авторизоваться",
+        variant: "destructive"
+      });
+      return;
     }
+    
+    onAddToCart(product);
   };
-
+  
+  const actualPrice = product.discount > 0 
+    ? product.price * (1 - product.discount / 100) 
+    : product.price;
+  
   return (
-    <Card className="product-card overflow-hidden h-full flex flex-col">
-      <div className="relative pt-4 px-4">
-        {product.discount > 0 && (
-          <Badge className="absolute top-6 left-6 bg-pet-orange">-{product.discount}%</Badge>
-        )}
-        {product.new && (
-          <Badge className="absolute top-6 right-6 bg-pet-blue">Новинка</Badge>
-        )}
-        <div className="h-48 flex items-center justify-center mb-4 overflow-hidden rounded-md bg-gray-100">
-          {product.image ? (
-            <img 
-              src={product.image} 
-              alt={product.name} 
-              className="object-cover w-full h-full transition-transform duration-300 hover:scale-105"
-              onError={(e) => {
-                const target = e.target as HTMLImageElement;
-                target.style.display = 'none';
-                
-                // Add a container for the icon
-                const iconContainer = document.createElement('div');
-                iconContainer.className = 'flex items-center justify-center w-full h-full';
-                target.parentElement?.appendChild(iconContainer);
-                
-                // Render the React component
-                const icon = getCategoryIcon(product.petType);
-                const iconDiv = document.createElement('div');
-                iconDiv.innerHTML = icon.type.render({ size: 48, className: 'text-gray-400' }).props.children;
-                iconContainer.appendChild(iconDiv);
-              }}
+    <div className="bg-white rounded-lg shadow-md overflow-hidden h-full flex flex-col transition-transform hover:-translate-y-1">
+      <div className="relative h-48 bg-gray-100 overflow-hidden">
+        {product.image ? (
+          <img 
+            src={product.image} 
+            alt={product.name} 
+            className="w-full h-full object-cover"
+            onError={(e) => {
+              const target = e.target as HTMLImageElement;
+              target.onerror = null;
+              target.style.display = 'none';
+              if (getCategoryIconSVG && target.parentElement) {
+                target.parentElement.innerHTML = getCategoryIconSVG(product.petType);
+              }
+            }}
+          />
+        ) : (
+          getCategoryIconSVG && (
+            <div 
+              className="w-full h-full flex items-center justify-center" 
+              dangerouslySetInnerHTML={{ __html: getCategoryIconSVG(product.petType) }} 
             />
-          ) : (
-            <div className="flex items-center justify-center w-full h-full">
-              {getCategoryIcon(product.petType)}
-            </div>
+          )
+        )}
+        
+        <div className="absolute top-2 left-2 flex flex-col gap-1">
+          {product.new && (
+            <Badge className="bg-pet-blue text-white">Новинка</Badge>
+          )}
+          
+          {product.discount > 0 && (
+            <Badge variant="outline" className="text-pet-orange border-pet-orange bg-white">
+              -{product.discount}%
+            </Badge>
           )}
         </div>
       </div>
       
-      <CardContent className="flex-grow">
-        <div className="text-sm text-gray-500 mb-1">{product.category}</div>
-        <h3 className="font-semibold text-lg mb-1 line-clamp-2">{product.name}</h3>
-        <div className="flex items-baseline gap-2 mb-2">
-          {product.discount > 0 ? (
-            <>
-              <span className="text-xl font-bold text-pet-blue">
-                {Math.round(product.price * (1 - product.discount / 100))} ₽
-              </span>
-              <span className="text-sm text-gray-400 line-through">
-                {product.price} ₽
-              </span>
-            </>
-          ) : (
-            <span className="text-xl font-bold text-pet-blue">{product.price} ₽</span>
-          )}
+      <div className="p-4 flex-1 flex flex-col">
+        <span className="text-xs text-gray-500 mb-1">{product.category}</span>
+        <h3 className="font-medium text-gray-900 mb-2">{product.name}</h3>
+        
+        <div className="mt-auto flex items-center justify-between">
+          <div>
+            {product.discount > 0 ? (
+              <div>
+                <span className="font-bold text-lg">{Math.round(actualPrice)}₽</span>
+                <span className="text-sm line-through text-gray-400 ml-1">{product.price}₽</span>
+              </div>
+            ) : (
+              <span className="font-bold text-lg">{product.price}₽</span>
+            )}
+          </div>
+          
+          <Button 
+            onClick={handleAddToCart} 
+            size="sm" 
+            className="bg-pet-blue hover:bg-blue-600"
+          >
+            {!currentUser ? <User size={16} /> : <ShoppingCart size={16} />}
+          </Button>
         </div>
-        <p className="text-sm text-gray-600 line-clamp-2">{product.description}</p>
-      </CardContent>
-      
-      <CardFooter className="pt-2 flex gap-2">
-        <Button 
-          onClick={handleAddToCart}
-          className="flex-1 bg-pet-blue hover:bg-blue-600 text-white"
-        >
-          <ShoppingCart size={18} className="mr-2" /> В корзину
-        </Button>
-        <Button 
-          variant="outline" 
-          size="icon"
-          onClick={handleAddToWishlist}
-          className="border-pet-orange text-pet-orange hover:bg-pet-light-orange hover:text-pet-orange"
-        >
-          <Heart size={18} />
-        </Button>
-      </CardFooter>
-    </Card>
+      </div>
+    </div>
   );
 };
 
