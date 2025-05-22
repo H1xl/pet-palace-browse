@@ -2,7 +2,7 @@
 import React from 'react';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ShoppingCart, Heart } from 'lucide-react';
+import { ShoppingCart, Heart, Cat, Dog, Bird, Fish, Mouse, Package2 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Product } from '@/types/product';
 import { toast } from '@/components/ui/use-toast';
@@ -28,6 +28,26 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart }) => {
     });
   };
 
+  const getCategoryIcon = (petType: string) => {
+    switch (petType) {
+      case 'cat':
+      case 'cats':
+        return <Cat size={48} className="text-gray-400" />;
+      case 'dog':
+      case 'dogs':
+        return <Dog size={48} className="text-gray-400" />;
+      case 'bird':
+      case 'birds':
+        return <Bird size={48} className="text-gray-400" />;
+      case 'fish':
+        return <Fish size={48} className="text-gray-400" />;
+      case 'rodent':
+        return <Mouse size={48} className="text-gray-400" />;
+      default:
+        return <Package2 size={48} className="text-gray-400" />;
+    }
+  };
+
   return (
     <Card className="product-card overflow-hidden h-full flex flex-col">
       <div className="relative pt-4 px-4">
@@ -37,12 +57,33 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart }) => {
         {product.new && (
           <Badge className="absolute top-6 right-6 bg-pet-blue">Новинка</Badge>
         )}
-        <div className="h-48 flex items-center justify-center mb-4 overflow-hidden rounded-md">
-          <img 
-            src={product.image} 
-            alt={product.name} 
-            className="object-cover w-full h-full transition-transform duration-300 hover:scale-105"
-          />
+        <div className="h-48 flex items-center justify-center mb-4 overflow-hidden rounded-md bg-gray-100">
+          {product.image ? (
+            <img 
+              src={product.image} 
+              alt={product.name} 
+              className="object-cover w-full h-full transition-transform duration-300 hover:scale-105"
+              onError={(e) => {
+                const target = e.target as HTMLImageElement;
+                target.style.display = 'none';
+                
+                // Add a container for the icon
+                const iconContainer = document.createElement('div');
+                iconContainer.className = 'flex items-center justify-center w-full h-full';
+                target.parentElement?.appendChild(iconContainer);
+                
+                // Render the React component
+                const icon = getCategoryIcon(product.petType);
+                const iconDiv = document.createElement('div');
+                iconDiv.innerHTML = icon.type.render({ size: 48, className: 'text-gray-400' }).props.children;
+                iconContainer.appendChild(iconDiv);
+              }}
+            />
+          ) : (
+            <div className="flex items-center justify-center w-full h-full">
+              {getCategoryIcon(product.petType)}
+            </div>
+          )}
         </div>
       </div>
       

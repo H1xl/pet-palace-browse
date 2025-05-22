@@ -1,29 +1,52 @@
 
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Settings, ShoppingBag, User } from 'lucide-react';
+import { Progress } from "@/components/ui/progress";
+import { Settings, ShoppingBag, User, Package, ListChecks, LogOut } from 'lucide-react';
+import OrdersManagement from '@/components/OrdersManagement';
+import ProductsManagement from '@/components/ProductsManagement';
 
 const Profile = () => {
   const [currentUser, setCurrentUser] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
-  
+
   useEffect(() => {
-    // Проверяем авторизацию при загрузке страницы
-    const user = localStorage.getItem('currentUser');
-    if (!user) {
-      navigate('/login');
-      return;
-    }
-    setCurrentUser(user);
+    // Имитация загрузки
+    setTimeout(() => {
+      // Проверяем авторизацию при загрузке страницы
+      const user = localStorage.getItem('currentUser');
+      if (!user) {
+        navigate('/login');
+        return;
+      }
+      setCurrentUser(user);
+      setIsLoading(false);
+    }, 800);
   }, [navigate]);
 
-  if (!currentUser) {
-    return null; // или показывать загрузку
+  const handleLogout = () => {
+    localStorage.removeItem('currentUser');
+    navigate('/login');
+  };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50">
+        <div className="w-full max-w-md px-4">
+          <div className="text-center mb-4">
+            <h2 className="text-xl font-medium text-gray-900">Загрузка профиля...</h2>
+            <p className="text-sm text-gray-500 mt-1">Пожалуйста, подождите</p>
+          </div>
+          <Progress value={70} className="h-2" />
+        </div>
+      </div>
+    );
   }
 
   const isAdmin = currentUser === 'admin';
@@ -33,7 +56,13 @@ const Profile = () => {
       <Navbar cartItemCount={0} currentPage="" />
       
       <div className="container mx-auto px-6 py-8 flex-1">
-        <h1 className="text-3xl font-bold mb-6">Личный кабинет</h1>
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+          <h1 className="text-3xl font-bold">Личный кабинет</h1>
+          <Button variant="outline" className="flex items-center gap-2" onClick={handleLogout}>
+            <LogOut size={16} />
+            Выйти из профиля
+          </Button>
+        </div>
         
         <div className="bg-white rounded-lg shadow-md p-1 mb-6">
           <Tabs defaultValue="profile" className="w-full">
@@ -95,22 +124,26 @@ const Profile = () => {
             
             {isAdmin && (
               <TabsContent value="settings" className="p-4">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Панель управления</CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="bg-amber-50 border border-amber-300 p-4 rounded-md">
-                      <p className="text-amber-800">Административные функции доступны только для администратора магазина.</p>
-                    </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <Button variant="outline" disabled>Управление товарами</Button>
-                      <Button variant="outline" disabled>Управление заказами</Button>
-                      <Button variant="outline" disabled>Управление пользователями</Button>
-                      <Button variant="outline" disabled>Настройки магазина</Button>
-                    </div>
-                  </CardContent>
-                </Card>
+                <Tabs defaultValue="products">
+                  <TabsList className="mb-4">
+                    <TabsTrigger value="products" className="flex items-center gap-2">
+                      <Package size={16} />
+                      <span>Товары</span>
+                    </TabsTrigger>
+                    <TabsTrigger value="orders-management" className="flex items-center gap-2">
+                      <ListChecks size={16} />
+                      <span>Заказы</span>
+                    </TabsTrigger>
+                  </TabsList>
+                  
+                  <TabsContent value="products">
+                    <ProductsManagement />
+                  </TabsContent>
+                  
+                  <TabsContent value="orders-management">
+                    <OrdersManagement />
+                  </TabsContent>
+                </Tabs>
               </TabsContent>
             )}
           </Tabs>

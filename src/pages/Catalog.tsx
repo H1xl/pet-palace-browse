@@ -8,25 +8,37 @@ import Footer from "@/components/Footer";
 import { Product, CartItem } from "@/types/product";
 import { products } from "@/data/products";
 import { useToast } from "@/components/ui/use-toast";
+import { Progress } from "@/components/ui/progress";
 
 const Catalog = () => {
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [filteredProducts, setFilteredProducts] = useState<Product[]>(products);
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
 
+  // Get current user for user-specific cart
+  const currentUser = localStorage.getItem('currentUser');
+  const cartKey = currentUser ? `cartItems_${currentUser}` : 'cartItems_guest';
+
   useEffect(() => {
-    // Загружаем корзину из localStorage при монтировании компонента
-    const savedCart = localStorage.getItem("cartItems");
-    if (savedCart) {
-      setCartItems(JSON.parse(savedCart));
-    }
-  }, []);
+    // Имитация загрузки
+    setTimeout(() => {
+      // Загружаем корзину из localStorage при монтировании компонента
+      const savedCart = localStorage.getItem(cartKey);
+      if (savedCart) {
+        setCartItems(JSON.parse(savedCart));
+      }
+      setIsLoading(false);
+    }, 600);
+  }, [cartKey]);
   
   useEffect(() => {
-    // Сохраняем корзину в localStorage при каждом обновлении
-    localStorage.setItem("cartItems", JSON.stringify(cartItems));
-  }, [cartItems]);
+    if (!isLoading) {
+      // Сохраняем корзину в localStorage при каждом обновлении
+      localStorage.setItem(cartKey, JSON.stringify(cartItems));
+    }
+  }, [cartItems, cartKey, isLoading]);
 
   useEffect(() => {
     if (selectedCategory === "all") {
@@ -81,6 +93,24 @@ const Catalog = () => {
       )
     );
   };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <Navbar cartItemCount={0} currentPage="catalog" />
+        <div className="container mx-auto px-6 py-8 flex-1 flex flex-col items-center justify-center">
+          <div className="w-full max-w-md">
+            <div className="text-center mb-4">
+              <h2 className="text-xl font-medium">Загрузка каталога...</h2>
+              <p className="text-sm text-gray-500 mt-1">Пожалуйста, подождите</p>
+            </div>
+            <Progress value={60} className="h-2" />
+          </div>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex flex-col">
