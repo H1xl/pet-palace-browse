@@ -177,5 +177,115 @@ export const products: Product[] = [
     discount: 0,
     new: true,
     petType: "birds"
+  },
+  {
+    id: "17",
+    name: "Домик для хомяка «Уютное гнездышко»",
+    description: "Деревянный домик для хомяка с лабиринтом и несколькими комнатами.",
+    price: 590,
+    image: "",
+    category: "Домики",
+    discount: 0,
+    new: true,
+    petType: "rodent"
+  },
+  {
+    id: "18",
+    name: "Беговое колесо для грызунов",
+    description: "Бесшумное беговое колесо для активных грызунов.",
+    price: 450,
+    image: "",
+    category: "Аксессуары",
+    discount: 5,
+    new: false,
+    petType: "rodent"
+  },
+  {
+    id: "19",
+    name: "Корм для хомяков «Хомячок»",
+    description: "Полнорационный корм для хомяков с добавлением витаминов и минералов.",
+    price: 280,
+    image: "",
+    category: "Корм",
+    discount: 0,
+    new: false,
+    petType: "rodent"
+  },
+  {
+    id: "20",
+    name: "Опилки для грызунов",
+    description: "Натуральные опилки для подстилки в клетках грызунов.",
+    price: 150,
+    image: "",
+    category: "Аксессуары",
+    discount: 0,
+    new: false,
+    petType: "rodent"
+  },
+  {
+    id: "21",
+    name: "Добавка для рыб «АкваВитамины»",
+    description: "Жидкие витамины для аквариумных рыб, укрепляющие иммунитет.",
+    price: 380,
+    image: "",
+    category: "Витамины",
+    discount: 10,
+    new: true,
+    petType: "fish"
+  },
+  {
+    id: "22",
+    name: "Поводок-рулетка для собак",
+    description: "Прочный поводок-рулетка для средних и крупных пород собак с длиной до 5 метров.",
+    price: 1250,
+    image: "",
+    category: "Аксессуары",
+    discount: 0,
+    new: false,
+    petType: "dogs"
+  },
+  {
+    id: "23",
+    name: "Ошейник для кошек «Антиблох»",
+    description: "Специальный ошейник, отпугивающий блох и клещей, безопасный для кошек.",
+    price: 520,
+    image: "",
+    category: "Уход",
+    discount: 15,
+    new: true,
+    petType: "cats"
+  },
+  {
+    id: "24",
+    name: "Жердочки для птиц натуральные",
+    description: "Набор жердочек разного диаметра из натурального дерева для птичьей клетки.",
+    price: 340,
+    image: "",
+    category: "Аксессуары",
+    discount: 0,
+    new: false,
+    petType: "birds"
+  },
+  {
+    id: "25",
+    name: "Комплект для чистки аквариума",
+    description: "Набор инструментов для чистки аквариума: сачок, скребок и сифон.",
+    price: 780,
+    image: "",
+    category: "Аксессуары",
+    discount: 5,
+    new: false,
+    petType: "fish"
+  },
+  {
+    id: "26",
+    name: "Игровой комплекс для кошек «Замок»",
+    description: "Многоуровневый игровой комплекс для кошек с когтеточками, домиками и игрушками.",
+    price: 7500,
+    image: "",
+    category: "Игровые комплексы",
+    discount: 10,
+    new: true,
+    petType: "cats"
   }
 ];

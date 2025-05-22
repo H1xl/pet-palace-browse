@@ -5,7 +5,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { CartItem } from "@/types/product";
-import { Minus, Plus, Trash2, ShieldCheck, ShoppingCart, UserRound } from 'lucide-react';
+import { Minus, Plus, Trash2, ShieldCheck, ShoppingCart, UserRound, ArrowLeft, Check } from 'lucide-react';
 import { useToast } from "@/components/ui/use-toast";
 import { Progress } from "@/components/ui/progress";
 
@@ -13,6 +13,7 @@ const Cart = () => {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [isOrderComplete, setIsOrderComplete] = useState(false);
   const [progress, setProgress] = useState(0);
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -23,13 +24,23 @@ const Cart = () => {
   useEffect(() => {
     // Имитация загрузки при первом рендере
     setTimeout(() => {
-      const savedCart = localStorage.getItem(cartKey);
-      if (savedCart) {
-        setCartItems(JSON.parse(savedCart));
+      if (currentUser) {
+        const savedCart = localStorage.getItem(cartKey);
+        if (savedCart) {
+          setCartItems(JSON.parse(savedCart));
+        }
+      } else {
+        // Redirect non-authenticated users
+        navigate('/login');
+        toast({
+          title: "Требуется авторизация",
+          description: "Для доступа к корзине необходимо войти в систему",
+          variant: "destructive"
+        });
       }
       setIsLoading(false);
     }, 600);
-  }, [cartKey]);
+  }, [cartKey, currentUser, navigate, toast]);
 
   const handleRemoveItem = (id: string) => {
     const updatedCart = cartItems.filter(item => item.id !== id);
@@ -46,6 +57,11 @@ const Cart = () => {
     
     setCartItems(updatedCart);
     localStorage.setItem(cartKey, JSON.stringify(updatedCart));
+  };
+
+  const clearCart = () => {
+    setCartItems([]);
+    localStorage.setItem(cartKey, JSON.stringify([]));
   };
   
   const handleCheckout = () => {
@@ -80,13 +96,10 @@ const Cart = () => {
         description: "Ваш заказ был успешно оформлен и передан в обработку",
       });
       
-      // Очищаем корзину
-      setCartItems([]);
-      localStorage.setItem(cartKey, JSON.stringify([]));
-      setIsProcessing(false);
+      setIsOrderComplete(true);
       
-      // Перенаправляем на главную страницу
-      setTimeout(() => navigate('/'), 1000);
+      // Очищаем корзину
+      clearCart();
     }, 2000);
   };
   
@@ -94,7 +107,7 @@ const Cart = () => {
     (total, item) => total + item.price * item.quantity, 
     0
   );
-  
+
   const getCategoryIcon = (petType: string) => {
     switch (petType) {
       case 'cat':
@@ -126,6 +139,38 @@ const Cart = () => {
               <p className="text-sm text-gray-500 mt-1">Пожалуйста, подождите</p>
             </div>
             <Progress value={60} className="h-2" />
+          </div>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
+
+  if (isOrderComplete) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <Navbar cartItemCount={0} currentPage="" />
+        <div className="container mx-auto px-6 py-8 flex-1">
+          <div className="bg-white rounded-lg shadow-md p-8 text-center max-w-lg mx-auto">
+            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Check size={32} className="text-green-500" />
+            </div>
+            <h2 className="text-2xl font-semibold mb-2">Заказ успешно оформлен!</h2>
+            <p className="text-gray-600 mb-6">
+              Ваш заказ был успешно оформлен и передан в обработку. 
+              Наш менеджер свяжется с вами в ближайшее время для уточнения деталей.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-3 justify-center">
+              <Button className="bg-pet-blue hover:bg-blue-600" asChild>
+                <Link to="/catalog">
+                  <ArrowLeft size={16} className="mr-2" />
+                  Вернуться в каталог
+                </Link>
+              </Button>
+              <Button variant="outline" asChild>
+                <Link to="/profile">Мои заказы</Link>
+              </Button>
+            </div>
           </div>
         </div>
         <Footer />
@@ -227,6 +272,16 @@ const Cart = () => {
                   </div>
                 </div>
               </div>
+              <div className="mt-4">
+                <Button 
+                  variant="outline" 
+                  className="text-red-500 border-red-200 hover:bg-red-50"
+                  onClick={clearCart}
+                >
+                  <Trash2 size={16} className="mr-2" />
+                  Очистить корзину
+                </Button>
+              </div>
             </div>
             
             <div className="lg:col-span-1">
@@ -250,33 +305,16 @@ const Cart = () => {
                   </div>
                 </div>
                 
-                {!currentUser ? (
-                  <div className="space-y-3">
-                    <div className="bg-amber-50 border border-amber-200 rounded-md p-3 text-sm text-amber-800 flex items-start">
-                      <UserRound size={18} className="mr-2 flex-shrink-0 mt-0.5" />
-                      <p>Для оформления заказа необходимо войти в систему</p>
-                    </div>
-                    <Button 
-                      className="w-full bg-pet-blue hover:bg-blue-600"
-                      onClick={() => navigate('/login')}
-                    >
-                      Войти для оформления
-                    </Button>
-                  </div>
-                ) : (
-                  <>
-                    <div className="bg-green-50 border border-green-200 rounded-md p-3 mb-3 text-sm text-green-800 flex items-start">
-                      <ShieldCheck size={18} className="mr-2 flex-shrink-0 mt-0.5" />
-                      <p>Вы вошли как {currentUser} и можете оформить заказ</p>
-                    </div>
-                    <Button 
-                      className="w-full bg-pet-blue hover:bg-blue-600"
-                      onClick={handleCheckout}
-                    >
-                      Оформить заказ
-                    </Button>
-                  </>
-                )}
+                <div className="bg-green-50 border border-green-200 rounded-md p-3 mb-3 text-sm text-green-800 flex items-start">
+                  <ShieldCheck size={18} className="mr-2 flex-shrink-0 mt-0.5" />
+                  <p>Вы вошли как {currentUser} и можете оформить заказ</p>
+                </div>
+                <Button 
+                  className="w-full bg-pet-blue hover:bg-blue-600"
+                  onClick={handleCheckout}
+                >
+                  Оформить заказ
+                </Button>
               </div>
             </div>
           </div>

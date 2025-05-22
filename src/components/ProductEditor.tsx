@@ -1,223 +1,184 @@
-
-import React, { useState } from 'react';
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import React, { useState, useEffect } from 'react';
+import { Product } from '@/types/product';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Product } from '@/types/product';
-import { useToast } from "@/components/ui/use-toast";
-import { Cat, Dog, Bird, Fish, Mouse, Package2, ImageOff } from 'lucide-react';
+import { Switch } from "@/components/ui/switch";
+import { Textarea } from "@/components/ui/textarea";
+import { ArrowLeft } from 'lucide-react';
 
 interface ProductEditorProps {
-  product: Product;
-  onSave: (updatedProduct: Product) => void;
+  product?: Product;
+  onSave: (product: Product) => void;
   onCancel: () => void;
 }
 
-const getCategoryIcon = (petType: string) => {
-  switch (petType) {
-    case 'cat':
-    case 'cats':
-      return Cat;
-    case 'dog':
-    case 'dogs':
-      return Dog;
-    case 'bird':
-    case 'birds':
-      return Bird;
-    case 'fish':
-      return Fish;
-    case 'rodent':
-      return Mouse;
-    default:
-      return Package2;
-  }
-};
+const ProductEditor: React.FC<ProductEditorProps> = ({ product: initialProduct, onSave, onCancel }) => {
+  const [product, setProduct] = useState<Product>(
+    initialProduct || {
+      id: '',
+      name: '',
+      description: '',
+      price: 0,
+      image: '',
+      category: '',
+      discount: 0,
+      new: false,
+      petType: 'dogs',
+    }
+  );
 
-const ProductEditor: React.FC<ProductEditorProps> = ({ product, onSave, onCancel }) => {
-  const [editedProduct, setEditedProduct] = useState<Product>({ ...product });
-  const { toast } = useToast();
+  useEffect(() => {
+    setProduct(initialProduct || {
+      id: '',
+      name: '',
+      description: '',
+      price: 0,
+      image: '',
+      category: '',
+      discount: 0,
+      new: false,
+      petType: 'dogs',
+    });
+  }, [initialProduct]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setEditedProduct(prev => ({
-      ...prev,
-      [name]: name === 'price' || name === 'discount' ? Number(value) : value
+    const { name, value, type, checked } = e.target;
+    const newValue = type === 'checkbox' ? checked : value;
+
+    setProduct(prevProduct => ({
+      ...prevProduct,
+      [name]: newValue,
     }));
   };
 
-  const handleSelectChange = (value: string, field: string) => {
-    setEditedProduct(prev => ({
-      ...prev,
-      [field]: value
-    }));
-  };
-
-  const handleSwitchChange = (checked: boolean, field: string) => {
-    setEditedProduct(prev => ({
-      ...prev,
-      [field]: checked
+  const handleSelectChange = (name: string, value: string) => {
+    setProduct(prevProduct => ({
+      ...prevProduct,
+      [name]: value,
     }));
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSave(editedProduct);
-    toast({
-      title: "Товар обновлен",
-      description: `${editedProduct.name} был успешно обновлен.`,
-    });
+    onSave(product);
   };
 
-  const CategoryIcon = getCategoryIcon(editedProduct.petType);
-
   return (
-    <Card className="w-full">
-      <form onSubmit={handleSubmit}>
-        <CardHeader>
-          <CardTitle>Редактирование товара</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="space-y-2">
+    <div className="container mx-auto py-8">
+      <Button variant="ghost" onClick={onCancel} className="mb-4">
+        <ArrowLeft size={16} className="mr-2" />
+        Вернуться к списку товаров
+      </Button>
+
+      <div className="bg-white shadow-md rounded-lg p-8">
+        <h1 className="text-2xl font-bold mb-6">{initialProduct ? 'Редактировать товар' : 'Добавить новый товар'}</h1>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
             <Label htmlFor="name">Название товара</Label>
-            <Input 
-              id="name" 
-              name="name" 
-              value={editedProduct.name} 
-              onChange={handleChange} 
-              required 
+            <Input
+              type="text"
+              id="name"
+              name="name"
+              value={product.name}
+              onChange={handleChange}
+              required
+              className="w-full"
             />
           </div>
-          
-          <div className="space-y-2">
+          <div>
             <Label htmlFor="description">Описание</Label>
-            <Textarea 
-              id="description" 
-              name="description" 
-              value={editedProduct.description} 
-              onChange={handleChange} 
-              rows={3}
+            <Textarea
+              id="description"
+              name="description"
+              value={product.description}
+              onChange={handleChange}
+              required
+              className="w-full"
             />
           </div>
-          
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="price">Цена (₽)</Label>
-              <Input 
-                id="price" 
-                name="price" 
-                type="number" 
-                min="0" 
-                value={editedProduct.price} 
-                onChange={handleChange} 
-                required 
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="discount">Скидка (%)</Label>
-              <Input 
-                id="discount" 
-                name="discount" 
-                type="number" 
-                min="0" 
-                max="100" 
-                value={editedProduct.discount} 
-                onChange={handleChange} 
-              />
-            </div>
+          <div>
+            <Label htmlFor="price">Цена</Label>
+            <Input
+              type="number"
+              id="price"
+              name="price"
+              value={product.price}
+              onChange={handleChange}
+              required
+              className="w-full"
+            />
           </div>
-          
-          <div className="space-y-2">
+          <div>
+            <Label htmlFor="image">URL изображения</Label>
+            <Input
+              type="text"
+              id="image"
+              name="image"
+              value={product.image}
+              onChange={handleChange}
+              className="w-full"
+            />
+          </div>
+          <div>
             <Label htmlFor="category">Категория</Label>
-            <Input 
-              id="category" 
-              name="category" 
-              value={editedProduct.category} 
-              onChange={handleChange} 
-              required 
+            <Input
+              type="text"
+              id="category"
+              name="category"
+              value={product.category}
+              onChange={handleChange}
+              className="w-full"
+              required
             />
           </div>
-          
-          <div className="space-y-2">
-            <Label htmlFor="petType">Тип питомца</Label>
-            <Select 
-              value={editedProduct.petType} 
-              onValueChange={(value) => handleSelectChange(value, 'petType')}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Выберите тип питомца" />
+          <div>
+            <Label htmlFor="discount">Скидка (%)</Label>
+            <Input
+              type="number"
+              id="discount"
+              name="discount"
+              value={product.discount}
+              onChange={handleChange}
+              className="w-full"
+            />
+          </div>
+          <div>
+            <Label htmlFor="petType">Тип животного</Label>
+            <Select onValueChange={(value) => handleSelectChange('petType', value)}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Выберите тип животного" defaultValue={product.petType} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="dog">Собака</SelectItem>
-                <SelectItem value="cat">Кошка</SelectItem>
-                <SelectItem value="bird">Птица</SelectItem>
-                <SelectItem value="fish">Рыба</SelectItem>
-                <SelectItem value="rodent">Грызун</SelectItem>
+                <SelectItem value="dogs">Собаки</SelectItem>
+                <SelectItem value="cats">Кошки</SelectItem>
+                <SelectItem value="birds">Птицы</SelectItem>
+                <SelectItem value="fish">Рыбы</SelectItem>
+                <SelectItem value="rodent">Грызуны</SelectItem>
               </SelectContent>
             </Select>
           </div>
-          
-          <div className="space-y-2">
-            <Label htmlFor="image">URL изображения</Label>
-            <Input 
-              id="image" 
-              name="image" 
-              value={editedProduct.image} 
-              onChange={handleChange}
-              placeholder="Оставьте пустым для иконки категории" 
+          <div>
+            <Label htmlFor="new">Новинка</Label>
+            <Switch
+              id="new"
+              name="new"
+              checked={product.new}
+              onCheckedChange={(checked) => setProduct(prevProduct => ({ ...prevProduct, new: checked }))}
             />
-            <div className="mt-2 flex items-center justify-center border rounded-md h-32">
-              {editedProduct.image ? (
-                <img 
-                  src={editedProduct.image} 
-                  alt={editedProduct.name} 
-                  className="h-full object-contain"
-                  onError={(e) => {
-                    const target = e.target as HTMLImageElement;
-                    target.onerror = null;
-                    target.style.display = 'none';
-                    target.parentElement?.appendChild((() => {
-                      const el = document.createElement('div');
-                      el.className = 'flex flex-col items-center justify-center';
-                      el.innerHTML = `
-                        <div class="text-gray-400 mb-2">
-                          <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="2" x2="22" y1="2" y2="22"></line><path d="M10.41 10.41a2 2 0 1 1-2.83-2.83"></path><line x1="13.5" x2="6.5" y1="13.5" y2="20.5"></line><path d="M14 14v6"></path><path d="M10 7v6"></path><path d="M18 18h0"></path><path d="M16.5 2.5C20 6 20 10 18 14"></path></svg>
-                        </div>
-                        <span class="text-sm text-gray-500">Изображение недоступно</span>
-                      `;
-                      return el;
-                    })());
-                  }}
-                />
-              ) : (
-                <div className="flex flex-col items-center justify-center text-gray-400">
-                  <CategoryIcon size={48} />
-                  <span className="text-sm text-gray-500 mt-2">Будет использована иконка категории</span>
-                </div>
-              )}
-            </div>
           </div>
-          
-          <div className="flex items-center space-x-4 pt-2">
-            <div className="flex items-center space-x-2">
-              <Switch 
-                id="new" 
-                checked={editedProduct.new} 
-                onCheckedChange={(checked) => handleSwitchChange(checked, 'new')}
-              />
-              <Label htmlFor="new">Новинка</Label>
-            </div>
+          <div className="flex justify-end">
+            <Button variant="ghost" onClick={onCancel} className="mr-2">
+              Отменить
+            </Button>
+            <Button type="submit">
+              {initialProduct ? 'Сохранить' : 'Добавить'}
+            </Button>
           </div>
-        </CardContent>
-        <CardFooter className="flex justify-end space-x-2">
-          <Button variant="outline" type="button" onClick={onCancel}>Отмена</Button>
-          <Button type="submit">Сохранить изменения</Button>
-        </CardFooter>
-      </form>
-    </Card>
+        </form>
+      </div>
+    </div>
   );
 };
 
