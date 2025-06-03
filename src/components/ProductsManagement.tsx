@@ -62,8 +62,7 @@ const ProductsManagement: React.FC = () => {
   const filteredProducts = products.filter(product => 
     product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     product.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    product.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    (product.articleCode && product.articleCode.toLowerCase().includes(searchTerm.toLowerCase()))
+    product.description.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
@@ -103,7 +102,6 @@ const ProductsManagement: React.FC = () => {
                 <TableHeader>
                   <TableRow>
                     <TableHead>Название</TableHead>
-                    <TableHead>Артикул</TableHead>
                     <TableHead>Категория</TableHead>
                     <TableHead>Цена (₽)</TableHead>
                     <TableHead>Статус</TableHead>
@@ -121,8 +119,16 @@ const ProductsManagement: React.FC = () => {
                                 src={product.image} 
                                 alt={product.name} 
                                 className="w-full h-full object-cover"
-                                onError={() => {
-                                  // Fallback to icon if image fails
+                                onError={(e) => {
+                                  const target = e.target as HTMLImageElement;
+                                  target.onerror = null;
+                                  target.style.display = 'none';
+                                  target.parentElement?.appendChild((() => {
+                                    const el = document.createElement('div');
+                                    el.className = 'w-full h-full flex items-center justify-center';
+                                    el.innerHTML = getCategoryIcon(product.petType).type.render({ size: 18, className: 'text-gray-400' }).props.children;
+                                    return el;
+                                  })());
                                 }}
                               />
                             ) : (
@@ -131,11 +137,6 @@ const ProductsManagement: React.FC = () => {
                           </div>
                           <span className="font-medium">{product.name}</span>
                         </div>
-                      </TableCell>
-                      <TableCell>
-                        <Badge variant="outline" className="text-xs">
-                          {product.articleCode || 'Н/Д'}
-                        </Badge>
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center gap-1">
