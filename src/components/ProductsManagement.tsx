@@ -62,7 +62,8 @@ const ProductsManagement: React.FC = () => {
   const filteredProducts = products.filter(product => 
     product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     product.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    product.description.toLowerCase().includes(searchTerm.toLowerCase())
+    product.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (product.articleCode && product.articleCode.toLowerCase().includes(searchTerm.toLowerCase()))
   );
 
   return (
@@ -102,6 +103,7 @@ const ProductsManagement: React.FC = () => {
                 <TableHeader>
                   <TableRow>
                     <TableHead>Название</TableHead>
+                    <TableHead>Артикул</TableHead>
                     <TableHead>Категория</TableHead>
                     <TableHead>Цена (₽)</TableHead>
                     <TableHead>Статус</TableHead>
@@ -121,14 +123,17 @@ const ProductsManagement: React.FC = () => {
                                 className="w-full h-full object-cover"
                                 onError={(e) => {
                                   const target = e.target as HTMLImageElement;
-                                  target.onerror = null;
                                   target.style.display = 'none';
-                                  target.parentElement?.appendChild((() => {
-                                    const el = document.createElement('div');
-                                    el.className = 'w-full h-full flex items-center justify-center';
-                                    el.innerHTML = getCategoryIcon(product.petType).type.render({ size: 18, className: 'text-gray-400' }).props.children;
-                                    return el;
-                                  })());
+                                  const container = target.parentElement;
+                                  if (container) {
+                                    const iconWrapper = document.createElement('div');
+                                    iconWrapper.className = 'w-full h-full flex items-center justify-center';
+                                    const icon = getCategoryIcon(product.petType);
+                                    const iconElement = document.createElement('div');
+                                    iconElement.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-400">${icon.props.children || ''}</svg>`;
+                                    iconWrapper.appendChild(iconElement);
+                                    container.appendChild(iconWrapper);
+                                  }
                                 }}
                               />
                             ) : (
@@ -137,6 +142,11 @@ const ProductsManagement: React.FC = () => {
                           </div>
                           <span className="font-medium">{product.name}</span>
                         </div>
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant="outline" className="text-xs">
+                          {product.articleCode || 'Н/Д'}
+                        </Badge>
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center gap-1">
