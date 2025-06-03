@@ -4,6 +4,7 @@ import { Product } from '@/types/product';
 export const products: Product[] = [
   {
     id: "1",
+    articleCode: "DOG001",
     name: "Премиум корм для собак «Счастливый Пёс»",
     description: "Полноценный сбалансированный корм для взрослых собак всех пород с курицей и рисом.",
     price: 2500,
@@ -15,6 +16,7 @@ export const products: Product[] = [
   },
   {
     id: "2",
+    articleCode: "CAT001",
     name: "Мягкая игрушка для кошек «Мышка с кошачьей мятой»",
     description: "Мягкая игрушка с кошачьей мятой внутри для активных игр вашей кошки.",
     price: 350,
@@ -26,6 +28,7 @@ export const products: Product[] = [
   },
   {
     id: "3",
+    articleCode: "FISH001",
     name: "Аквариум с LED-подсветкой «Подводный мир»",
     description: "Современный аквариум с LED-подсветкой, фильтром и всем необходимым для запуска.",
     price: 8500,
@@ -37,6 +40,7 @@ export const products: Product[] = [
   },
   {
     id: "4",
+    articleCode: "BIRD001",
     name: "Комфортная клетка для птиц «Небесный дом»",
     description: "Просторная клетка для средних и мелких птиц с жердочками и кормушками.",
     price: 3200,
@@ -48,6 +52,7 @@ export const products: Product[] = [
   },
   {
     id: "5",
+    articleCode: "DOG002",
     name: "Лежак для собак «Мягкий сон»",
     description: "Мягкий и уютный лежак для собак средних и крупных пород с ортопедическим эффектом.",
     price: 1800,
@@ -59,6 +64,7 @@ export const products: Product[] = [
   },
   {
     id: "6",
+    articleCode: "CAT002",
     name: "Когтеточка-столбик «Царапка»",
     description: "Прочная когтеточка-столбик с игрушкой для вашей кошки.",
     price: 1200,
@@ -70,6 +76,7 @@ export const products: Product[] = [
   },
   {
     id: "7",
+    articleCode: "FISH002",
     name: "Корм для рыб «Аква Меню»",
     description: "Питательный корм для всех видов аквариумных рыб, обогащенный витаминами.",
     price: 320,
@@ -81,6 +88,7 @@ export const products: Product[] = [
   },
   {
     id: "8",
+    articleCode: "BIRD002",
     name: "Витаминный комплекс для птиц «Здоровое оперение»",
     description: "Комплекс витаминов для поддержания здоровья и красивого оперения птиц.",
     price: 450,
@@ -92,6 +100,7 @@ export const products: Product[] = [
   },
   {
     id: "9",
+    articleCode: "DOG003",
     name: "Комбинезон для собак «Зимний уют»",
     description: "Теплый комбинезон для собак мелких и средних пород для комфортных прогулок в холодное время года.",
     price: 1800,
@@ -103,6 +112,7 @@ export const products: Product[] = [
   },
   {
     id: "10",
+    articleCode: "CAT003",
     name: "Интерактивная игрушка для кошек «Умный шарик»",
     description: "Электронная игрушка с непредсказуемым движением для стимуляции охотничьего инстинкта вашей кошки.",
     price: 990,
@@ -114,6 +124,7 @@ export const products: Product[] = [
   },
   {
     id: "11",
+    articleCode: "FISH003",
     name: "Автоматическая кормушка для рыб «АкваТайм»",
     description: "Программируемая кормушка для аквариумных рыб с возможностью установки до 4 кормлений в день.",
     price: 1450,
@@ -125,6 +136,7 @@ export const products: Product[] = [
   },
   {
     id: "12",
+    articleCode: "BIRD003",
     name: "Минеральный камень для клюва попугаев",
     description: "Натуральный минеральный камень для стачивания и укрепления клюва декоративных птиц.",
     price: 210,
@@ -136,6 +148,7 @@ export const products: Product[] = [
   },
   {
     id: "13",
+    articleCode: "DOG004",
     name: "Шампунь для собак «Мягкая шерсть»",
     description: "Деликатный шампунь для регулярного мытья собак с чувствительной кожей.",
     price: 650,
@@ -147,6 +160,7 @@ export const products: Product[] = [
   },
   {
     id: "14",
+    articleCode: "CAT004",
     name: "Автоматический туалет для кошек «КлинБокс»",
     description: "Современный автоматический туалет с системой самоочистки и контролем запаха.",
     price: 12500,
@@ -158,6 +172,7 @@ export const products: Product[] = [
   },
   {
     id: "15",
+    articleCode: "FISH004",
     name: "Декоративный грот для аквариума «Коралловый риф»",
     description: "Безопасное декоративное украшение для аквариума в виде кораллового рифа с укрытиями для рыб.",
     price: 880,
@@ -169,6 +184,7 @@ export const products: Product[] = [
   },
   {
     id: "16",
+    articleCode: "BIRD004",
     name: "Качели для птиц «Радуга»",
     description: "Яркие безопасные качели для клетки с колокольчиком для активного времяпрепровождения вашей птицы.",
     price: 320,
@@ -180,6 +196,7 @@ export const products: Product[] = [
   },
   {
     id: "17",
+    articleCode: "ROD001",
     name: "Домик для хомяка «Уютное гнездышко»",
     description: "Деревянный домик для хомяка с лабиринтом и несколькими комнатами.",
     price: 590,
@@ -191,6 +208,7 @@ export const products: Product[] = [
   },
   {
     id: "18",
+    articleCode: "ROD002",
     name: "Беговое колесо для грызунов",
     description: "Бесшумное беговое колесо для активных грызунов.",
     price: 450,
@@ -202,6 +220,7 @@ export const products: Product[] = [
   },
   {
     id: "19",
+    articleCode: "ROD003",
     name: "Корм для хомяков «Хомячок»",
     description: "Полнорационный корм для хомяков с добавлением витаминов и минералов.",
     price: 280,
@@ -213,6 +232,7 @@ export const products: Product[] = [
   },
   {
     id: "20",
+    articleCode: "ROD004",
     name: "Опилки для грызунов",
     description: "Натуральные опилки для подстилки в клетках грызунов.",
     price: 150,
@@ -224,6 +244,7 @@ export const products: Product[] = [
   },
   {
     id: "21",
+    articleCode: "FISH005",
     name: "Добавка для рыб «АкваВитамины»",
     description: "Жидкие витамины для аквариумных рыб, укрепляющие иммунитет.",
     price: 380,
@@ -235,6 +256,7 @@ export const products: Product[] = [
   },
   {
     id: "22",
+    articleCode: "DOG005",
     name: "Поводок-рулетка для собак",
     description: "Прочный поводок-рулетка для средних и крупных пород собак с длиной до 5 метров.",
     price: 1250,
@@ -246,6 +268,7 @@ export const products: Product[] = [
   },
   {
     id: "23",
+    articleCode: "CAT005",
     name: "Ошейник для кошек «Антиблох»",
     description: "Специальный ошейник, отпугивающий блох и клещей, безопасный для кошек.",
     price: 520,
@@ -257,6 +280,7 @@ export const products: Product[] = [
   },
   {
     id: "24",
+    articleCode: "BIRD005",
     name: "Жердочки для птиц натуральные",
     description: "Набор жердочек разного диаметра из натурального дерева для птичьей клетки.",
     price: 340,
@@ -268,6 +292,7 @@ export const products: Product[] = [
   },
   {
     id: "25",
+    articleCode: "FISH006",
     name: "Комплект для чистки аквариума",
     description: "Набор инструментов для чистки аквариума: сачок, скребок и сифон.",
     price: 780,
@@ -279,6 +304,7 @@ export const products: Product[] = [
   },
   {
     id: "26",
+    articleCode: "CAT006",
     name: "Игровой комплекс для кошек «Замок»",
     description: "Многоуровневый игровой комплекс для кошек с когтеточками, домиками и игрушками.",
     price: 7500,
@@ -290,6 +316,7 @@ export const products: Product[] = [
   },
   {
     id: "27",
+    articleCode: "DOG006",
     name: "Сумка-переноска для собак малых пород",
     description: "Стильная и удобная сумка-переноска для собак малых пород с вентиляционными отверстиями.",
     price: 1800,
@@ -301,6 +328,7 @@ export const products: Product[] = [
   },
   {
     id: "28",
+    articleCode: "CAT007",
     name: "Лакомство для кошек «Вкусные палочки»",
     description: "Вкусное и полезное лакомство для кошек с добавлением витаминов.",
     price: 150,
@@ -312,6 +340,7 @@ export const products: Product[] = [
   },
   {
     id: "29",
+    articleCode: "ROD005",
     name: "Клетка для хомяка «Замок»",
     description: "Просторная клетка для хомяка с горками, туннелями и колесом.",
     price: 1200,
@@ -323,6 +352,7 @@ export const products: Product[] = [
   },
   {
     id: "30",
+    articleCode: "BIRD006",
     name: "Кормушка для птиц автоматическая",
     description: "Автоматическая кормушка для птиц с регулируемой подачей корма.",
     price: 650,
@@ -334,6 +364,7 @@ export const products: Product[] = [
   },
   {
     id: "31",
+    articleCode: "FISH007",
     name: "Термометр для аквариума электронный",
     description: "Точный электронный термометр для контроля температуры воды в аквариуме.",
     price: 350,
@@ -345,6 +376,7 @@ export const products: Product[] = [
   },
   {
     id: "32",
+    articleCode: "DOG007",
     name: "Игрушка для собак «Говорящий мяч»",
     description: "Интерактивная игрушка для собак, издающая звуки при движении.",
     price: 480,
@@ -356,6 +388,7 @@ export const products: Product[] = [
   },
   {
     id: "33",
+    articleCode: "CAT008",
     name: "Миска для кошек с защитой от переедания",
     description: "Специальная миска для кошек, замедляющая прием пищи и предотвращающая переедание.",
     price: 690,

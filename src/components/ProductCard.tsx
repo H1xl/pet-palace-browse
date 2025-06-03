@@ -3,7 +3,7 @@ import React from 'react';
 import { Product } from '@/types/product';
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ShoppingCart, User, ImageOff } from 'lucide-react';
+import { ShoppingCart, User, ImageOff, Cat, Dog, Bird, Fish, Mouse } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
 
 interface ProductCardProps {
@@ -32,6 +32,25 @@ const ProductCard = ({ product, onAddToCart, getCategoryIconSVG }: ProductCardPr
   const actualPrice = product.discount > 0 
     ? product.price * (1 - product.discount / 100) 
     : product.price;
+
+  const getCategoryIcon = (petType: string) => {
+    const iconProps = { size: 48, className: "text-gray-400" };
+    
+    switch (petType) {
+      case 'cats':
+        return <Cat {...iconProps} />;
+      case 'dogs':
+        return <Dog {...iconProps} />;
+      case 'birds':
+        return <Bird {...iconProps} />;
+      case 'fish':
+        return <Fish {...iconProps} />;
+      case 'rodent':
+        return <Mouse {...iconProps} />;
+      default:
+        return <ImageOff {...iconProps} />;
+    }
+  };
   
   return (
     <div className="bg-white rounded-lg shadow-md overflow-hidden h-full flex flex-col transition-transform hover:-translate-y-1">
@@ -47,25 +66,22 @@ const ProductCard = ({ product, onAddToCart, getCategoryIconSVG }: ProductCardPr
               target.style.display = 'none';
               const container = target.parentElement;
               if (container) {
-                if (getCategoryIconSVG) {
-                  container.innerHTML = getCategoryIconSVG(product.petType);
-                } else {
-                  // Fallback to using ImageOff if no categoryIcon is available
-                  const fallbackDiv = document.createElement('div');
-                  fallbackDiv.className = 'w-full h-full flex items-center justify-center text-gray-400';
-                  fallbackDiv.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="2" y1="2" x2="22" y2="22"></line><path d="M10.41 10.41a2 2 0 1 0 3.18 3.18"></path><circle cx="12" cy="12" r="9"></circle></svg>';
-                  container.appendChild(fallbackDiv);
-                }
+                const fallbackDiv = document.createElement('div');
+                fallbackDiv.className = 'w-full h-full flex items-center justify-center';
+                container.appendChild(fallbackDiv);
+                
+                // Render the React icon component
+                const iconElement = getCategoryIcon(product.petType);
+                import('react-dom/client').then(({ createRoot }) => {
+                  const root = createRoot(fallbackDiv);
+                  root.render(iconElement);
+                });
               }
             }}
           />
         ) : (
-          <div className="w-full h-full flex items-center justify-center text-gray-400">
-            {getCategoryIconSVG ? (
-              <div dangerouslySetInnerHTML={{ __html: getCategoryIconSVG(product.petType) }} />
-            ) : (
-              <ImageOff size={48} />
-            )}
+          <div className="w-full h-full flex items-center justify-center">
+            {getCategoryIcon(product.petType)}
           </div>
         )}
         
@@ -84,6 +100,7 @@ const ProductCard = ({ product, onAddToCart, getCategoryIconSVG }: ProductCardPr
       
       <div className="p-4 flex-1 flex flex-col">
         <span className="text-xs text-gray-500 mb-1">{product.category}</span>
+        <span className="text-xs text-gray-400 mb-1">Артикул: {product.articleCode}</span>
         <h3 className="font-medium text-gray-900 mb-2">{product.name}</h3>
         
         <div className="mt-auto flex items-center justify-between">
