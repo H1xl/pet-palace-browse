@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Product } from '@/types/product';
 import { Button } from "@/components/ui/button";
@@ -7,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { ArrowLeft } from 'lucide-react';
+import { useToast } from "@/hooks/use-toast";
 
 interface ProductEditorProps {
   product?: Product;
@@ -28,6 +30,7 @@ const ProductEditor: React.FC<ProductEditorProps> = ({ product: initialProduct, 
       petType: 'dogs',
     }
   );
+  const { toast } = useToast();
 
   useEffect(() => {
     setProduct(initialProduct || {
@@ -44,12 +47,10 @@ const ProductEditor: React.FC<ProductEditorProps> = ({ product: initialProduct, 
   }, [initialProduct]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value, type, checked } = e.target;
-    const newValue = type === 'checkbox' ? checked : value;
-
+    const { name, value } = e.target;
     setProduct(prevProduct => ({
       ...prevProduct,
-      [name]: newValue,
+      [name]: value,
     }));
   };
 
@@ -63,6 +64,10 @@ const ProductEditor: React.FC<ProductEditorProps> = ({ product: initialProduct, 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onSave(product);
+    toast({
+      title: "Сохранено",
+      description: "Товар успешно сохранен",
+    });
   };
 
   return (
@@ -146,9 +151,12 @@ const ProductEditor: React.FC<ProductEditorProps> = ({ product: initialProduct, 
           </div>
           <div>
             <Label htmlFor="petType">Тип животного</Label>
-            <Select onValueChange={(value) => handleSelectChange('petType', value)}>
+            <Select 
+              value={product.petType} 
+              onValueChange={(value) => handleSelectChange('petType', value)}
+            >
               <SelectTrigger className="w-full">
-                <SelectValue placeholder="Выберите тип животного" defaultValue={product.petType} />
+                <SelectValue placeholder="Выберите тип животного" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="dogs">Собаки</SelectItem>
@@ -159,11 +167,10 @@ const ProductEditor: React.FC<ProductEditorProps> = ({ product: initialProduct, 
               </SelectContent>
             </Select>
           </div>
-          <div>
+          <div className="flex items-center gap-2">
             <Label htmlFor="new">Новинка</Label>
             <Switch
               id="new"
-              name="new"
               checked={product.new}
               onCheckedChange={(checked) => setProduct(prevProduct => ({ ...prevProduct, new: checked }))}
             />
