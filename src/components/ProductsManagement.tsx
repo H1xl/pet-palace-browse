@@ -7,22 +7,23 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Product } from '@/types/product';
 import { products as initialProducts } from '@/data/products';
-import { Search, Edit2, Cat, Dog, Bird, Fish, Mouse, Package2, ArrowLeft } from 'lucide-react';
+import { Search, Edit2, Cat, Dog, Bird, Fish, Mouse, Package2 } from 'lucide-react';
 import ProductEditor from './ProductEditor';
-import { useToast } from "@/hooks/use-toast";
 
 const ProductsManagement: React.FC = () => {
   const [products, setProducts] = useState<Product[]>(initialProducts);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
-  const { toast } = useToast();
 
   const getCategoryIcon = (petType: string) => {
     switch (petType) {
+      case 'cat':
       case 'cats':
         return <Cat size={18} className="text-gray-600" />;
+      case 'dog':
       case 'dogs':
         return <Dog size={18} className="text-gray-600" />;
+      case 'bird':
       case 'birds':
         return <Bird size={18} className="text-gray-600" />;
       case 'fish':
@@ -44,19 +45,6 @@ const ProductsManagement: React.FC = () => {
       product.id === updatedProduct.id ? updatedProduct : product
     ));
     setSelectedProduct(null);
-    toast({
-      title: "Изменения сохранены",
-      description: `Товар "${updatedProduct.name}" успешно обновлен.`,
-    });
-    
-    // Save to localStorage
-    localStorage.setItem('savedProducts', JSON.stringify(
-      products.map(product => product.id === updatedProduct.id ? updatedProduct : product)
-    ));
-  };
-
-  const handleCancel = () => {
-    setSelectedProduct(null);
   };
 
   const filteredProducts = products.filter(product => 
@@ -68,18 +56,11 @@ const ProductsManagement: React.FC = () => {
   return (
     <div className="space-y-6">
       {selectedProduct ? (
-        <div className="container mx-auto py-8">
-          <Button variant="ghost" onClick={handleCancel} className="mb-4">
-            <ArrowLeft size={16} className="mr-2" />
-            Вернуться к списку товаров
-          </Button>
-
-          <ProductEditor 
-            product={selectedProduct}
-            onSave={handleProductUpdate}
-            onCancel={handleCancel}
-          />
-        </div>
+        <ProductEditor 
+          product={selectedProduct}
+          onSave={handleProductUpdate}
+          onCancel={() => setSelectedProduct(null)}
+        />
       ) : (
         <Card>
           <CardHeader>

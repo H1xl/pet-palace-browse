@@ -61,11 +61,11 @@ const About = () => {
             <div className="bg-white p-6 rounded-lg shadow-md text-center">
               <div className="bg-pet-blue p-3 rounded-full inline-flex justify-center items-center mb-4">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
                 </svg>
               </div>
-              <h3 className="text-xl font-semibold mb-2">Выгодные цены</h3>
-              <p className="text-gray-600">Лучшие цены на товары для ваших питомцев</p>
+              <h3 className="text-xl font-semibold mb-2">Быстрая доставка</h3>
+              <p className="text-gray-600">Доставляем заказы в кратчайшие сроки по всему городу</p>
             </div>
             <div className="bg-white p-6 rounded-lg shadow-md text-center">
               <div className="bg-pet-blue p-3 rounded-full inline-flex justify-center items-center mb-4">
@@ -88,10 +88,10 @@ const About = () => {
             <strong>Телефон:</strong> +7 (123) 456-7890
           </div>
           <div className="mb-1">
-            <strong>Email:</strong> info@zoomir.ru
+            <strong>Email:</strong> info@зоомагазин.рф
           </div>
           <div className="mb-1">
-            <strong>Адрес:</strong> г. Ставрополь, ул. Примерная, д. 123
+            <strong>Адрес:</strong> г. Москва, ул. Примерная, д. 123
           </div>
         </div>
       </div>
