@@ -9,33 +9,33 @@ interface CategoryFilterProps {
 
 const categories = [
   { id: 'all', name: 'Все товары', icon: Package2 },
-  { id: 'dogs', name: 'Для собак', icon: Dog },
-  { id: 'cats', name: 'Для кошек', icon: Cat },
-  { id: 'birds', name: 'Для птиц', icon: Bird },
+  { id: 'dog', name: 'Для собак', icon: Dog },
+  { id: 'cat', name: 'Для кошек', icon: Cat },
+  { id: 'bird', name: 'Для птиц', icon: Bird },
   { id: 'fish', name: 'Для рыб', icon: Fish },
   { id: 'rodent', name: 'Для грызунов', icon: Mouse },
 ];
 
 const CategoryFilter = ({ selectedCategory, onSelectCategory }: CategoryFilterProps) => {
   return (
-    <div className="bg-white py-3 shadow-sm">
+    <div className="bg-white py-4 shadow-sm">
       <div className="container mx-auto px-6">
-        <h2 className="text-lg font-medium mb-2">Категории</h2>
-        <div className="flex flex-nowrap overflow-x-auto pb-2 gap-2 -mx-2 px-2">
+        <h2 className="text-lg font-medium mb-3">Категории</h2>
+        <div className="flex flex-nowrap overflow-x-auto pb-2 gap-3 -mx-2 px-2">
           {categories.map((category) => {
             const CategoryIcon = category.icon;
             return (
               <button
                 key={category.id}
                 onClick={() => onSelectCategory(category.id)}
-                className={`flex flex-col items-center min-w-[70px] p-1.5 rounded-lg transition-colors ${
+                className={`flex flex-col items-center min-w-[80px] p-2 rounded-lg transition-colors ${
                   selectedCategory === category.id 
                   ? "bg-pet-light-blue text-pet-blue" 
                   : "bg-gray-50 hover:bg-gray-100"
                 }`}
               >
-                <div className="w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center mb-1">
-                  <CategoryIcon size={14} className={selectedCategory === category.id ? "text-pet-blue" : "text-gray-500"} />
+                <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center mb-1">
+                  <CategoryIcon size={18} className={selectedCategory === category.id ? "text-pet-blue" : "text-gray-500"} />
                 </div>
                 <span className="text-xs font-medium whitespace-nowrap">{category.name}</span>
               </button>
