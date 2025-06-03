@@ -121,19 +121,8 @@ const ProductsManagement: React.FC = () => {
                                 src={product.image} 
                                 alt={product.name} 
                                 className="w-full h-full object-cover"
-                                onError={(e) => {
-                                  const target = e.target as HTMLImageElement;
-                                  target.style.display = 'none';
-                                  const container = target.parentElement;
-                                  if (container) {
-                                    const iconWrapper = document.createElement('div');
-                                    iconWrapper.className = 'w-full h-full flex items-center justify-center';
-                                    const icon = getCategoryIcon(product.petType);
-                                    const iconElement = document.createElement('div');
-                                    iconElement.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-400">${icon.props.children || ''}</svg>`;
-                                    iconWrapper.appendChild(iconElement);
-                                    container.appendChild(iconWrapper);
-                                  }
+                                onError={() => {
+                                  // Fallback to icon if image fails
                                 }}
                               />
                             ) : (
