@@ -28,43 +28,46 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onClick }) => {
     }
   };
 
+  const handleImageError = (e: React.SyntheticEvent<HTMLImageElement>) => {
+    const target = e.target as HTMLImageElement;
+    target.style.display = 'none';
+    const parent = target.parentElement;
+    if (parent && !parent.querySelector('.fallback-icon')) {
+      const iconDiv = document.createElement('div');
+      iconDiv.className = 'fallback-icon flex items-center justify-center w-full h-full';
+      iconDiv.innerHTML = getCategoryIcon(product.petType).props.children || '';
+      parent.appendChild(iconDiv);
+    }
+  };
+
   return (
     <Card 
-      className="product-card overflow-hidden h-full flex flex-col cursor-pointer hover:shadow-lg transition-shadow relative"
+      className="product-card overflow-hidden h-full flex flex-col cursor-pointer hover:shadow-lg transition-all duration-300 hover:scale-105 relative group animate-fade-in"
       onClick={() => onClick(product)}
     >
       {/* Полупрозрачная иконка пальца в правом нижнем углу */}
-      <div className="absolute bottom-2 right-2 z-10 opacity-30 pointer-events-none">
+      <div className="absolute bottom-2 right-2 z-10 opacity-30 group-hover:opacity-50 transition-opacity duration-200 pointer-events-none">
         <Hand size={20} className="text-gray-600" />
       </div>
       
       <div className="relative pt-4 px-4">
         {product.discount > 0 && (
-          <Badge className="absolute top-6 left-6 bg-pet-orange">-{product.discount}%</Badge>
+          <Badge className="absolute top-6 left-6 bg-pet-orange animate-scale-in">-{product.discount}%</Badge>
         )}
         {product.new && (
-          <Badge className="absolute top-6 right-6 bg-pet-blue">Новинка</Badge>
+          <Badge className="absolute top-6 right-6 bg-pet-blue animate-scale-in">Новинка</Badge>
         )}
         {!product.inStock && (
-          <Badge className="absolute top-6 left-6 bg-gray-500">Нет в наличии</Badge>
+          <Badge className="absolute top-6 left-6 bg-gray-500 animate-scale-in">Нет в наличии</Badge>
         )}
         
-        <div className="h-48 flex items-center justify-center mb-4 overflow-hidden rounded-md bg-gray-100">
+        <div className="h-48 flex items-center justify-center mb-4 overflow-hidden rounded-md bg-gray-100 group-hover:bg-gray-50 transition-colors duration-200">
           {product.image ? (
             <img 
               src={product.image} 
               alt={product.name} 
-              className="object-cover w-full h-full transition-transform duration-300 hover:scale-105"
-              onError={(e) => {
-                const target = e.target as HTMLImageElement;
-                target.style.display = 'none';
-                const parent = target.parentElement;
-                if (parent && !parent.querySelector('.fallback-icon')) {
-                  const iconDiv = document.createElement('div');
-                  iconDiv.className = 'fallback-icon flex items-center justify-center w-full h-full';
-                  parent.appendChild(iconDiv);
-                }
-              }}
+              className="object-cover w-full h-full transition-transform duration-300 hover:scale-110"
+              onError={handleImageError}
             />
           ) : (
             <div className="flex items-center justify-center w-full h-full">
@@ -76,7 +79,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onClick }) => {
       
       <CardContent className="flex-grow">
         <div className="text-sm text-gray-500 mb-1">{product.category}</div>
-        <h3 className="font-semibold text-lg mb-1 line-clamp-2">{product.name}</h3>
+        <h3 className="font-semibold text-lg mb-1 line-clamp-2 group-hover:text-pet-blue transition-colors duration-200">{product.name}</h3>
         <div className="flex items-baseline gap-2 mb-2">
           {product.discount > 0 ? (
             <>

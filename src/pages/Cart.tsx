@@ -96,8 +96,8 @@ const Cart = () => {
     clearCart();
     
     toast({
-      title: "Заказ оформлен!",
-      description: "Ваш заказ успешно оформлен. Мы свяжемся с вами в ближайшее время.",
+      title: "Заказ создан!",
+      description: "Ваш заказ успешно создан. Мы свяжемся с вами в ближайшее время.",
     });
     
     navigate('/profile');
@@ -105,16 +105,16 @@ const Cart = () => {
 
   if (!isLoggedIn) {
     return (
-      <div className="min-h-screen flex flex-col">
+      <div className="min-h-screen flex flex-col animate-fade-in">
         <Navbar cartItemCount={0} currentPage="cart" />
         <div className="container mx-auto px-6 py-8 flex-1 flex items-center justify-center">
-          <Card className="w-full max-w-md">
+          <Card className="w-full max-w-md animate-scale-in">
             <CardHeader>
               <CardTitle className="text-center">Доступ ограничен</CardTitle>
             </CardHeader>
             <CardContent className="text-center space-y-4">
               <p className="text-gray-600">Для просмотра корзины необходимо войти в систему</p>
-              <Button onClick={() => navigate('/login')} className="w-full">
+              <Button onClick={() => navigate('/login')} className="w-full transition-all duration-200 hover:scale-105">
                 Войти в систему
               </Button>
             </CardContent>
@@ -126,32 +126,32 @@ const Cart = () => {
   }
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col animate-fade-in">
       <Navbar cartItemCount={cartItems.reduce((total, item) => total + item.quantity, 0)} currentPage="cart" />
       
       <div className="container mx-auto px-6 py-8 flex-1">
         <h1 className="text-3xl font-bold mb-8">Корзина</h1>
         
         {cartItems.length === 0 ? (
-          <div className="text-center py-12">
+          <div className="text-center py-12 animate-fade-in">
             <ShoppingBag size={64} className="mx-auto text-gray-400 mb-4" />
             <h2 className="text-xl font-medium text-gray-500 mb-2">Ваша корзина пуста</h2>
             <p className="text-gray-400 mb-6">Добавьте товары из каталога</p>
-            <Button onClick={() => navigate('/catalog')}>
+            <Button onClick={() => navigate('/catalog')} className="transition-all duration-200 hover:scale-105">
               Перейти в каталог
             </Button>
           </div>
         ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 animate-fade-in">
             {/* Список товаров */}
             <div className="lg:col-span-2 space-y-4">
-              {cartItems.map((item) => {
+              {cartItems.map((item, index) => {
                 const itemPrice = item.discount > 0 
                   ? item.price * (1 - item.discount / 100)
                   : item.price;
                   
                 return (
-                  <Card key={item.id}>
+                  <Card key={item.id} className="animate-fade-in transition-all duration-200 hover:shadow-md" style={{ animationDelay: `${index * 100}ms` }}>
                     <CardContent className="p-4">
                       <div className="flex gap-4">
                         {/* Изображение товара */}
@@ -197,6 +197,7 @@ const Cart = () => {
                                 variant="outline"
                                 size="sm"
                                 onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                                className="transition-all duration-200 hover:scale-110"
                               >
                                 <Minus size={14} />
                               </Button>
@@ -211,6 +212,7 @@ const Cart = () => {
                                 variant="outline"
                                 size="sm"
                                 onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                                className="transition-all duration-200 hover:scale-110"
                               >
                                 <Plus size={14} />
                               </Button>
@@ -220,7 +222,7 @@ const Cart = () => {
                               variant="ghost"
                               size="sm"
                               onClick={() => removeItem(item.id)}
-                              className="text-red-500 hover:text-red-700"
+                              className="text-red-500 hover:text-red-700 transition-all duration-200 hover:scale-110"
                             >
                               <Trash2 size={16} />
                             </Button>
@@ -242,7 +244,7 @@ const Cart = () => {
             
             {/* Итоговая информация */}
             <div className="space-y-4">
-              <Card>
+              <Card className="animate-fade-in">
                 <CardHeader>
                   <CardTitle>Итого</CardTitle>
                 </CardHeader>
@@ -251,24 +253,20 @@ const Cart = () => {
                     <span>Товары ({cartItems.reduce((total, item) => total + item.quantity, 0)} шт.)</span>
                     <span>{Math.round(calculateTotal())} ₽</span>
                   </div>
-                  <div className="flex justify-between">
-                    <span>Доставка</span>
-                    <span className="text-green-600">Бесплатно</span>
-                  </div>
                   <hr />
                   <div className="flex justify-between font-bold text-lg">
                     <span>К оплате</span>
                     <span>{Math.round(calculateTotal())} ₽</span>
                   </div>
                   
-                  <Button onClick={handleCheckout} className="w-full" size="lg">
-                    Оформить заказ
+                  <Button onClick={handleCheckout} className="w-full transition-all duration-200 hover:scale-105" size="lg">
+                    Создать заказ
                   </Button>
                   
                   <Button 
                     variant="outline" 
                     onClick={clearCart} 
-                    className="w-full"
+                    className="w-full transition-all duration-200 hover:scale-105"
                   >
                     Очистить корзину
                   </Button>

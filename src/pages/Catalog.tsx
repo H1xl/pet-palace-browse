@@ -10,7 +10,7 @@ import { products } from "@/data/products";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Filter, Search } from "lucide-react";
+import { Filter, Search, RotateCcw } from "lucide-react";
 
 const Catalog = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -72,7 +72,7 @@ const Catalog = () => {
   const applyFiltersAndSort = () => {
     setLoading(true);
     
-    // Минимальная задержка для skeleton анимации
+    // Увеличенная задержка для анимации
     setTimeout(() => {
       let result = [...products];
 
@@ -149,7 +149,7 @@ const Catalog = () => {
 
       setFilteredProducts(result);
       setLoading(false);
-    }, 150); // Минимум 150мс для отображения skeleton
+    }, 300); // Увеличено до 300мс
   };
 
   const handleSearch = (e: React.FormEvent) => {
@@ -220,13 +220,13 @@ const Catalog = () => {
     searchTerm.trim() !== '';
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col animate-fade-in">
       <Navbar 
         cartItemCount={isLoggedIn ? cartItems.reduce((total, item) => total + item.quantity, 0) : 0} 
         currentPage="catalog" 
       />
       
-      <div className="container mx-auto px-6 py-8">
+      <div className="container mx-auto px-6 py-8 animate-fade-in">
         <h1 className="text-3xl font-bold mb-6">Каталог товаров</h1>
         
         {/* Поиск и фильтры */}
@@ -235,13 +235,13 @@ const Catalog = () => {
             <Input 
               type="text" 
               placeholder="Поиск товаров..." 
-              className="pr-10"
+              className="pr-10 transition-all duration-200 focus:ring-2 focus:ring-pet-blue"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
             <button 
               type="submit" 
-              className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+              className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors duration-200"
             >
               <Search size={18} />
             </button>
@@ -250,7 +250,7 @@ const Catalog = () => {
           <Button 
             onClick={() => setIsFiltersOpen(true)}
             variant="outline"
-            className="flex items-center gap-2"
+            className="flex items-center gap-2 transition-all duration-200 hover:scale-105"
           >
             <Filter size={18} />
             Фильтры и сортировка
@@ -260,17 +260,14 @@ const Catalog = () => {
         {/* Активные фильтры */}
         <div className="mb-4">
           <div className="text-sm text-gray-600">
-            {(filters.category !== 'all' || 
-              filters.productType !== 'all' || 
-              filters.showOnlyNew || 
-              filters.showOnlyDiscounted || 
-              filters.inStock || 
-              searchTerm.trim()) && (
+            {hasActiveFilters && (
               <Button 
-                variant="link" 
+                variant="destructive" 
                 onClick={resetFilters}
-                className="ml-2 h-auto p-0 text-sm"
+                className="ml-2 h-auto p-2 text-sm flex items-center gap-1 hover:scale-105 transition-transform duration-200"
+                size="sm"
               >
+                <RotateCcw size={14} />
                 Сбросить фильтры
               </Button>
             )}
@@ -286,11 +283,16 @@ const Catalog = () => {
 
       {/* Поле найденных товаров - отображается только при фильтрации */}
       {hasActiveFilters && (
-        <div className="container mx-auto px-6 pb-4">
-          <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 text-center">
-            <p className="text-sm text-gray-600">
-              Найдено товаров: <span className="font-semibold text-gray-800">{filteredProducts.length}</span>
-            </p>
+        <div className="container mx-auto px-6 pb-4 animate-fade-in">
+          <div className="bg-gradient-to-r from-pet-light-blue to-pet-light-orange border-l-4 border-pet-blue rounded-lg p-4 shadow-sm">
+            <div className="flex items-center justify-between">
+              <p className="text-sm font-medium text-gray-700">
+                Найдено товаров: <span className="font-bold text-pet-blue text-lg">{filteredProducts.length}</span>
+              </p>
+              <div className="text-xs text-gray-500">
+                {searchTerm && `по запросу "${searchTerm}"`}
+              </div>
+            </div>
           </div>
         </div>
       )}

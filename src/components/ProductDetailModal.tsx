@@ -44,22 +44,34 @@ const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
     ? Math.round(product.price * (1 - product.discount / 100))
     : product.price;
 
+  const handleImageError = (e: React.SyntheticEvent<HTMLImageElement>) => {
+    const target = e.target as HTMLImageElement;
+    target.style.display = 'none';
+    const parent = target.parentElement;
+    if (parent && !parent.querySelector('.fallback-icon')) {
+      const iconDiv = document.createElement('div');
+      iconDiv.className = 'fallback-icon flex items-center justify-center w-full h-full';
+      parent.appendChild(iconDiv);
+    }
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+      <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto animate-scale-in">
         <DialogHeader>
-          <DialogTitle className="text-xl font-bold">{product.name}</DialogTitle>
+          <DialogTitle className="text-xl font-bold animate-fade-in">{product.name}</DialogTitle>
         </DialogHeader>
         
-        <div className="space-y-6">
+        <div className="space-y-6 animate-fade-in">
           {/* Изображение и основная информация */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="relative">
+            <div className="relative group">
               {product.image ? (
                 <img 
                   src={product.image} 
                   alt={product.name} 
-                  className="w-full h-64 object-cover rounded-lg"
+                  className="w-full h-64 object-cover rounded-lg transition-transform duration-300 hover:scale-105"
+                  onError={handleImageError}
                 />
               ) : (
                 <div className="w-full h-64 bg-gray-100 rounded-lg flex items-center justify-center">
@@ -70,18 +82,18 @@ const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
               {/* Badges */}
               <div className="absolute top-2 left-2 space-y-1">
                 {product.discount > 0 && (
-                  <Badge className="bg-pet-orange">-{product.discount}%</Badge>
+                  <Badge className="bg-pet-orange animate-scale-in">-{product.discount}%</Badge>
                 )}
                 {product.new && (
-                  <Badge className="bg-pet-blue">Новинка</Badge>
+                  <Badge className="bg-pet-blue animate-scale-in">Новинка</Badge>
                 )}
                 {!product.inStock && (
-                  <Badge className="bg-gray-500">Нет в наличии</Badge>
+                  <Badge className="bg-gray-500 animate-scale-in">Нет в наличии</Badge>
                 )}
               </div>
             </div>
             
-            <div className="space-y-4">
+            <div className="space-y-4 animate-fade-in">
               <div className="flex items-center gap-2">
                 {getCategoryIcon(product.petType)}
                 <span className="text-sm text-gray-500">{product.category}</span>
@@ -107,7 +119,7 @@ const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
               {showAddToCart && product.inStock && (
                 <Button 
                   onClick={() => onAddToCart?.(product)}
-                  className="w-full flex items-center gap-2"
+                  className="w-full flex items-center gap-2 transition-all duration-200 hover:scale-105"
                 >
                   <ShoppingCart size={18} />
                   Добавить в корзину
@@ -123,18 +135,18 @@ const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
           </div>
           
           {/* Описание */}
-          <div>
+          <div className="animate-fade-in">
             <h3 className="text-lg font-semibold mb-2">Описание</h3>
             <p className="text-gray-700">{product.description}</p>
           </div>
           
           {/* Характеристики */}
           {product.specifications && product.specifications.length > 0 && (
-            <div>
+            <div className="animate-fade-in">
               <h3 className="text-lg font-semibold mb-3">Характеристики</h3>
               <ul className="space-y-2">
                 {product.specifications.map((spec, index) => (
-                  <li key={index} className="flex items-start gap-2">
+                  <li key={index} className="flex items-start gap-2 animate-fade-in" style={{ animationDelay: `${index * 100}ms` }}>
                     <span className="w-2 h-2 bg-pet-blue rounded-full mt-2 flex-shrink-0"></span>
                     <span className="text-gray-700">{spec}</span>
                   </li>

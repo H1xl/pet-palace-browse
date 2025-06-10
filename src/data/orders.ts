@@ -1,6 +1,8 @@
 
 import { Order, OrderItem } from '@/types/order';
 
+export { Order, OrderItem };
+
 export const orders: Order[] = [
   {
     id: '1',

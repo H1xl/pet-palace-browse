@@ -57,23 +57,105 @@
 }
 
 .product-card {
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .product-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  transform: translateY(-8px);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
 }
 
 .category-button {
-  transition: background-color 0.2s ease, transform 0.1s ease;
+  transition: all 0.3s ease;
 }
 
 .category-button:hover {
-  transform: translateY(-2px);
+  transform: translateY(-3px);
 }
 
 .category-button.active {
   background-color: theme('colors.pet.blue');
   color: white;
+}
+
+/* Плавные переходы для всех интерактивных элементов */
+button, input, select, textarea {
+  transition: all 0.2s ease;
+}
+
+/* Анимации для модальных окон */
+.animate-modal-enter {
+  animation: modalEnter 0.3s ease-out;
+}
+
+.animate-modal-exit {
+  animation: modalExit 0.3s ease-out;
+}
+
+@keyframes modalEnter {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes modalExit {
+  from {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.9) translateY(-10px);
+  }
+}
+
+/* Улучшенные анимации появления */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.4s ease-out;
+}
+
+/* Стилизация скроллбара */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: theme('colors.pet.blue');
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: theme('colors.pet.orange');
 }
