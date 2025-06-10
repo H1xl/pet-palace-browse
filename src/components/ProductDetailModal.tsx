@@ -1,20 +1,25 @@
 
 import React from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Product } from '@/types/product';
-import { Cat, Dog, Bird, Fish, Mouse, Package2 } from 'lucide-react';
+import { Cat, Dog, Bird, Fish, Mouse, Package2, ShoppingCart } from 'lucide-react';
 
 interface ProductDetailModalProps {
   product: Product | null;
   isOpen: boolean;
   onClose: () => void;
+  onAddToCart?: (product: Product) => void;
+  showAddToCart?: boolean;
 }
 
-const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
-  product,
-  isOpen,
-  onClose,
+const ProductDetailModal: React.FC<ProductDetailModalProps> = ({ 
+  product, 
+  isOpen, 
+  onClose, 
+  onAddToCart,
+  showAddToCart = false 
 }) => {
   if (!product) return null;
 
@@ -35,108 +40,108 @@ const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
     }
   };
 
-  const getProductTypeName = (type: string) => {
-    const types: Record<string, string> = {
-      food: 'Корм',
-      toys: 'Игрушки',
-      accessories: 'Аксессуары',
-      cages: 'Клетки и домики',
-      care: 'Уход',
-      medicine: 'Лекарства',
-    };
-    return types[type] || type;
-  };
+  const finalPrice = product.discount > 0 
+    ? Math.round(product.price * (1 - product.discount / 100))
+    : product.price;
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="text-xl">{product.name}</DialogTitle>
+          <DialogTitle className="text-xl font-bold">{product.name}</DialogTitle>
         </DialogHeader>
         
-        <div className="grid md:grid-cols-2 gap-6">
-          {/* Изображение */}
-          <div className="aspect-square bg-gray-100 rounded-lg overflow-hidden flex items-center justify-center">
-            {product.image ? (
-              <img 
-                src={product.image} 
-                alt={product.name} 
-                className="w-full h-full object-cover"
-              />
-            ) : (
-              getCategoryIcon(product.petType)
-            )}
-          </div>
-          
-          {/* Информация */}
-          <div className="space-y-4">
-            <div className="flex items-center gap-2">
-              {getCategoryIcon(product.petType)}
-              <span className="text-sm text-gray-600">{product.category}</span>
-            </div>
-            
-            <div className="flex gap-2">
-              <Badge variant="outline">{getProductTypeName(product.productType)}</Badge>
-              {product.new && <Badge className="bg-pet-blue">Новинка</Badge>}
-              {product.discount > 0 && (
-                <Badge className="bg-pet-orange">-{product.discount}%</Badge>
+        <div className="space-y-6">
+          {/* Изображение и основная информация */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="relative">
+              {product.image ? (
+                <img 
+                  src={product.image} 
+                  alt={product.name} 
+                  className="w-full h-64 object-cover rounded-lg"
+                />
+              ) : (
+                <div className="w-full h-64 bg-gray-100 rounded-lg flex items-center justify-center">
+                  {getCategoryIcon(product.petType)}
+                </div>
               )}
-              {!product.inStock && (
-                <Badge variant="destructive">Нет в наличии</Badge>
-              )}
-            </div>
-
-            <div className="space-y-2">
-              <div className="flex items-baseline gap-2">
-                {product.discount > 0 ? (
-                  <>
-                    <span className="text-2xl font-bold text-pet-blue">
-                      {Math.round(product.price * (1 - product.discount / 100))} ₽
-                    </span>
-                    <span className="text-lg text-gray-400 line-through">
-                      {product.price} ₽
-                    </span>
-                  </>
-                ) : (
-                  <span className="text-2xl font-bold text-pet-blue">{product.price} ₽</span>
+              
+              {/* Badges */}
+              <div className="absolute top-2 left-2 space-y-1">
+                {product.discount > 0 && (
+                  <Badge className="bg-pet-orange">-{product.discount}%</Badge>
+                )}
+                {product.new && (
+                  <Badge className="bg-pet-blue">Новинка</Badge>
+                )}
+                {!product.inStock && (
+                  <Badge className="bg-gray-500">Нет в наличии</Badge>
                 )}
               </div>
             </div>
-
-            {product.brand && (
-              <div>
-                <span className="text-sm font-medium">Бренд: </span>
-                <span className="text-sm">{product.brand}</span>
+            
+            <div className="space-y-4">
+              <div className="flex items-center gap-2">
+                {getCategoryIcon(product.petType)}
+                <span className="text-sm text-gray-500">{product.category}</span>
               </div>
-            )}
-
-            {product.weight && (
-              <div>
-                <span className="text-sm font-medium">Вес: </span>
-                <span className="text-sm">{product.weight}</span>
+              
+              <div className="space-y-2">
+                <div className="flex items-baseline gap-2">
+                  <span className="text-2xl font-bold text-pet-blue">{finalPrice} ₽</span>
+                  {product.discount > 0 && (
+                    <span className="text-lg text-gray-400 line-through">{product.price} ₽</span>
+                  )}
+                </div>
+                
+                {product.brand && (
+                  <p className="text-sm text-gray-600">Бренд: <span className="font-medium">{product.brand}</span></p>
+                )}
+                
+                {product.weight && (
+                  <p className="text-sm text-gray-600">Вес: <span className="font-medium">{product.weight}</span></p>
+                )}
               </div>
-            )}
-
-            <div>
-              <h4 className="font-medium mb-2">Описание</h4>
-              <p className="text-sm text-gray-600">{product.description}</p>
-            </div>
-
-            {product.specifications && product.specifications.length > 0 && (
-              <div>
-                <h4 className="font-medium mb-2">Характеристики</h4>
-                <ul className="text-sm text-gray-600 space-y-1">
-                  {product.specifications.map((spec, index) => (
-                    <li key={index}>• {spec}</li>
-                  ))}
-                </ul>
-              </div>
-            )}
-
-            <div className="text-xs text-gray-400">
-              Добавлен: {new Date(product.dateAdded).toLocaleDateString('ru-RU')}
+              
+              {showAddToCart && product.inStock && (
+                <Button 
+                  onClick={() => onAddToCart?.(product)}
+                  className="w-full flex items-center gap-2"
+                >
+                  <ShoppingCart size={18} />
+                  Добавить в корзину
+                </Button>
+              )}
+              
+              {!product.inStock && (
+                <Button disabled className="w-full">
+                  Нет в наличии
+                </Button>
+              )}
             </div>
           </div>
+          
+          {/* Описание */}
+          <div>
+            <h3 className="text-lg font-semibold mb-2">Описание</h3>
+            <p className="text-gray-700">{product.description}</p>
+          </div>
+          
+          {/* Характеристики */}
+          {product.specifications && product.specifications.length > 0 && (
+            <div>
+              <h3 className="text-lg font-semibold mb-3">Характеристики</h3>
+              <ul className="space-y-2">
+                {product.specifications.map((spec, index) => (
+                  <li key={index} className="flex items-start gap-2">
+                    <span className="w-2 h-2 bg-pet-blue rounded-full mt-2 flex-shrink-0"></span>
+                    <span className="text-gray-700">{spec}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
         </div>
       </DialogContent>
     </Dialog>

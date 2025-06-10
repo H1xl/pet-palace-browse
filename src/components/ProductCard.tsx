@@ -1,9 +1,9 @@
 
 import React from 'react';
-import { Card, CardContent, CardFooter } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Product } from '@/types/product';
-import { Cat, Dog, Bird, Fish, Mouse, Package2 } from 'lucide-react';
+import { Cat, Dog, Bird, Fish, Mouse, Package2, Hand } from 'lucide-react';
 
 interface ProductCardProps {
   product: Product;
@@ -30,9 +30,14 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onClick }) => {
 
   return (
     <Card 
-      className="product-card overflow-hidden h-full flex flex-col cursor-pointer hover:shadow-lg transition-shadow"
+      className="product-card overflow-hidden h-full flex flex-col cursor-pointer hover:shadow-lg transition-shadow relative"
       onClick={() => onClick(product)}
     >
+      {/* Полупрозрачная иконка пальца в правом нижнем углу */}
+      <div className="absolute bottom-2 right-2 z-10 opacity-30 pointer-events-none">
+        <Hand size={20} className="text-gray-600" />
+      </div>
+      
       <div className="relative pt-4 px-4">
         {product.discount > 0 && (
           <Badge className="absolute top-6 left-6 bg-pet-orange">-{product.discount}%</Badge>
@@ -91,12 +96,6 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onClick }) => {
           <p className="text-xs text-gray-500 mt-1">Бренд: {product.brand}</p>
         )}
       </CardContent>
-      
-      <CardFooter className="pt-2">
-        <div className="w-full text-center text-sm text-gray-500">
-          Нажмите для подробной информации
-        </div>
-      </CardFooter>
     </Card>
   );
 };

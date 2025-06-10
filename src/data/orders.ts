@@ -1,105 +1,114 @@
 
-import { Product } from '@/types/product';
+import { Order, OrderItem } from '@/types/order';
 
-export interface Order {
-  id: string;
-  clientId: string;
-  clientName: string;
-  products: {
-    product: Product;
-    quantity: number;
-  }[];
-  status: 'open' | 'closed';
-  totalAmount: number;
-  date: string;
-}
-
-// Sample orders data
 export const orders: Order[] = [
   {
-    id: "ORD-001",
-    clientId: "client",
-    clientName: "Тестовый Клиент",
-    products: [
+    id: '1',
+    userId: 'user1',
+    items: [
       {
-        product: {
-          id: "1",
-          name: "Премиум корм для собак «Счастливый Пёс»",
-          description: "Полноценный сбалансированный корм для взрослых собак всех пород с курицей и рисом.",
-          price: 2500,
-          image: "https://images.unsplash.com/photo-1568640347023-a616a30bc3bd?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=600&h=400&q=80",
-          category: "Корм",
-          discount: 15,
-          new: false,
-          petType: "dog"
-        },
+        id: '1',
+        name: 'Корм для собак Royal Canin Adult',
+        price: 2500,
+        description: 'Полнорационный сухой корм для взрослых собак средних пород',
+        image: 'https://images.unsplash.com/photo-1589941013453-ec89f33b5e95?w=300&h=300&fit=crop',
+        category: 'Корм для собак',
+        petType: 'dog',
+        productType: 'food',
+        discount: 15,
+        new: false,
+        dateAdded: '2024-01-15',
+        inStock: true,
+        brand: 'Royal Canin',
+        weight: '15 кг',
+        specifications: [
+          'Для собак средних пород',
+          'Возраст: от 1 года до 7 лет',
+          'Поддерживает здоровье пищеварения',
+          'Укрепляет иммунную систему'
+        ],
         quantity: 2
-      },
+      }
+    ],
+    total: 4250,
+    status: 'delivered',
+    date: '2024-01-20',
+    shippingAddress: {
+      street: 'ул. Ленина, 123',
+      city: 'Ставрополь',
+      postalCode: '355000'
+    }
+  },
+  {
+    id: '2',
+    userId: 'user1',
+    items: [
       {
-        product: {
-          id: "5",
-          name: "Лежак для собак «Мягкий сон»",
-          description: "Мягкий и уютный лежак для собак средних и крупных пород с ортопедическим эффектом.",
-          price: 1800,
-          image: "https://images.unsplash.com/photo-1541599540903-216a46ca1dc0?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=600&h=400&q=80",
-          category: "Лежаки",
-          discount: 5,
-          new: false,
-          petType: "dogs"
-        },
+        id: '2',
+        name: 'Игрушка-мышка для кошек',
+        price: 450,
+        description: 'Мягкая игрушка-мышка с кошачьей мятой для активных игр',
+        image: 'https://images.unsplash.com/photo-1574144611937-0df059b5ef3e?w=300&h=300&fit=crop',
+        category: 'Игрушки для кошек',
+        petType: 'cat',
+        productType: 'toys',
+        discount: 0,
+        new: true,
+        dateAdded: '2024-02-10',
+        inStock: true,
+        brand: 'Pet Fun',
+        specifications: [
+          'Материал: плюш',
+          'Размер: 8 см',
+          'С кошачьей мятой',
+          'Безопасные материалы'
+        ],
         quantity: 1
       }
     ],
-    status: "open",
-    totalAmount: 6050,
-    date: "2025-05-15"
+    total: 450,
+    status: 'processing',
+    date: '2024-02-15',
+    shippingAddress: {
+      street: 'пр. Октябрьской Революции, 45',
+      city: 'Ставрополь',
+      postalCode: '355001'
+    }
   },
   {
-    id: "ORD-002",
-    clientId: "client1",
-    clientName: "Новый Клиент",
-    products: [
+    id: '3',
+    userId: 'user2',
+    items: [
       {
-        product: {
-          id: "2",
-          name: "Мягкая игрушка для кошек «Мышка с кошачьей мятой»",
-          description: "Мягкая игрушка с кошачьей мятой внутри для активных игр вашей кошки.",
-          price: 350,
-          image: "https://images.unsplash.com/photo-1526336024174-e58f5cdd8e13?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=600&h=400&q=80",
-          category: "Игрушки",
-          discount: 0,
-          new: true,
-          petType: "cats"
-        },
-        quantity: 3
-      }
-    ],
-    status: "closed",
-    totalAmount: 1050,
-    date: "2025-05-10"
-  },
-  {
-    id: "ORD-003",
-    clientId: "client",
-    clientName: "Тестовый Клиент",
-    products: [
-      {
-        product: {
-          id: "10",
-          name: "Интерактивная игрушка для кошек «Умный шарик»",
-          description: "Электронная игрушка с непредсказуемым движением для стимуляции охотничьего инстинкта вашей кошки.",
-          price: 990,
-          image: "https://images.unsplash.com/photo-1547404415-5eb25e0fb22e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=600&h=400&q=80",
-          category: "Игрушки",
-          discount: 0,
-          new: true,
-          petType: "cats"
-        },
+        id: '3',
+        name: 'Клетка для попугаев средних размеров',
+        price: 8900,
+        description: 'Просторная клетка для попугаев с удобными жердочками и кормушками',
+        image: 'https://images.unsplash.com/photo-1452570053594-1b985d6ea890?w=300&h=300&fit=crop',
+        category: 'Клетки для птиц',
+        petType: 'bird',
+        productType: 'cages',
+        discount: 20,
+        new: false,
+        dateAdded: '2024-01-20',
+        inStock: true,
+        brand: 'BirdLife',
+        specifications: [
+          'Размер: 60x40x60 см',
+          'Материал: металл с полимерным покрытием',
+          '2 жердочки в комплекте',
+          '2 кормушки и поилка'
+        ],
         quantity: 1
       }
     ],
-    status: "open",
-    totalAmount: 990,
-    date: "2025-05-18"
+    total: 7120,
+    status: 'shipped',
+    date: '2024-02-10',
+    shippingAddress: {
+      street: 'ул. Мира, 78',
+      city: 'Ставрополь',
+      postalCode: '355002'
+    }
   }
 ];
