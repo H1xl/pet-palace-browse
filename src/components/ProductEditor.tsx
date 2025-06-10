@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Product } from '@/types/product';
 import { Button } from "@/components/ui/button";
@@ -25,7 +26,10 @@ const ProductEditor: React.FC<ProductEditorProps> = ({ product: initialProduct, 
       category: '',
       discount: 0,
       new: false,
-      petType: 'dogs',
+      petType: 'dog',
+      productType: 'food',
+      dateAdded: new Date().toISOString().split('T')[0],
+      inStock: true
     }
   );
 
@@ -39,12 +43,16 @@ const ProductEditor: React.FC<ProductEditorProps> = ({ product: initialProduct, 
       category: '',
       discount: 0,
       new: false,
-      petType: 'dogs',
+      petType: 'dog',
+      productType: 'food',
+      dateAdded: new Date().toISOString().split('T')[0],
+      inStock: true
     });
   }, [initialProduct]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value, type, checked } = e.target;
+    const { name, value, type } = e.target;
+    const checked = 'checked' in e.target ? e.target.checked : false;
     const newValue = type === 'checkbox' ? checked : value;
 
     setProduct(prevProduct => ({
@@ -151,9 +159,9 @@ const ProductEditor: React.FC<ProductEditorProps> = ({ product: initialProduct, 
                 <SelectValue placeholder="Выберите тип животного" defaultValue={product.petType} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="dogs">Собаки</SelectItem>
-                <SelectItem value="cats">Кошки</SelectItem>
-                <SelectItem value="birds">Птицы</SelectItem>
+                <SelectItem value="dog">Собаки</SelectItem>
+                <SelectItem value="cat">Кошки</SelectItem>
+                <SelectItem value="bird">Птицы</SelectItem>
                 <SelectItem value="fish">Рыбы</SelectItem>
                 <SelectItem value="rodent">Грызуны</SelectItem>
               </SelectContent>

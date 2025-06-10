@@ -1,7 +1,7 @@
 
-import { Order, OrderItem } from '@/types/order';
+import type { Order, OrderItem } from '@/types/order';
 
-export { Order, OrderItem };
+export type { Order, OrderItem };
 
 export const orders: Order[] = [
   {
