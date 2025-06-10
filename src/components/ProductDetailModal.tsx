@@ -46,25 +46,34 @@ const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
 
   const handleImageError = (e: React.SyntheticEvent<HTMLImageElement>) => {
     const target = e.target as HTMLImageElement;
-    target.style.display = 'none';
     const parent = target.parentElement;
-    if (parent && !parent.querySelector('.fallback-icon')) {
-      const iconDiv = document.createElement('div');
-      iconDiv.className = 'fallback-icon flex items-center justify-center w-full h-full';
-      parent.appendChild(iconDiv);
+    if (parent) {
+      target.style.display = 'none';
+      if (!parent.querySelector('.fallback-icon')) {
+        const iconContainer = document.createElement('div');
+        iconContainer.className = 'fallback-icon w-full h-64 bg-gray-100 rounded-lg flex items-center justify-center';
+        
+        const iconElement = document.createElement('div');
+        iconElement.innerHTML = getCategoryIcon(product.petType).props.children;
+        iconElement.className = 'text-gray-400';
+        iconElement.style.fontSize = '48px';
+        
+        iconContainer.appendChild(iconElement);
+        parent.appendChild(iconContainer);
+      }
     }
   };
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto animate-scale-in">
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-hidden animate-modal-enter">
         <DialogHeader>
-          <DialogTitle className="text-xl font-bold animate-fade-in">{product.name}</DialogTitle>
+          <DialogTitle className="text-xl font-bold animate-fade-in-up">{product.name}</DialogTitle>
         </DialogHeader>
         
-        <div className="space-y-6 animate-fade-in">
+        <div className="space-y-6 overflow-y-auto max-h-[70vh] pr-2">
           {/* Изображение и основная информация */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 animate-fade-in-up" style={{ animationDelay: '100ms' }}>
             <div className="relative group">
               {product.image ? (
                 <img 
@@ -75,7 +84,9 @@ const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
                 />
               ) : (
                 <div className="w-full h-64 bg-gray-100 rounded-lg flex items-center justify-center">
-                  {getCategoryIcon(product.petType)}
+                  <div className="text-gray-400" style={{ fontSize: '48px' }}>
+                    {getCategoryIcon(product.petType)}
+                  </div>
                 </div>
               )}
               
@@ -93,7 +104,7 @@ const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
               </div>
             </div>
             
-            <div className="space-y-4 animate-fade-in">
+            <div className="space-y-4 animate-fade-in-up" style={{ animationDelay: '200ms' }}>
               <div className="flex items-center gap-2">
                 {getCategoryIcon(product.petType)}
                 <span className="text-sm text-gray-500">{product.category}</span>
@@ -135,18 +146,18 @@ const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
           </div>
           
           {/* Описание */}
-          <div className="animate-fade-in">
+          <div className="animate-fade-in-up" style={{ animationDelay: '300ms' }}>
             <h3 className="text-lg font-semibold mb-2">Описание</h3>
             <p className="text-gray-700">{product.description}</p>
           </div>
           
           {/* Характеристики */}
           {product.specifications && product.specifications.length > 0 && (
-            <div className="animate-fade-in">
+            <div className="animate-fade-in-up" style={{ animationDelay: '400ms' }}>
               <h3 className="text-lg font-semibold mb-3">Характеристики</h3>
               <ul className="space-y-2">
                 {product.specifications.map((spec, index) => (
-                  <li key={index} className="flex items-start gap-2 animate-fade-in" style={{ animationDelay: `${index * 100}ms` }}>
+                  <li key={index} className="flex items-start gap-2 animate-fade-in-up" style={{ animationDelay: `${500 + index * 100}ms` }}>
                     <span className="w-2 h-2 bg-pet-blue rounded-full mt-2 flex-shrink-0"></span>
                     <span className="text-gray-700">{spec}</span>
                   </li>

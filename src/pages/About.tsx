@@ -21,10 +21,10 @@ const About = () => {
       <Navbar cartItemCount={cartItemCount} currentPage="about" />
       
       <div className="container mx-auto px-6 py-12">
-        <h1 className="text-4xl font-bold mb-8 text-center">О нашем магазине</h1>
+        <h1 className="text-4xl font-bold mb-8 text-center animate-fade-in-up">О нашем магазине</h1>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
-          <div>
+          <div className="animate-fade-in-up" style={{ animationDelay: '200ms' }}>
             <h2 className="text-2xl font-semibold mb-4">Наша миссия</h2>
             <p className="text-lg text-gray-700 mb-4">
               Мы стремимся сделать жизнь домашних питомцев счастливее, а их владельцев - спокойнее. 
@@ -35,22 +35,22 @@ const About = () => {
               домашних животных в выборе лучших товаров для их питомцев.
             </p>
           </div>
-          <div className="relative">
+          <div className="relative animate-fade-in-up" style={{ animationDelay: '400ms' }}>
             <AspectRatio ratio={4/3} className="rounded-lg overflow-hidden">
               <img 
                 src="https://images.unsplash.com/photo-1583336663277-620dc1996580?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1200&h=900&q=80" 
                 alt="Счастливые питомцы" 
-                className="object-cover w-full h-full"
+                className="object-cover w-full h-full transition-transform duration-500 hover:scale-105"
               />
             </AspectRatio>
           </div>
         </div>
         
-        <div className="bg-pet-light-blue p-8 rounded-lg mb-12">
+        <div className="bg-gradient-to-r from-pet-light-blue to-pet-light-orange p-8 rounded-lg mb-12 animate-fade-in-up" style={{ animationDelay: '600ms' }}>
           <h2 className="text-2xl font-semibold mb-4 text-center">Наши преимущества</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="bg-white p-6 rounded-lg shadow-md text-center">
-              <div className="bg-pet-blue p-3 rounded-full inline-flex justify-center items-center mb-4">
+            <div className="bg-white p-6 rounded-lg shadow-md text-center transform transition-all duration-300 hover:scale-105 hover:shadow-lg animate-fade-in-up" style={{ animationDelay: '800ms' }}>
+              <div className="bg-pet-blue p-3 rounded-full inline-flex justify-center items-center mb-4 transition-transform duration-300 hover:rotate-12">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
@@ -58,8 +58,8 @@ const About = () => {
               <h3 className="text-xl font-semibold mb-2">Отборные товары</h3>
               <p className="text-gray-600">Мы тщательно выбираем каждый товар в наш ассортимент</p>
             </div>
-            <div className="bg-white p-6 rounded-lg shadow-md text-center">
-              <div className="bg-pet-blue p-3 rounded-full inline-flex justify-center items-center mb-4">
+            <div className="bg-white p-6 rounded-lg shadow-md text-center transform transition-all duration-300 hover:scale-105 hover:shadow-lg animate-fade-in-up" style={{ animationDelay: '1000ms' }}>
+              <div className="bg-pet-blue p-3 rounded-full inline-flex justify-center items-center mb-4 transition-transform duration-300 hover:rotate-12">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
                 </svg>
@@ -67,8 +67,8 @@ const About = () => {
               <h3 className="text-xl font-semibold mb-2">Быстрая доставка</h3>
               <p className="text-gray-600">Доставляем заказы в кратчайшие сроки по всему городу</p>
             </div>
-            <div className="bg-white p-6 rounded-lg shadow-md text-center">
-              <div className="bg-pet-blue p-3 rounded-full inline-flex justify-center items-center mb-4">
+            <div className="bg-white p-6 rounded-lg shadow-md text-center transform transition-all duration-300 hover:scale-105 hover:shadow-lg animate-fade-in-up" style={{ animationDelay: '1200ms' }}>
+              <div className="bg-pet-blue p-3 rounded-full inline-flex justify-center items-center mb-4 transition-transform duration-300 hover:rotate-12">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
                 </svg>
@@ -79,19 +79,21 @@ const About = () => {
           </div>
         </div>
         
-        <div>
+        <div className="animate-fade-in-up" style={{ animationDelay: '1400ms' }}>
           <h2 className="text-2xl font-semibold mb-4">Свяжитесь с нами</h2>
           <p className="text-lg text-gray-700 mb-2">
             Если у вас есть вопросы или предложения, пожалуйста, свяжитесь с нами:
           </p>
-          <div className="mb-1">
-            <strong>Телефон:</strong> +7 (123) 456-7890
-          </div>
-          <div className="mb-1">
-            <strong>Email:</strong> info@зоомагазин.рф
-          </div>
-          <div className="mb-1">
-            <strong>Адрес:</strong> г. Москва, ул. Примерная, д. 123
+          <div className="space-y-2">
+            <div className="animate-fade-in-up" style={{ animationDelay: '1600ms' }}>
+              <strong>Телефон:</strong> +7 (123) 456-7890
+            </div>
+            <div className="animate-fade-in-up" style={{ animationDelay: '1700ms' }}>
+              <strong>Email:</strong> info@зоомагазин.рф
+            </div>
+            <div className="animate-fade-in-up" style={{ animationDelay: '1800ms' }}>
+              <strong>Адрес:</strong> г. Москва, ул. Примерная, д. 123
+            </div>
           </div>
         </div>
       </div>
