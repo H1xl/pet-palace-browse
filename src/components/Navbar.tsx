@@ -1,8 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Search, ShoppingCart, Menu, X, User, LogOut } from 'lucide-react';
+import { Menu, X, User, LogOut } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Progress } from "@/components/ui/progress";
@@ -21,7 +20,6 @@ interface NavbarProps {
 
 const Navbar = ({ cartItemCount, currentPage = '' }: NavbarProps) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [searchValue, setSearchValue] = useState('');
   const [isNavigating, setIsNavigating] = useState(false);
   const [progress, setProgress] = useState(0);
   const navigate = useNavigate();
@@ -45,12 +43,6 @@ const Navbar = ({ cartItemCount, currentPage = '' }: NavbarProps) => {
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
-  };
-
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log('Searching for:', searchValue);
-    // Implement search functionality
   };
 
   const getNavLinkClass = (page: string) => {
@@ -127,19 +119,6 @@ const Navbar = ({ cartItemCount, currentPage = '' }: NavbarProps) => {
             </div>
 
             <div className="flex items-center gap-4">
-              <form onSubmit={handleSearch} className="hidden md:flex relative">
-                <Input 
-                  type="text" 
-                  placeholder="Поиск товаров..." 
-                  className="w-64 pr-10"
-                  value={searchValue}
-                  onChange={(e) => setSearchValue(e.target.value)}
-                />
-                <button type="submit" className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400">
-                  <Search size={18} />
-                </button>
-              </form>
-
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" className="relative" aria-label="Меню пользователя">
@@ -201,18 +180,6 @@ const Navbar = ({ cartItemCount, currentPage = '' }: NavbarProps) => {
                 <Link to="/" onClick={(e) => { e.preventDefault(); navigateWithProgress('/'); setIsMenuOpen(false); }} className={`${getNavLinkClass("home")} py-1`}>Главная</Link>
                 <Link to="/catalog" onClick={(e) => { e.preventDefault(); navigateWithProgress('/catalog'); setIsMenuOpen(false); }} className={`${getNavLinkClass("catalog")} py-1`}>Каталог</Link>
                 <Link to="/about" onClick={(e) => { e.preventDefault(); navigateWithProgress('/about'); setIsMenuOpen(false); }} className={`${getNavLinkClass("about")} py-1`}>О нас</Link>
-                <form onSubmit={handleSearch} className="flex md:hidden relative">
-                  <Input 
-                    type="text" 
-                    placeholder="Поиск товаров..." 
-                    className="w-full pr-10"
-                    value={searchValue}
-                    onChange={(e) => setSearchValue(e.target.value)}
-                  />
-                  <button type="submit" className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400">
-                    <Search size={18} />
-                  </button>
-                </form>
               </div>
             </div>
           )}

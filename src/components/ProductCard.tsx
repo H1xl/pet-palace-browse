@@ -1,43 +1,23 @@
 
 import React from 'react';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { ShoppingCart, Heart, Cat, Dog, Bird, Fish, Mouse, Package2 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Product } from '@/types/product';
-import { toast } from '@/components/ui/use-toast';
+import { Cat, Dog, Bird, Fish, Mouse, Package2 } from 'lucide-react';
 
 interface ProductCardProps {
   product: Product;
-  onAddToCart: (product: Product) => void;
+  onClick: (product: Product) => void;
 }
 
-const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart }) => {
-  const handleAddToCart = () => {
-    onAddToCart(product);
-    toast({
-      title: "Товар добавлен в корзину",
-      description: `${product.name} добавлен в вашу корзину.`,
-    });
-  };
-
-  const handleAddToWishlist = () => {
-    toast({
-      title: "Товар добавлен в избранное",
-      description: `${product.name} добавлен в ваш список желаний.`,
-    });
-  };
-
+const ProductCard: React.FC<ProductCardProps> = ({ product, onClick }) => {
   const getCategoryIcon = (petType: string) => {
     switch (petType) {
       case 'cat':
-      case 'cats':
         return <Cat size={48} className="text-gray-400" />;
       case 'dog':
-      case 'dogs':
         return <Dog size={48} className="text-gray-400" />;
       case 'bird':
-      case 'birds':
         return <Bird size={48} className="text-gray-400" />;
       case 'fish':
         return <Fish size={48} className="text-gray-400" />;
@@ -49,7 +29,10 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart }) => {
   };
 
   return (
-    <Card className="product-card overflow-hidden h-full flex flex-col">
+    <Card 
+      className="product-card overflow-hidden h-full flex flex-col cursor-pointer hover:shadow-lg transition-shadow"
+      onClick={() => onClick(product)}
+    >
       <div className="relative pt-4 px-4">
         {product.discount > 0 && (
           <Badge className="absolute top-6 left-6 bg-pet-orange">-{product.discount}%</Badge>
@@ -57,6 +40,10 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart }) => {
         {product.new && (
           <Badge className="absolute top-6 right-6 bg-pet-blue">Новинка</Badge>
         )}
+        {!product.inStock && (
+          <Badge className="absolute top-6 left-6 bg-gray-500">Нет в наличии</Badge>
+        )}
+        
         <div className="h-48 flex items-center justify-center mb-4 overflow-hidden rounded-md bg-gray-100">
           {product.image ? (
             <img 
@@ -66,17 +53,12 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart }) => {
               onError={(e) => {
                 const target = e.target as HTMLImageElement;
                 target.style.display = 'none';
-                
-                // Add a container for the icon
-                const iconContainer = document.createElement('div');
-                iconContainer.className = 'flex items-center justify-center w-full h-full';
-                target.parentElement?.appendChild(iconContainer);
-                
-                // Render the React component
-                const icon = getCategoryIcon(product.petType);
-                const iconDiv = document.createElement('div');
-                iconDiv.innerHTML = icon.type.render({ size: 48, className: 'text-gray-400' }).props.children;
-                iconContainer.appendChild(iconDiv);
+                const parent = target.parentElement;
+                if (parent && !parent.querySelector('.fallback-icon')) {
+                  const iconDiv = document.createElement('div');
+                  iconDiv.className = 'fallback-icon flex items-center justify-center w-full h-full';
+                  parent.appendChild(iconDiv);
+                }
               }}
             />
           ) : (
@@ -105,23 +87,15 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart }) => {
           )}
         </div>
         <p className="text-sm text-gray-600 line-clamp-2">{product.description}</p>
+        {product.brand && (
+          <p className="text-xs text-gray-500 mt-1">Бренд: {product.brand}</p>
+        )}
       </CardContent>
       
-      <CardFooter className="pt-2 flex gap-2">
-        <Button 
-          onClick={handleAddToCart}
-          className="flex-1 bg-pet-blue hover:bg-blue-600 text-white"
-        >
-          <ShoppingCart size={18} className="mr-2" /> В корзину
-        </Button>
-        <Button 
-          variant="outline" 
-          size="icon"
-          onClick={handleAddToWishlist}
-          className="border-pet-orange text-pet-orange hover:bg-pet-light-orange hover:text-pet-orange"
-        >
-          <Heart size={18} />
-        </Button>
+      <CardFooter className="pt-2">
+        <div className="w-full text-center text-sm text-gray-500">
+          Нажмите для подробной информации
+        </div>
       </CardFooter>
     </Card>
   );
