@@ -9,9 +9,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Progress } from "@/components/ui/progress";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { Settings, ShoppingBag, User, Package, ListChecks, LogOut, Crown, UserCircle } from 'lucide-react';
+import { Settings, ShoppingBag, User, Package, ListChecks, LogOut, Crown, UserCircle, Users } from 'lucide-react';
 import OrdersManagement from '@/components/OrdersManagement';
 import ProductsManagement from '@/components/ProductsManagement';
+import UserManagement from '@/components/UserManagement';
 
 const Profile = () => {
   const [currentUser, setCurrentUser] = useState<string | null>(null);
@@ -40,7 +41,7 @@ const Profile = () => {
   if (isLoading) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-pet-light-blue to-pet-light-orange">
-        <div className="w-full max-w-md px-4 animate-scale-in">
+        <div className="w-full max-w-md px-4 opacity-0 animate-fade-in-up" style={{ animationFillMode: 'forwards' }}>
           <div className="text-center mb-4">
             <div className="mx-auto mb-4 w-16 h-16 bg-pet-blue rounded-full flex items-center justify-center animate-bounce-gentle">
               <UserCircle size={32} className="text-white" />
@@ -62,7 +63,7 @@ const Profile = () => {
       
       <div className="container mx-auto px-6 py-8 flex-1">
         {/* Заголовок профиля */}
-        <div className="bg-gradient-to-r from-pet-blue to-pet-orange rounded-xl p-6 mb-8 text-white animate-fade-in-up">
+        <div className="bg-gradient-to-r from-pet-blue to-pet-orange rounded-xl p-6 mb-8 text-white opacity-0 animate-fade-in-up" style={{ animationFillMode: 'forwards' }}>
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div className="flex items-center gap-4">
               <Avatar className="w-16 h-16 border-4 border-white/20">
@@ -99,9 +100,9 @@ const Profile = () => {
         </div>
         
         {/* Основной контент */}
-        <div className="bg-white rounded-xl shadow-lg overflow-hidden animate-fade-in-up" style={{ animationDelay: '200ms' }}>
+        <div className="bg-white rounded-xl shadow-lg overflow-hidden opacity-0 animate-fade-in-up" style={{ animationDelay: '200ms', animationFillMode: 'forwards' }}>
           <Tabs defaultValue="profile" className="w-full">
-            <TabsList className="grid w-full grid-cols-3 bg-gray-100 p-1 m-1 rounded-lg">
+            <TabsList className={`grid w-full ${isAdmin ? 'grid-cols-3' : 'grid-cols-2'} bg-gray-100 p-1 m-1 rounded-lg`}>
               <TabsTrigger value="profile" className="flex items-center gap-2 data-[state=active]:bg-white data-[state=active]:shadow-sm transition-all duration-200">
                 <User size={16} />
                 <span className="hidden sm:inline">Профиль</span>
@@ -111,14 +112,14 @@ const Profile = () => {
                 <span className="hidden sm:inline">Заказы</span>
               </TabsTrigger>
               {isAdmin && (
-                <TabsTrigger value="settings" className="flex items-center gap-2 data-[state=active]:bg-white data-[state=active]:shadow-sm transition-all duration-200">
+                <TabsTrigger value="admin" className="flex items-center gap-2 data-[state=active]:bg-white data-[state=active]:shadow-sm transition-all duration-200">
                   <Settings size={16} />
                   <span className="hidden sm:inline">Управление</span>
                 </TabsTrigger>
               )}
             </TabsList>
             
-            <TabsContent value="profile" className="p-6 animate-fade-in">
+            <TabsContent value="profile" className="p-6 opacity-0 animate-fade-in" style={{ animationFillMode: 'forwards' }}>
               <Card className="border-0 shadow-none">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
@@ -169,7 +170,7 @@ const Profile = () => {
               </Card>
             </TabsContent>
             
-            <TabsContent value="orders" className="p-6 animate-fade-in">
+            <TabsContent value="orders" className="p-6 opacity-0 animate-fade-in" style={{ animationFillMode: 'forwards' }}>
               <Card className="border-0 shadow-none">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
@@ -190,26 +191,34 @@ const Profile = () => {
             </TabsContent>
             
             {isAdmin && (
-              <TabsContent value="settings" className="p-0 animate-fade-in">
+              <TabsContent value="admin" className="p-0 opacity-0 animate-fade-in" style={{ animationFillMode: 'forwards' }}>
                 <div className="bg-gradient-to-r from-gray-50 to-gray-100 p-6">
                   <Tabs defaultValue="products" className="w-full">
                     <TabsList className="mb-6 bg-white shadow-sm">
                       <TabsTrigger value="products" className="flex items-center gap-2 px-6 py-3">
                         <Package size={16} />
-                        <span>Управление товарами</span>
+                        <span>Товары</span>
                       </TabsTrigger>
                       <TabsTrigger value="orders-management" className="flex items-center gap-2 px-6 py-3">
                         <ListChecks size={16} />
-                        <span>Управление заказами</span>
+                        <span>Заказы</span>
+                      </TabsTrigger>
+                      <TabsTrigger value="users" className="flex items-center gap-2 px-6 py-3">
+                        <Users size={16} />
+                        <span>Пользователи</span>
                       </TabsTrigger>
                     </TabsList>
                     
-                    <TabsContent value="products" className="animate-fade-in">
+                    <TabsContent value="products" className="opacity-0 animate-fade-in" style={{ animationFillMode: 'forwards' }}>
                       <ProductsManagement />
                     </TabsContent>
                     
-                    <TabsContent value="orders-management" className="animate-fade-in">
+                    <TabsContent value="orders-management" className="opacity-0 animate-fade-in" style={{ animationFillMode: 'forwards' }}>
                       <OrdersManagement />
+                    </TabsContent>
+                    
+                    <TabsContent value="users" className="opacity-0 animate-fade-in" style={{ animationFillMode: 'forwards' }}>
+                      <UserManagement />
                     </TabsContent>
                   </Tabs>
                 </div>

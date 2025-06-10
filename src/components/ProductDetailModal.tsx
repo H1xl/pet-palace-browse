@@ -26,17 +26,17 @@ const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
   const getCategoryIcon = (petType: string) => {
     switch (petType) {
       case 'cat':
-        return <Cat size={24} className="text-gray-600" />;
+        return <Cat size={48} className="text-gray-400" />;
       case 'dog':
-        return <Dog size={24} className="text-gray-600" />;
+        return <Dog size={48} className="text-gray-400" />;
       case 'bird':
-        return <Bird size={24} className="text-gray-600" />;
+        return <Bird size={48} className="text-gray-400" />;
       case 'fish':
-        return <Fish size={24} className="text-gray-600" />;
+        return <Fish size={48} className="text-gray-400" />;
       case 'rodent':
-        return <Mouse size={24} className="text-gray-600" />;
+        return <Mouse size={48} className="text-gray-400" />;
       default:
-        return <Package2 size={24} className="text-gray-600" />;
+        return <Package2 size={48} className="text-gray-400" />;
     }
   };
 
@@ -52,13 +52,7 @@ const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
       if (!parent.querySelector('.fallback-icon')) {
         const iconContainer = document.createElement('div');
         iconContainer.className = 'fallback-icon w-full h-64 bg-gray-100 rounded-lg flex items-center justify-center';
-        
-        const iconElement = document.createElement('div');
-        iconElement.innerHTML = getCategoryIcon(product.petType).props.children;
-        iconElement.className = 'text-gray-400';
-        iconElement.style.fontSize = '48px';
-        
-        iconContainer.appendChild(iconElement);
+        iconContainer.innerHTML = `<div class="text-gray-400">${getCategoryIcon(product.petType)}</div>`;
         parent.appendChild(iconContainer);
       }
     }
@@ -68,12 +62,12 @@ const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-hidden animate-modal-enter">
         <DialogHeader>
-          <DialogTitle className="text-xl font-bold animate-fade-in-up">{product.name}</DialogTitle>
+          <DialogTitle className="text-xl font-bold opacity-0 animate-fade-in-up">{product.name}</DialogTitle>
         </DialogHeader>
         
-        <div className="space-y-6 overflow-y-auto max-h-[70vh] pr-2">
+        <div className="space-y-6 overflow-y-hidden">
           {/* Изображение и основная информация */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 animate-fade-in-up" style={{ animationDelay: '100ms' }}>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 opacity-0 animate-fade-in-up" style={{ animationDelay: '100ms', animationFillMode: 'forwards' }}>
             <div className="relative group">
               {product.image ? (
                 <img 
@@ -84,9 +78,7 @@ const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
                 />
               ) : (
                 <div className="w-full h-64 bg-gray-100 rounded-lg flex items-center justify-center">
-                  <div className="text-gray-400" style={{ fontSize: '48px' }}>
-                    {getCategoryIcon(product.petType)}
-                  </div>
+                  {getCategoryIcon(product.petType)}
                 </div>
               )}
               
@@ -104,7 +96,7 @@ const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
               </div>
             </div>
             
-            <div className="space-y-4 animate-fade-in-up" style={{ animationDelay: '200ms' }}>
+            <div className="space-y-4">
               <div className="flex items-center gap-2">
                 {getCategoryIcon(product.petType)}
                 <span className="text-sm text-gray-500">{product.category}</span>
@@ -146,18 +138,18 @@ const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
           </div>
           
           {/* Описание */}
-          <div className="animate-fade-in-up" style={{ animationDelay: '300ms' }}>
+          <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: '300ms', animationFillMode: 'forwards' }}>
             <h3 className="text-lg font-semibold mb-2">Описание</h3>
             <p className="text-gray-700">{product.description}</p>
           </div>
           
           {/* Характеристики */}
           {product.specifications && product.specifications.length > 0 && (
-            <div className="animate-fade-in-up" style={{ animationDelay: '400ms' }}>
+            <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: '400ms', animationFillMode: 'forwards' }}>
               <h3 className="text-lg font-semibold mb-3">Характеристики</h3>
               <ul className="space-y-2">
                 {product.specifications.map((spec, index) => (
-                  <li key={index} className="flex items-start gap-2 animate-fade-in-up" style={{ animationDelay: `${500 + index * 100}ms` }}>
+                  <li key={index} className="flex items-start gap-2 opacity-0 animate-fade-in-up" style={{ animationDelay: `${500 + index * 100}ms`, animationFillMode: 'forwards' }}>
                     <span className="w-2 h-2 bg-pet-blue rounded-full mt-2 flex-shrink-0"></span>
                     <span className="text-gray-700">{spec}</span>
                   </li>

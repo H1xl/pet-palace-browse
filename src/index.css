@@ -85,11 +85,11 @@ button, input, select, textarea {
 
 /* Анимации для модальных окон */
 .animate-modal-enter {
-  animation: modalEnter 0.4s ease-out;
+  animation: modalEnter 0.4s ease-out forwards;
 }
 
 .animate-modal-exit {
-  animation: modalExit 0.3s ease-out;
+  animation: modalExit 0.3s ease-out forwards;
 }
 
 @keyframes modalEnter {
@@ -114,7 +114,7 @@ button, input, select, textarea {
   }
 }
 
-/* Улучшенные анимации появления */
+/* Улучшенные анимации появления с скрытием до анимации */
 @keyframes fadeInUp {
   from {
     opacity: 0;
@@ -160,15 +160,25 @@ button, input, select, textarea {
 }
 
 .animate-fade-in-up {
-  animation: fadeInUp 0.6s ease-out;
+  animation: fadeInUp 0.6s ease-out forwards;
 }
 
 .animate-slide-in-right {
-  animation: slideInRight 0.5s ease-out;
+  animation: slideInRight 0.5s ease-out forwards;
 }
 
 .animate-bounce-gentle {
   animation: bounceGentle 2s infinite;
+}
+
+/* Скрытие полос прокрутки во время анимации */
+.hide-scrollbar-during-animation::-webkit-scrollbar {
+  display: none;
+}
+
+.hide-scrollbar-during-animation {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
 /* Стилизация скроллбара */
@@ -192,7 +202,7 @@ button, input, select, textarea {
 
 /* Анимации для переходов между страницами */
 .page-transition-enter {
-  animation: pageEnter 0.5s ease-out;
+  animation: pageEnter 0.5s ease-out forwards;
 }
 
 @keyframes pageEnter {
@@ -241,4 +251,38 @@ button, input, select, textarea {
   background: linear-gradient(135deg, #f0f8ff 0%, #e6f3ff 100%);
   border: 1px solid #1EAEDB;
   box-shadow: 0 0 20px rgba(30, 174, 219, 0.1);
+}
+
+/* Улучшенная анимация для форм */
+.form-animation {
+  opacity: 0;
+  animation: formSlideIn 0.8s ease-out forwards;
+}
+
+@keyframes formSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(40px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Анимация для карточек с задержкой */
+.card-stagger-animation {
+  opacity: 0;
+  animation: cardStagger 0.6s ease-out forwards;
+}
+
+@keyframes cardStagger {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }

@@ -14,7 +14,7 @@ const TooltipProvider = React.forwardRef<
     return null;
   }
   
-  return <TooltipPrimitive.Provider ref={ref} {...props} />;
+  return <TooltipPrimitive.Provider {...props} />;
 });
 
 TooltipProvider.displayName = "TooltipProvider";
