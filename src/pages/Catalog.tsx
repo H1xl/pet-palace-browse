@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import Navbar from "@/components/Navbar";
 import ProductGrid from "@/components/ProductGrid";
@@ -14,6 +13,7 @@ import { Filter, Search, RotateCcw } from "lucide-react";
 
 const Catalog = () => {
   const [searchTerm, setSearchTerm] = useState("");
+  // DBPoint: READ - Загрузка товаров из базы данных
   const [filteredProducts, setFilteredProducts] = useState<Product[]>(products);
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
@@ -21,7 +21,7 @@ const Catalog = () => {
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
 
-  // Get current user from localStorage
+  // DBPoint: READ - Получение текущего пользователя из сессии БД
   const currentUser = localStorage.getItem('currentUser');
   const isLoggedIn = !!currentUser;
   const cartKey = currentUser ? `cartItems_${currentUser}` : 'cartItems_guest';
@@ -42,7 +42,7 @@ const Catalog = () => {
 
   const maxPrice = Math.max(...products.map(p => p.price));
 
-  // Load cart from localStorage
+  // DBPoint: READ - Загрузка корзины пользователя из БД
   useEffect(() => {
     if (isLoggedIn) {
       const savedCart = localStorage.getItem(cartKey);
@@ -52,7 +52,7 @@ const Catalog = () => {
     }
   }, [cartKey, isLoggedIn]);
 
-  // Save cart to localStorage
+  // DBPoint: UPDATE - Сохранение корзины в БД
   useEffect(() => {
     if (isLoggedIn) {
       localStorage.setItem(cartKey, JSON.stringify(cartItems));
@@ -74,6 +74,7 @@ const Catalog = () => {
     
     // Увеличенная задержка для анимации
     setTimeout(() => {
+      // DBPoint: READ - Фильтрация и сортировка товаров в БД
       let result = [...products];
 
       // Поиск
@@ -191,6 +192,7 @@ const Catalog = () => {
       return;
     }
 
+    // DBPoint: CREATE/UPDATE - Добавление товара в корзину в БД
     setCartItems(prevItems => {
       const existingItemIndex = prevItems.findIndex(item => item.id === product.id);
       if (existingItemIndex > -1) {
@@ -221,18 +223,18 @@ const Catalog = () => {
 
   return (
     <div className="min-h-screen flex flex-col hide-scrollbar-during-animation">
-      <div className="nav-animate">
+      <div className="nav-animate opacity-0">
         <Navbar 
           cartItemCount={isLoggedIn ? cartItems.reduce((total, item) => total + item.quantity, 0) : 0} 
           currentPage="catalog" 
         />
       </div>
       
-      <div className="container mx-auto px-6 py-8 animate-fade-in-up animate-delay-100">
-        <h1 className="text-3xl font-bold mb-6 animate-slide-in-down">Каталог товаров</h1>
+      <div className="container mx-auto px-6 py-8 opacity-0 animate-fade-in-up animate-delay-100">
+        <h1 className="text-3xl font-bold mb-6 opacity-0 animate-slide-in-down">Каталог товаров</h1>
         
         {/* Поиск и фильтры */}
-        <div className="flex flex-col md:flex-row gap-4 mb-6 animate-slide-in-left animate-delay-200">
+        <div className="flex flex-col md:flex-row gap-4 mb-6 opacity-0 animate-slide-in-left animate-delay-200">
           <form onSubmit={handleSearch} className="flex-1 relative">
             <Input 
               type="text" 
@@ -260,7 +262,7 @@ const Catalog = () => {
         </div>
 
         {/* Активные фильтры */}
-        <div className="mb-4 animate-slide-in-right animate-delay-300">
+        <div className="mb-4 opacity-0 animate-slide-in-right animate-delay-300">
           <div className="text-sm text-gray-600">
             {hasActiveFilters && (
               <Button 
@@ -277,7 +279,7 @@ const Catalog = () => {
         </div>
       </div>
       
-      <div className="animate-fade-in animate-delay-400">
+      <div className="opacity-0 animate-fade-in animate-delay-400">
         <ProductGrid 
           products={filteredProducts}
           onProductClick={handleProductClick}
@@ -287,7 +289,7 @@ const Catalog = () => {
 
       {/* Поле найденных товаров - отображается только при фильтрации */}
       {hasActiveFilters && (
-        <div className="container mx-auto px-6 pb-4 animate-scale-in animate-delay-500">
+        <div className="container mx-auto px-6 pb-4 opacity-0 animate-scale-in animate-delay-500">
           <div className="bg-gradient-to-r from-pet-light-blue to-pet-light-orange border-l-4 border-pet-blue rounded-lg p-4 shadow-sm">
             <div className="flex items-center justify-between">
               <p className="text-sm font-medium text-gray-700">
@@ -324,7 +326,7 @@ const Catalog = () => {
         showAddToCart={isLoggedIn}
       />
       
-      <div className="animate-fade-in animate-delay-300">
+      <div className="opacity-0 animate-fade-in animate-delay-300">
         <Footer />
       </div>
     </div>

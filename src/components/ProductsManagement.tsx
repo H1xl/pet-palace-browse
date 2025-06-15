@@ -11,6 +11,7 @@ import { Search, Edit2, Cat, Dog, Bird, Fish, Mouse, Package2 } from 'lucide-rea
 import ProductEditor from './ProductEditor';
 
 const ProductsManagement: React.FC = () => {
+  // DBPoint: READ - Загрузка всех товаров из базы данных
   const [products, setProducts] = useState<Product[]>(initialProducts);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
@@ -37,16 +38,18 @@ const ProductsManagement: React.FC = () => {
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    // Search functionality is already handled by the filteredProducts
+    // DBPoint: READ - Поиск товаров в базе данных по критериям
   };
 
   const handleProductUpdate = (updatedProduct: Product) => {
+    // DBPoint: UPDATE - Обновление товара в базе данных
     setProducts(products.map(product => 
       product.id === updatedProduct.id ? updatedProduct : product
     ));
     setSelectedProduct(null);
   };
 
+  // DBPoint: READ - Фильтрация товаров (может быть заменена на поиск в БД)
   const filteredProducts = products.filter(product => 
     product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     product.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -102,14 +105,14 @@ const ProductsManagement: React.FC = () => {
                                 className="w-full h-full object-cover"
                                 onError={(e) => {
                                   const target = e.target as HTMLImageElement;
-                                  target.onerror = null;
                                   target.style.display = 'none';
-                                  target.parentElement?.appendChild((() => {
-                                    const el = document.createElement('div');
-                                    el.className = 'w-full h-full flex items-center justify-center';
-                                    el.innerHTML = getCategoryIcon(product.petType).type.render({ size: 18, className: 'text-gray-400' }).props.children;
-                                    return el;
-                                  })());
+                                  const parent = target.parentElement;
+                                  if (parent && !parent.querySelector('.fallback-icon')) {
+                                    const iconContainer = document.createElement('div');
+                                    iconContainer.className = 'fallback-icon w-full h-full flex items-center justify-center';
+                                    const iconElement = getCategoryIcon(product.petType);
+                                    parent.appendChild(iconContainer);
+                                  }
                                 }}
                               />
                             ) : (

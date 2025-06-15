@@ -39,13 +39,14 @@ const Login = () => {
       clearInterval(interval);
       setProgress(100);
       
+      // DBPoint: READ - Проверка пользователя в базе данных
       const validUsers = [
         { username: 'admin', password: 'admin' },
         { username: 'client', password: 'client' },
         { username: 'client1', password: 'client1' }
       ];
       
-      // Проверяем также зарегистрированных пользователей
+      // DBPoint: READ - Проверка зарегистрированных пользователей из БД
       const registeredUsers = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
       const registeredUser = registeredUsers.find((user: any) => 
         user.username === username && user.password === password
@@ -56,6 +57,7 @@ const Login = () => {
       ) || registeredUser;
       
       if (foundUser) {
+        // DBPoint: CREATE/UPDATE - Сессия пользователя в БД
         localStorage.setItem('currentUser', username);
         toast({
           title: "Успешный вход",
@@ -78,12 +80,12 @@ const Login = () => {
 
   return (
     <div className="min-h-screen flex flex-col hide-scrollbar-during-animation">
-      <div className="nav-animate">
+      <div className="nav-animate opacity-0">
         <Navbar cartItemCount={0} currentPage="" />
       </div>
       
-      <div className="flex-1 flex items-center justify-center px-4 py-12 bg-gradient-to-br from-pet-light-blue to-pet-light-orange animate-fade-in">
-        <Card className="w-full max-w-md animate-scale-in shadow-2xl animate-delay-200">
+      <div className="flex-1 flex items-center justify-center px-4 py-12 bg-gradient-to-br from-pet-light-blue to-pet-light-orange opacity-0 animate-fade-in">
+        <Card className="w-full max-w-md opacity-0 animate-scale-in shadow-2xl animate-delay-200">
           <CardHeader className="text-center">
             <div className="mx-auto mb-4 w-16 h-16 bg-pet-blue rounded-full flex items-center justify-center animate-bounce-gentle">
               <LogIn size={32} className="text-white" />
@@ -100,7 +102,7 @@ const Login = () => {
                 <Progress value={progress} className="h-2" />
               </div>
             ) : (
-              <form onSubmit={handleLogin} className="space-y-4 form-animation">
+              <form onSubmit={handleLogin} className="space-y-4 opacity-0 form-animation">
                 <div className="space-y-2">
                   <div className="flex items-center border rounded-md px-3 py-2 bg-white transition-all duration-200 focus-within:ring-2 focus-within:ring-pet-blue focus-within:border-pet-blue">
                     <User size={18} className="text-gray-500 mr-2" />
@@ -162,7 +164,7 @@ const Login = () => {
         </Card>
       </div>
       
-      <div className="animate-fade-in animate-delay-300">
+      <div className="opacity-0 animate-fade-in animate-delay-300">
         <Footer />
       </div>
     </div>

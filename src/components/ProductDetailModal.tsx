@@ -21,6 +21,14 @@ const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
   onAddToCart,
   showAddToCart = false 
 }) => {
+  const [imageError, setImageError] = React.useState(false);
+
+  React.useEffect(() => {
+    if (product) {
+      setImageError(false);
+    }
+  }, [product]);
+
   if (!product) return null;
 
   const getCategoryIcon = (petType: string) => {
@@ -44,32 +52,22 @@ const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
     ? Math.round(product.price * (1 - product.discount / 100))
     : product.price;
 
-  const handleImageError = (e: React.SyntheticEvent<HTMLImageElement>) => {
-    const target = e.target as HTMLImageElement;
-    const parent = target.parentElement;
-    if (parent) {
-      target.style.display = 'none';
-      if (!parent.querySelector('.fallback-icon')) {
-        const iconContainer = document.createElement('div');
-        iconContainer.className = 'fallback-icon w-full h-64 bg-gray-100 rounded-lg flex items-center justify-center';
-        iconContainer.innerHTML = `<div class="text-gray-400">${getCategoryIcon(product.petType)}</div>`;
-        parent.appendChild(iconContainer);
-      }
-    }
+  const handleImageError = () => {
+    setImageError(true);
   };
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-hidden animate-modal-enter">
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto animate-modal-enter">
         <DialogHeader>
           <DialogTitle className="text-xl font-bold opacity-0 animate-fade-in-up">{product.name}</DialogTitle>
         </DialogHeader>
         
-        <div className="space-y-6 overflow-y-hidden">
+        <div className="space-y-6">
           {/* Изображение и основная информация */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 opacity-0 animate-fade-in-up" style={{ animationDelay: '100ms', animationFillMode: 'forwards' }}>
             <div className="relative group">
-              {product.image ? (
+              {product.image && !imageError ? (
                 <img 
                   src={product.image} 
                   alt={product.name} 
