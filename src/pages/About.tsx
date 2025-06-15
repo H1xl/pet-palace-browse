@@ -2,103 +2,163 @@
 import React from 'react';
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { AspectRatio } from "@/components/ui/aspect-ratio";
+import { Award, Users, Heart, Shield, Truck, Phone } from 'lucide-react';
 
 const About = () => {
-  const [cartItemCount, setCartItemCount] = React.useState(0);
-
-  React.useEffect(() => {
-    // Загружаем количество товаров в корзине из localStorage
-    const savedCart = localStorage.getItem("cartItems");
-    if (savedCart) {
-      const cartItems = JSON.parse(savedCart);
-      setCartItemCount(cartItems.reduce((total: number, item: any) => total + item.quantity, 0));
-    }
-  }, []);
-
   return (
-    <div className="min-h-screen flex flex-col">
-      <Navbar cartItemCount={cartItemCount} currentPage="about" />
+    <div className="min-h-screen flex flex-col hide-scrollbar-during-animation">
+      <div className="nav-animate">
+        <Navbar cartItemCount={0} currentPage="about" />
+      </div>
       
-      <div className="container mx-auto px-6 py-12">
-        <h1 className="text-4xl font-bold mb-8 text-center animate-fade-in-up">О нашем магазине</h1>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
-          <div className="animate-fade-in-up" style={{ animationDelay: '200ms' }}>
-            <h2 className="text-2xl font-semibold mb-4">Наша миссия</h2>
-            <p className="text-lg text-gray-700 mb-4">
-              Мы стремимся сделать жизнь домашних питомцев счастливее, а их владельцев - спокойнее. 
-              Наш магазин предлагает только качественные товары от проверенных производителей.
-            </p>
-            <p className="text-lg text-gray-700 mb-4">
-              Основанный в 2015 году, наш зоомагазин стал надёжным помощником для тысяч владельцев 
-              домашних животных в выборе лучших товаров для их питомцев.
+      <div className="flex-1 animate-fade-in">
+        {/* Hero секция */}
+        <div className="bg-gradient-to-r from-pet-blue to-pet-orange text-white py-16 animate-slide-in-down">
+          <div className="container mx-auto px-6 text-center">
+            <h1 className="text-4xl md:text-5xl font-bold mb-6 animate-scale-in animate-delay-200">
+              О нашем зоомагазине
+            </h1>
+            <p className="text-xl md:text-2xl max-w-3xl mx-auto animate-fade-in-up animate-delay-300">
+              Мы заботимся о ваших питомцах уже более 10 лет, предоставляя качественные товары и профессиональные услуги
             </p>
           </div>
-          <div className="relative animate-fade-in-up" style={{ animationDelay: '400ms' }}>
-            <AspectRatio ratio={4/3} className="rounded-lg overflow-hidden">
+        </div>
+
+        {/* Основная информация */}
+        <div className="container mx-auto px-6 py-16">
+          <div className="grid md:grid-cols-2 gap-12 items-center">
+            <div className="animate-slide-in-left animate-delay-400">
+              <h2 className="text-3xl font-bold mb-6">Наша история</h2>
+              <p className="text-gray-600 mb-4">
+                Зоомагазин "ПетДом" был основан в 2014 году группой энтузиастов, которые любят животных и понимают, 
+                насколько важно обеспечить наших четвероногих друзей всем необходимым для счастливой и здоровой жизни.
+              </p>
+              <p className="text-gray-600 mb-4">
+                За годы работы мы накопили огромный опыт в области зоотоваров и можем предложить нашим клиентам 
+                только самые качественные и проверенные товары от ведущих мировых производителей.
+              </p>
+              <p className="text-gray-600">
+                Сегодня мы гордимся тем, что стали одним из самых доверенных зоомагазинов в городе, 
+                где каждый владелец питомца может найти всё необходимое для своего любимца.
+              </p>
+            </div>
+            <div className="animate-slide-in-right animate-delay-500">
               <img 
-                src="https://images.unsplash.com/photo-1583336663277-620dc1996580?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1200&h=900&q=80" 
-                alt="Счастливые питомцы" 
-                className="object-cover w-full h-full transition-transform duration-500 hover:scale-105"
+                src="https://images.unsplash.com/photo-1601758228041-f3b2795255f1?auto=format&fit=crop&w=800&q=80" 
+                alt="Зоомагазин" 
+                className="rounded-lg shadow-xl w-full h-auto"
               />
-            </AspectRatio>
-          </div>
-        </div>
-        
-        <div className="bg-gradient-to-r from-pet-light-blue to-pet-light-orange p-8 rounded-lg mb-12 animate-fade-in-up" style={{ animationDelay: '600ms' }}>
-          <h2 className="text-2xl font-semibold mb-4 text-center">Наши преимущества</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="bg-white p-6 rounded-lg shadow-md text-center transform transition-all duration-300 hover:scale-105 hover:shadow-lg animate-fade-in-up" style={{ animationDelay: '800ms' }}>
-              <div className="bg-pet-blue p-3 rounded-full inline-flex justify-center items-center mb-4 transition-transform duration-300 hover:rotate-12">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              </div>
-              <h3 className="text-xl font-semibold mb-2">Отборные товары</h3>
-              <p className="text-gray-600">Мы тщательно выбираем каждый товар в наш ассортимент</p>
-            </div>
-            <div className="bg-white p-6 rounded-lg shadow-md text-center transform transition-all duration-300 hover:scale-105 hover:shadow-lg animate-fade-in-up" style={{ animationDelay: '1000ms' }}>
-              <div className="bg-pet-blue p-3 rounded-full inline-flex justify-center items-center mb-4 transition-transform duration-300 hover:rotate-12">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                </svg>
-              </div>
-              <h3 className="text-xl font-semibold mb-2">Быстрая доставка</h3>
-              <p className="text-gray-600">Доставляем заказы в кратчайшие сроки по всему городу</p>
-            </div>
-            <div className="bg-white p-6 rounded-lg shadow-md text-center transform transition-all duration-300 hover:scale-105 hover:shadow-lg animate-fade-in-up" style={{ animationDelay: '1200ms' }}>
-              <div className="bg-pet-blue p-3 rounded-full inline-flex justify-center items-center mb-4 transition-transform duration-300 hover:rotate-12">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                </svg>
-              </div>
-              <h3 className="text-xl font-semibold mb-2">Большой выбор</h3>
-              <p className="text-gray-600">У нас более 5000 товаров для всех типов домашних животных</p>
             </div>
           </div>
         </div>
-        
-        <div className="animate-fade-in-up" style={{ animationDelay: '1400ms' }}>
-          <h2 className="text-2xl font-semibold mb-4">Свяжитесь с нами</h2>
-          <p className="text-lg text-gray-700 mb-2">
-            Если у вас есть вопросы или предложения, пожалуйста, свяжитесь с нами:
-          </p>
-          <div className="space-y-2">
-            <div className="animate-fade-in-up" style={{ animationDelay: '1600ms' }}>
-              <strong>Телефон:</strong> +7 (123) 456-7890
+
+        {/* Наши преимущества */}
+        <div className="bg-gray-50 py-16">
+          <div className="container mx-auto px-6">
+            <h2 className="text-3xl font-bold text-center mb-12 animate-slide-in-down animate-delay-200">
+              Почему выбирают нас?
+            </h2>
+            
+            <div className="grid md:grid-cols-3 gap-8">
+              <div className="bg-white p-6 rounded-lg shadow-md text-center animate-scale-in animate-delay-300">
+                <div className="bg-pet-light-blue p-3 rounded-full inline-flex justify-center items-center mb-4">
+                  <Award className="h-8 w-8 text-pet-blue" />
+                </div>
+                <h3 className="text-xl font-semibold mb-3">Качественные товары</h3>
+                <p className="text-gray-600">
+                  Мы работаем только с проверенными поставщиками и предлагаем товары высокого качества
+                </p>
+              </div>
+
+              <div className="bg-white p-6 rounded-lg shadow-md text-center animate-scale-in animate-delay-400">
+                <div className="bg-pet-light-blue p-3 rounded-full inline-flex justify-center items-center mb-4">
+                  <Users className="h-8 w-8 text-pet-blue" />
+                </div>
+                <h3 className="text-xl font-semibold mb-3">Опытная команда</h3>
+                <p className="text-gray-600">
+                  Наши консультанты - опытные специалисты, готовые помочь с выбором товаров
+                </p>
+              </div>
+
+              <div className="bg-white p-6 rounded-lg shadow-md text-center animate-scale-in animate-delay-500">
+                <div className="bg-pet-light-blue p-3 rounded-full inline-flex justify-center items-center mb-4">
+                  <Heart className="h-8 w-8 text-pet-blue" />
+                </div>
+                <h3 className="text-xl font-semibold mb-3">Любовь к животным</h3>
+                <p className="text-gray-600">
+                  Мы искренне любим животных и понимаем потребности каждого питомца
+                </p>
+              </div>
             </div>
-            <div className="animate-fade-in-up" style={{ animationDelay: '1700ms' }}>
-              <strong>Email:</strong> info@зоомагазин.рф
+          </div>
+        </div>
+
+        {/* Услуги */}
+        <div className="container mx-auto px-6 py-16">
+          <h2 className="text-3xl font-bold text-center mb-12 animate-slide-in-down animate-delay-200">
+            Наши услуги
+          </h2>
+          
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="flex items-start space-x-4 animate-slide-in-left animate-delay-300">
+              <div className="bg-pet-orange p-2 rounded-lg">
+                <Shield className="h-6 w-6 text-white" />
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold mb-2">Гарантия качества</h3>
+                <p className="text-gray-600">Предоставляем гарантию на все товары и готовы заменить некачественный товар</p>
+              </div>
             </div>
-            <div className="animate-fade-in-up" style={{ animationDelay: '1800ms' }}>
-              <strong>Адрес:</strong> г. Москва, ул. Примерная, д. 123
+
+            <div className="flex items-start space-x-4 animate-slide-in-up animate-delay-400">
+              <div className="bg-pet-orange p-2 rounded-lg">
+                <Truck className="h-6 w-6 text-white" />
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold mb-2">Быстрая доставка</h3>
+                <p className="text-gray-600">Доставляем заказы по городу в день заказа или на следующий день</p>
+              </div>
+            </div>
+
+            <div className="flex items-start space-x-4 animate-slide-in-right animate-delay-500">
+              <div className="bg-pet-orange p-2 rounded-lg">
+                <Phone className="h-6 w-6 text-white" />
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold mb-2">Консультации</h3>
+                <p className="text-gray-600">Наши специалисты всегда готовы проконсультировать по уходу за питомцами</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Контакты */}
+        <div className="bg-pet-blue text-white py-16">
+          <div className="container mx-auto px-6 text-center">
+            <h2 className="text-3xl font-bold mb-8 animate-scale-in animate-delay-200">
+              Свяжитесь с нами
+            </h2>
+            <div className="grid md:grid-cols-3 gap-8 animate-fade-in-up animate-delay-300">
+              <div>
+                <h3 className="text-xl font-semibold mb-2">Адрес</h3>
+                <p>г. Москва, ул. Примерная, д. 123</p>
+              </div>
+              <div>
+                <h3 className="text-xl font-semibold mb-2">Телефон</h3>
+                <p>+7 (495) 123-45-67</p>
+              </div>
+              <div>
+                <h3 className="text-xl font-semibold mb-2">Email</h3>
+                <p>info@petdom.ru</p>
+              </div>
             </div>
           </div>
         </div>
       </div>
       
-      <Footer />
+      <div className="animate-fade-in animate-delay-300">
+        <Footer />
+      </div>
     </div>
   );
 };

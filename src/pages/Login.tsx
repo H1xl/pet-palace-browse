@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { User, Lock, LogIn, Eye, EyeOff } from 'lucide-react';
+import { User, Lock, LogIn, Eye, EyeOff, UserPlus } from 'lucide-react';
 
 const Login = () => {
   const [username, setUsername] = useState('');
@@ -77,13 +77,15 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <Navbar cartItemCount={0} currentPage="" />
+    <div className="min-h-screen flex flex-col hide-scrollbar-during-animation">
+      <div className="nav-animate">
+        <Navbar cartItemCount={0} currentPage="" />
+      </div>
       
-      <div className="flex-1 flex items-center justify-center px-4 py-12 bg-gradient-to-br from-pet-light-blue to-pet-light-orange">
-        <Card className="w-full max-w-md animate-scale-in shadow-2xl">
+      <div className="flex-1 flex items-center justify-center px-4 py-12 bg-gradient-to-br from-pet-light-blue to-pet-light-orange animate-fade-in">
+        <Card className="w-full max-w-md animate-scale-in shadow-2xl animate-delay-200">
           <CardHeader className="text-center">
-            <div className="mx-auto mb-4 w-16 h-16 bg-pet-blue rounded-full flex items-center justify-center">
+            <div className="mx-auto mb-4 w-16 h-16 bg-pet-blue rounded-full flex items-center justify-center animate-bounce-gentle">
               <LogIn size={32} className="text-white" />
             </div>
             <CardTitle className="text-2xl font-bold">Вход в аккаунт</CardTitle>
@@ -98,7 +100,7 @@ const Login = () => {
                 <Progress value={progress} className="h-2" />
               </div>
             ) : (
-              <form onSubmit={handleLogin} className="space-y-4">
+              <form onSubmit={handleLogin} className="space-y-4 form-animation">
                 <div className="space-y-2">
                   <div className="flex items-center border rounded-md px-3 py-2 bg-white transition-all duration-200 focus-within:ring-2 focus-within:ring-pet-blue focus-within:border-pet-blue">
                     <User size={18} className="text-gray-500 mr-2" />
@@ -136,7 +138,7 @@ const Login = () => {
                 
                 <Button 
                   type="submit" 
-                  className="w-full bg-pet-blue hover:bg-blue-600 transition-all duration-200 hover:scale-105" 
+                  className="w-full bg-pet-blue hover:bg-blue-600 transition-all duration-200 hover:scale-105 btn-hover-effect" 
                   disabled={isLoading}
                 >
                   Войти
@@ -144,21 +146,25 @@ const Login = () => {
               </form>
             )}
           </CardContent>
-          <CardFooter className="flex justify-center">
-            <p className="text-sm text-gray-500">
-              Нет аккаунта?{' '}
-              <button 
-                onClick={() => navigate('/register')}
-                className="text-pet-blue hover:underline font-medium"
-              >
-                Зарегистрироваться
-              </button>
+          <CardFooter className="flex flex-col space-y-2">
+            <p className="text-sm text-gray-500 text-center">
+              Нет аккаунта?
             </p>
+            <Button 
+              onClick={() => navigate('/register')}
+              variant="outline"
+              className="w-full flex items-center gap-2 hover:scale-105 transition-all duration-200"
+            >
+              <UserPlus size={18} />
+              Зарегистрироваться
+            </Button>
           </CardFooter>
         </Card>
       </div>
       
-      <Footer />
+      <div className="animate-fade-in animate-delay-300">
+        <Footer />
+      </div>
     </div>
   );
 };

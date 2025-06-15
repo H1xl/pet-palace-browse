@@ -18,20 +18,26 @@ const Index = () => {
   }, []);
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <Navbar 
-        cartItemCount={cartItems.reduce((total, item) => total + item.quantity, 0)}
-        currentPage="home" 
-      />
+    <div className="min-h-screen flex flex-col hide-scrollbar-during-animation">
+      <div className="nav-animate">
+        <Navbar 
+          cartItemCount={cartItems.reduce((total, item) => total + item.quantity, 0)}
+          currentPage="home" 
+        />
+      </div>
       
-      <Hero />
+      <div className="animate-fade-in-up">
+        <Hero />
+      </div>
       
       <div className="container mx-auto px-6 py-16">
         <div className="text-center">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-8">Почему выбирают нас?</h2>
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-8 animate-slide-in-down animate-delay-200">
+            Почему выбирают нас?
+          </h2>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="bg-white p-6 rounded-lg shadow-md">
+            <div className="bg-white p-6 rounded-lg shadow-md animate-scale-in animate-delay-300">
               <div className="bg-pet-light-blue p-3 rounded-full inline-flex justify-center items-center mb-4">
                 <Award className="h-8 w-8 text-pet-blue" />
               </div>
@@ -39,7 +45,7 @@ const Index = () => {
               <p className="text-gray-600">Мы тщательно отбираем только лучшие товары от проверенных производителей для ваших питомцев.</p>
             </div>
             
-            <div className="bg-white p-6 rounded-lg shadow-md">
+            <div className="bg-white p-6 rounded-lg shadow-md animate-scale-in animate-delay-400">
               <div className="bg-pet-light-blue p-3 rounded-full inline-flex justify-center items-center mb-4">
                 <Heart className="h-8 w-8 text-pet-blue" />
               </div>
@@ -47,7 +53,7 @@ const Index = () => {
               <p className="text-gray-600">Каждый товар подобран с учетом здоровья и комфорта ваших любимых животных.</p>
             </div>
 
-            <div className="bg-white p-6 rounded-lg shadow-md">
+            <div className="bg-white p-6 rounded-lg shadow-md animate-scale-in animate-delay-500">
               <div className="bg-pet-light-blue p-3 rounded-full inline-flex justify-center items-center mb-4">
                 <ShieldCheck className="h-8 w-8 text-pet-blue" />
               </div>
@@ -58,7 +64,9 @@ const Index = () => {
         </div>
       </div>
       
-      <Footer />
+      <div className="animate-fade-in animate-delay-300">
+        <Footer />
+      </div>
     </div>
   );
 };

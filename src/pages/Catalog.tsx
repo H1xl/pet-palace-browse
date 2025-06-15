@@ -220,17 +220,19 @@ const Catalog = () => {
     searchTerm.trim() !== '';
 
   return (
-    <div className="min-h-screen flex flex-col animate-fade-in">
-      <Navbar 
-        cartItemCount={isLoggedIn ? cartItems.reduce((total, item) => total + item.quantity, 0) : 0} 
-        currentPage="catalog" 
-      />
+    <div className="min-h-screen flex flex-col hide-scrollbar-during-animation">
+      <div className="nav-animate">
+        <Navbar 
+          cartItemCount={isLoggedIn ? cartItems.reduce((total, item) => total + item.quantity, 0) : 0} 
+          currentPage="catalog" 
+        />
+      </div>
       
-      <div className="container mx-auto px-6 py-8 animate-fade-in">
-        <h1 className="text-3xl font-bold mb-6">Каталог товаров</h1>
+      <div className="container mx-auto px-6 py-8 animate-fade-in-up animate-delay-100">
+        <h1 className="text-3xl font-bold mb-6 animate-slide-in-down">Каталог товаров</h1>
         
         {/* Поиск и фильтры */}
-        <div className="flex flex-col md:flex-row gap-4 mb-6">
+        <div className="flex flex-col md:flex-row gap-4 mb-6 animate-slide-in-left animate-delay-200">
           <form onSubmit={handleSearch} className="flex-1 relative">
             <Input 
               type="text" 
@@ -258,7 +260,7 @@ const Catalog = () => {
         </div>
 
         {/* Активные фильтры */}
-        <div className="mb-4">
+        <div className="mb-4 animate-slide-in-right animate-delay-300">
           <div className="text-sm text-gray-600">
             {hasActiveFilters && (
               <Button 
@@ -275,15 +277,17 @@ const Catalog = () => {
         </div>
       </div>
       
-      <ProductGrid 
-        products={filteredProducts}
-        onProductClick={handleProductClick}
-        loading={loading}
-      />
+      <div className="animate-fade-in animate-delay-400">
+        <ProductGrid 
+          products={filteredProducts}
+          onProductClick={handleProductClick}
+          loading={loading}
+        />
+      </div>
 
       {/* Поле найденных товаров - отображается только при фильтрации */}
       {hasActiveFilters && (
-        <div className="container mx-auto px-6 pb-4 animate-fade-in">
+        <div className="container mx-auto px-6 pb-4 animate-scale-in animate-delay-500">
           <div className="bg-gradient-to-r from-pet-light-blue to-pet-light-orange border-l-4 border-pet-blue rounded-lg p-4 shadow-sm">
             <div className="flex items-center justify-between">
               <p className="text-sm font-medium text-gray-700">
@@ -320,7 +324,9 @@ const Catalog = () => {
         showAddToCart={isLoggedIn}
       />
       
-      <Footer />
+      <div className="animate-fade-in animate-delay-300">
+        <Footer />
+      </div>
     </div>
   );
 };

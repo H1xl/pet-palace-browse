@@ -114,7 +114,7 @@ button, input, select, textarea {
   }
 }
 
-/* Улучшенные анимации появления с скрытием до анимации */
+/* Исправленные анимации с изначальным скрытием */
 @keyframes fadeInUp {
   from {
     opacity: 0;
@@ -148,6 +148,28 @@ button, input, select, textarea {
   }
 }
 
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 @keyframes bounceGentle {
   0%, 100% {
     transform: translateY(-3px);
@@ -159,19 +181,67 @@ button, input, select, textarea {
   }
 }
 
+/* Основные анимационные классы с изначальным скрытием */
+.animate-fade-in {
+  opacity: 0;
+  animation: fadeInUp 0.6s ease-out forwards;
+}
+
 .animate-fade-in-up {
+  opacity: 0;
   animation: fadeInUp 0.6s ease-out forwards;
 }
 
 .animate-slide-in-right {
+  opacity: 0;
   animation: slideInRight 0.5s ease-out forwards;
+}
+
+.animate-slide-in-left {
+  opacity: 0;
+  animation: slideInLeft 0.5s ease-out forwards;
+}
+
+.animate-slide-in-down {
+  opacity: 0;
+  animation: slideInDown 0.5s ease-out forwards;
+}
+
+.animate-scale-in {
+  opacity: 0;
+  animation: scaleIn 0.4s ease-out forwards;
 }
 
 .animate-bounce-gentle {
   animation: bounceGentle 2s infinite;
 }
 
+/* Задержки для последовательной анимации */
+.animate-delay-100 {
+  animation-delay: 100ms;
+}
+
+.animate-delay-200 {
+  animation-delay: 200ms;
+}
+
+.animate-delay-300 {
+  animation-delay: 300ms;
+}
+
+.animate-delay-400 {
+  animation-delay: 400ms;
+}
+
+.animate-delay-500 {
+  animation-delay: 500ms;
+}
+
 /* Скрытие полос прокрутки во время анимации */
+.hide-scrollbar-during-animation {
+  overflow: hidden;
+}
+
 .hide-scrollbar-during-animation::-webkit-scrollbar {
   display: none;
 }
@@ -202,6 +272,7 @@ button, input, select, textarea {
 
 /* Анимации для переходов между страницами */
 .page-transition-enter {
+  opacity: 0;
   animation: pageEnter 0.5s ease-out forwards;
 }
 
@@ -284,5 +355,39 @@ button, input, select, textarea {
   to {
     opacity: 1;
     transform: translateY(0) scale(1);
+  }
+}
+
+/* Анимации для секций */
+.section-animate {
+  opacity: 0;
+  animation: sectionFadeIn 0.8s ease-out forwards;
+}
+
+@keyframes sectionFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Анимации для навигации */
+.nav-animate {
+  opacity: 0;
+  animation: navSlideDown 0.6s ease-out forwards;
+}
+
+@keyframes navSlideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
