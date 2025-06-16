@@ -1,12 +1,12 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import ProductEditor, { ProductFormData } from './ProductEditor';
+import ProductEditor from './ProductEditor';
 import ErrorPage from './ErrorPage';
 import { Product } from '@/types/product';
+import { ProductFormData } from '@/types/productForm';
 import { apiService, APIError } from '@/services/api';
 import { useToast } from '@/hooks/use-toast';
 import { Plus, Search, Edit, Trash2, Package2 } from 'lucide-react';
@@ -133,6 +133,24 @@ const ProductsManagement = () => {
     setIsEditorOpen(true);
   };
 
+  const convertProductToFormData = (product: Product): ProductFormData => {
+    return {
+      name: product.name,
+      description: product.description,
+      price: product.price,
+      image_url: product.image,
+      category: product.category,
+      pet_type: product.petType,
+      product_type: product.productType,
+      discount: product.discount,
+      is_new: product.new,
+      in_stock: product.inStock,
+      brand: product.brand,
+      weight: product.weight,
+      specifications: Array.isArray(product.specifications) ? product.specifications.join('\n') : product.specifications
+    };
+  };
+
   if (loading) {
     return (
       <div className="p-6">
@@ -253,7 +271,7 @@ const ProductsManagement = () => {
           setEditingProduct(null);
         }}
         onSave={editingProduct ? handleEditProduct : handleCreateProduct}
-        product={editingProduct}
+        product={editingProduct ? convertProductToFormData(editingProduct) : null}
       />
     </div>
   );

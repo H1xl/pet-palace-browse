@@ -1,7 +1,10 @@
 
 import { Product } from './product';
 
-export interface OrderItem extends Product {
+export interface OrderItem {
+  id: string;
+  name: string;
+  price: number;
   quantity: number;
 }
 
@@ -16,7 +19,10 @@ export interface Order {
   userId: string;
   items: OrderItem[];
   total: number;
-  status: 'processing' | 'shipped' | 'delivered' | 'cancelled';
-  date: string;
-  shippingAddress: ShippingAddress;
+  status: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
+  createdAt: string;
+  customerName: string;
+  customerEmail: string;
+  customerPhone: string;
+  shippingAddress: string; // API returns string, not object
 }

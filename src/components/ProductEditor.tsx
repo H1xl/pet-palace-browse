@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -7,6 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { ArrowLeft } from 'lucide-react';
+import { ProductFormData } from '@/types/productForm';
 
 interface Product {
   id?: string;
@@ -26,13 +26,13 @@ interface Product {
 }
 
 interface ProductEditorProps {
-  product?: Product | null;
-  onSave: (product: Product) => void;
+  product?: ProductFormData | null;
+  onSave: (product: ProductFormData) => void;
   onCancel: () => void;
 }
 
 const ProductEditor: React.FC<ProductEditorProps> = ({ product: initialProduct, onSave, onCancel }) => {
-  const [product, setProduct] = useState<Product>({
+  const [product, setProduct] = useState<ProductFormData>({
     name: '',
     description: '',
     price: 0,
