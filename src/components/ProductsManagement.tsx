@@ -1,108 +1,98 @@
 
 import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
-import { Search, Edit2, Cat, Dog, Bird, Fish, Mouse, Package2, Plus } from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import ProductEditor, { ProductFormData } from './ProductEditor';
+import ErrorPage from './ErrorPage';
+import { Product } from '@/types/product';
 import { apiService, APIError } from '@/services/api';
-import ProductEditor from './ProductEditor';
+import { useToast } from '@/hooks/use-toast';
+import { Plus, Search, Edit, Trash2, Package2 } from 'lucide-react';
 
-interface Product {
-  id: string;
-  name: string;
-  description: string;
-  price: number;
-  image_url?: string;
-  category: string;
-  pet_type: string;
-  product_type: string;
-  discount: number;
-  is_new: boolean;
-  in_stock: boolean;
-  brand?: string;
-  weight?: string;
-  specifications?: string;
-  created_at: string;
-  updated_at: string;
-}
-
-const ProductsManagement: React.FC = () => {
-  const { toast } = useToast();
+const ProductsManagement = () => {
   const [products, setProducts] = useState<Product[]>([]);
+  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isCreating, setIsCreating] = useState(false);
+  const [isEditorOpen, setIsEditorOpen] = useState(false);
+  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [apiError, setApiError] = useState<string | null>(null);
+  const { toast } = useToast();
 
   useEffect(() => {
     loadProducts();
   }, []);
 
+  useEffect(() => {
+    filterProducts();
+  }, [products, searchTerm]);
+
   const loadProducts = async () => {
     try {
-      setIsLoading(true);
+      setLoading(true);
+      setApiError(null);
       const productsData = await apiService.getProducts();
       setProducts(productsData);
     } catch (error) {
       if (error instanceof APIError) {
+        setApiError(error.message);
+      } else {
+        setApiError("Произошла неизвестная ошибка при загрузке товаров");
+      }
+      setProducts([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const filterProducts = () => {
+    if (!searchTerm.trim()) {
+      setFilteredProducts(products);
+      return;
+    }
+
+    const filtered = products.filter(product =>
+      product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      product.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (product.brand && product.brand.toLowerCase().includes(searchTerm.toLowerCase()))
+    );
+    setFilteredProducts(filtered);
+  };
+
+  const handleCreateProduct = async (productData: ProductFormData) => {
+    try {
+      const newProduct = await apiService.createProduct(productData);
+      setProducts(prev => [...prev, newProduct]);
+      setIsEditorOpen(false);
+      toast({
+        title: "Успешно",
+        description: "Товар создан успешно"
+      });
+    } catch (error) {
+      if (error instanceof APIError) {
         toast({
           title: "Ошибка",
-          description: error.status === 0 
-            ? "Сервер недоступен. Проверьте подключение к интернету."
-            : error.message,
+          description: error.message,
           variant: "destructive"
         });
       }
-    } finally {
-      setIsLoading(false);
     }
   };
 
-  const getCategoryIcon = (petType: string) => {
-    switch (petType) {
-      case 'cat':
-      case 'cats':
-        return <Cat size={18} className="text-gray-600" />;
-      case 'dog':
-      case 'dogs':
-        return <Dog size={18} className="text-gray-600" />;
-      case 'bird':
-      case 'birds':
-        return <Bird size={18} className="text-gray-600" />;
-      case 'fish':
-        return <Fish size={18} className="text-gray-600" />;
-      case 'rodent':
-        return <Mouse size={18} className="text-gray-600" />;
-      default:
-        return <Package2 size={18} className="text-gray-600" />;
-    }
-  };
+  const handleEditProduct = async (productData: ProductFormData) => {
+    if (!editingProduct) return;
 
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-  };
-
-  const handleProductUpdate = async (updatedProduct: any) => {
     try {
-      if (selectedProduct?.id) {
-        await apiService.updateProduct(selectedProduct.id, updatedProduct);
-        toast({
-          title: "Товар обновлен",
-          description: "Товар успешно обновлен",
-        });
-      } else {
-        await apiService.createProduct(updatedProduct);
-        toast({
-          title: "Товар создан",
-          description: "Товар успешно создан",
-        });
-      }
-      setSelectedProduct(null);
-      setIsCreating(false);
-      loadProducts();
+      const updatedProduct = await apiService.updateProduct(editingProduct.id, productData);
+      setProducts(prev => prev.map(p => p.id === editingProduct.id ? updatedProduct : p));
+      setIsEditorOpen(false);
+      setEditingProduct(null);
+      toast({
+        title: "Успешно",
+        description: "Товар обновлен успешно"
+      });
     } catch (error) {
       if (error instanceof APIError) {
         toast({
@@ -115,17 +105,13 @@ const ProductsManagement: React.FC = () => {
   };
 
   const handleDeleteProduct = async (productId: string) => {
-    if (!confirm('Вы уверены, что хотите удалить этот товар?')) {
-      return;
-    }
-
     try {
       await apiService.deleteProduct(productId);
+      setProducts(prev => prev.filter(p => p.id !== productId));
       toast({
-        title: "Товар удален",
-        description: "Товар успешно удален",
+        title: "Успешно",
+        description: "Товар удален успешно"
       });
-      loadProducts();
     } catch (error) {
       if (error instanceof APIError) {
         toast({
@@ -137,162 +123,138 @@ const ProductsManagement: React.FC = () => {
     }
   };
 
-  const filteredProducts = products.filter(product => 
-    product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    product.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    product.description.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const openCreateEditor = () => {
+    setEditingProduct(null);
+    setIsEditorOpen(true);
+  };
 
-  if (isLoading) {
+  const openEditEditor = (product: Product) => {
+    setEditingProduct(product);
+    setIsEditorOpen(true);
+  };
+
+  if (loading) {
     return (
-      <div className="space-y-6 animate-fade-in-up">
-        <Card>
-          <CardContent className="p-8 text-center">
-            <p>Загрузка товаров...</p>
-          </CardContent>
-        </Card>
+      <div className="p-6">
+        <div className="text-center">
+          <p className="text-lg">Загрузка товаров...</p>
+        </div>
       </div>
     );
   }
 
+  if (apiError) {
+    return (
+      <ErrorPage
+        title="Ошибка загрузки товаров"
+        message={apiError}
+        onRetry={loadProducts}
+      />
+    );
+  }
+
   return (
-    <div className="space-y-6">
-      {selectedProduct || isCreating ? (
-        <ProductEditor 
-          product={selectedProduct}
-          onSave={handleProductUpdate}
-          onCancel={() => {
-            setSelectedProduct(null);
-            setIsCreating(false);
-          }}
+    <div className="p-6 space-y-6">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <h2 className="text-2xl font-bold">Управление товарами</h2>
+        <Button onClick={openCreateEditor} className="flex items-center gap-2">
+          <Plus size={18} />
+          Добавить товар
+        </Button>
+      </div>
+
+      <div className="relative">
+        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
+        <Input
+          type="text"
+          placeholder="Поиск товаров..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="pl-10"
         />
-      ) : (
-        <Card>
-          <CardHeader>
-            <CardTitle>Управление товарами</CardTitle>
-            <CardDescription>Просмотр и редактирование всех товаров магазина</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="flex gap-4 mb-6">
-              <form onSubmit={handleSearch} className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
-                <Input
-                  placeholder="Поиск товаров..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10"
-                />
-              </form>
-              <Button onClick={() => setIsCreating(true)} className="flex items-center gap-2">
-                <Plus size={16} />
-                Добавить товар
-              </Button>
-            </div>
-            
-            {filteredProducts.length > 0 ? (
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Название</TableHead>
-                    <TableHead>Категория</TableHead>
-                    <TableHead>Цена (₽)</TableHead>
-                    <TableHead>Статус</TableHead>
-                    <TableHead>Действия</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {filteredProducts.map((product) => (
-                    <TableRow key={product.id}>
-                      <TableCell>
-                        <div className="flex items-center gap-2">
-                          <div className="w-10 h-10 bg-gray-100 rounded overflow-hidden flex items-center justify-center">
-                            {product.image_url ? (
-                              <img 
-                                src={product.image_url} 
-                                alt={product.name} 
-                                className="w-full h-full object-cover"
-                                onError={(e) => {
-                                  const target = e.target as HTMLImageElement;
-                                  target.style.display = 'none';
-                                  const parent = target.parentElement;
-                                  if (parent && !parent.querySelector('.fallback-icon')) {
-                                    const iconContainer = document.createElement('div');
-                                    iconContainer.className = 'fallback-icon w-full h-full flex items-center justify-center';
-                                    const iconElement = getCategoryIcon(product.pet_type);
-                                    parent.appendChild(iconContainer);
-                                  }
-                                }}
-                              />
-                            ) : (
-                              getCategoryIcon(product.pet_type)
-                            )}
-                          </div>
-                          <span className="font-medium">{product.name}</span>
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex items-center gap-1">
-                          {getCategoryIcon(product.pet_type)}
-                          {product.category}
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        {product.discount > 0 ? (
-                          <div>
-                            <span className="font-bold">
-                              {Math.round(product.price * (1 - product.discount / 100))}
-                            </span> 
-                            <span className="text-xs line-through text-gray-400 ml-1">
-                              {product.price}
-                            </span>
-                          </div>
-                        ) : (
-                          <span className="font-bold">{product.price}</span>
-                        )}
-                      </TableCell>
-                      <TableCell>
-                        <div className="space-x-1">
-                          {product.is_new && <Badge>Новинка</Badge>}
-                          {product.discount > 0 && (
-                            <Badge variant="outline" className="text-pet-orange border-pet-orange">
-                              -{product.discount}%
-                            </Badge>
-                          )}
-                          {!product.in_stock && (
-                            <Badge variant="destructive">Нет в наличии</Badge>
-                          )}
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex gap-2">
-                          <Button 
-                            variant="ghost" 
-                            size="sm" 
-                            onClick={() => setSelectedProduct(product)}
-                          >
-                            <Edit2 size={16} className="mr-1" /> Изменить
-                          </Button>
-                          <Button 
-                            variant="destructive" 
-                            size="sm" 
-                            onClick={() => handleDeleteProduct(product.id)}
-                          >
-                            Удалить
-                          </Button>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            ) : (
-              <div className="text-center py-8 text-gray-500">
-                Товары не найдены
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {filteredProducts.map((product) => (
+          <Card key={product.id} className="overflow-hidden">
+            <CardHeader className="pb-3">
+              <div className="flex justify-between items-start">
+                <CardTitle className="text-lg line-clamp-2">{product.name}</CardTitle>
+                <div className="flex gap-1 ml-2">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => openEditEditor(product)}
+                    className="h-8 w-8 p-0"
+                  >
+                    <Edit size={14} />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => handleDeleteProduct(product.id)}
+                    className="h-8 w-8 p-0 text-red-600 hover:text-red-800"
+                  >
+                    <Trash2 size={14} />
+                  </Button>
+                </div>
               </div>
-            )}
-          </CardContent>
-        </Card>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              {product.image ? (
+                <img 
+                  src={product.image} 
+                  alt={product.name}
+                  className="w-full h-32 object-cover rounded-md"
+                />
+              ) : (
+                <div className="w-full h-32 bg-gray-100 rounded-md flex items-center justify-center">
+                  <Package2 size={32} className="text-gray-400" />
+                </div>
+              )}
+              
+              <div className="space-y-2">
+                <div className="flex justify-between items-center">
+                  <span className="font-semibold text-lg">{product.price} ₽</span>
+                  {product.discount > 0 && (
+                    <Badge className="bg-red-100 text-red-800">-{product.discount}%</Badge>
+                  )}
+                </div>
+                
+                <div className="flex flex-wrap gap-1">
+                  <Badge variant="secondary">{product.category}</Badge>
+                  {product.new && <Badge className="bg-green-100 text-green-800">Новинка</Badge>}
+                  {!product.inStock && <Badge variant="destructive">Нет в наличии</Badge>}
+                </div>
+                
+                <p className="text-sm text-gray-600 line-clamp-2">{product.description}</p>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+
+      {filteredProducts.length === 0 && !loading && (
+        <div className="text-center py-12">
+          <Package2 size={48} className="mx-auto text-gray-400 mb-4" />
+          <h3 className="text-lg font-medium text-gray-500 mb-2">
+            {searchTerm ? 'Товары не найдены' : 'Нет товаров'}
+          </h3>
+          <p className="text-sm text-gray-400">
+            {searchTerm ? 'Попробуйте изменить поисковый запрос' : 'Добавьте первый товар для начала работы'}
+          </p>
+        </div>
       )}
+
+      <ProductEditor
+        isOpen={isEditorOpen}
+        onClose={() => {
+          setIsEditorOpen(false);
+          setEditingProduct(null);
+        }}
+        onSave={editingProduct ? handleEditProduct : handleCreateProduct}
+        product={editingProduct}
+      />
     </div>
   );
 };

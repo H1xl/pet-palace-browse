@@ -9,7 +9,8 @@ import { Product, ProductFilters, ProductSort, CartItem } from "@/types/product"
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Filter, Search, RotateCcw } from "lucide-react";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Filter, Search, RotateCcw, AlertCircle, RefreshCw } from "lucide-react";
 import { apiService, APIError } from "@/services/api";
 
 const Catalog = () => {
@@ -21,6 +22,7 @@ const Catalog = () => {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [loading, setLoading] = useState(false);
   const [isLoadingProducts, setIsLoadingProducts] = useState(true);
+  const [apiError, setApiError] = useState<string | null>(null);
   const { toast } = useToast();
 
   const currentUser = apiService.getCurrentUser();
@@ -49,6 +51,7 @@ const Catalog = () => {
   const loadProducts = async () => {
     try {
       setIsLoadingProducts(true);
+      setApiError(null);
       const productsData = await apiService.getProducts();
       setProducts(productsData);
       setFilteredProducts(productsData);
@@ -61,23 +64,12 @@ const Catalog = () => {
       }));
     } catch (error) {
       if (error instanceof APIError) {
-        toast({
-          title: "Ошибка",
-          description: error.status === 0 
-            ? "Сервер недоступен. Показываем кэшированные данные."
-            : error.message,
-          variant: "destructive"
-        });
+        setApiError(error.message);
+      } else {
+        setApiError("Произошла неизвестная ошибка при загрузке товаров");
       }
-      // Fallback к локальным данным при ошибке
-      const { products: fallbackProducts } = await import("@/data/products");
-      setProducts(fallbackProducts);
-      setFilteredProducts(fallbackProducts);
-      const maxPrice = Math.max(...fallbackProducts.map(p => p.price));
-      setFilters(prev => ({
-        ...prev,
-        priceRange: [0, maxPrice]
-      }));
+      setProducts([]);
+      setFilteredProducts([]);
     } finally {
       setIsLoadingProducts(false);
     }
@@ -284,6 +276,36 @@ const Catalog = () => {
     filters.showOnlyDiscounted || 
     filters.inStock || 
     searchTerm.trim() !== '';
+
+  // Error state
+  if (apiError && !isLoadingProducts) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <Navbar 
+          cartItemCount={isLoggedIn ? cartItems.reduce((total, item) => total + item.quantity, 0) : 0} 
+          currentPage="catalog" 
+        />
+        <div className="container mx-auto px-6 py-8 flex-1 flex items-center justify-center">
+          <div className="max-w-md w-full">
+            <Alert variant="destructive">
+              <AlertCircle className="h-4 w-4" />
+              <AlertTitle>Ошибка загрузки данных</AlertTitle>
+              <AlertDescription className="mt-2">
+                {apiError}
+              </AlertDescription>
+            </Alert>
+            <div className="mt-4 text-center">
+              <Button onClick={loadProducts} className="flex items-center gap-2">
+                <RefreshCw size={16} />
+                Попробовать снова
+              </Button>
+            </div>
+          </div>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
 
   if (isLoadingProducts) {
     return (

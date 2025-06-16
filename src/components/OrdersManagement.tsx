@@ -1,33 +1,20 @@
 
 import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
-import { Search, Eye, Package } from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import ErrorPage from './ErrorPage';
+import { Order } from '@/types/order';
 import { apiService, APIError } from '@/services/api';
+import { useToast } from '@/hooks/use-toast';
+import { Package, Clock, CheckCircle, XCircle, Truck, AlertCircle } from 'lucide-react';
 
-interface Order {
-  id: string;
-  user_id: string;
-  total: number;
-  status: 'processing' | 'shipped' | 'delivered' | 'cancelled';
-  shipping_street: string;
-  shipping_city: string;
-  shipping_postal_code: string;
-  created_at: string;
-  updated_at: string;
-  items?: any[];
-}
-
-const OrdersManagement: React.FC = () => {
-  const { toast } = useToast();
+const OrdersManagement = () => {
   const [orders, setOrders] = useState<Order[]>([]);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedStatus, setSelectedStatus] = useState<string>('all');
-  const [isLoading, setIsLoading] = useState(true);
+  const [loading, setLoading] = useState(true);
+  const [apiError, setApiError] = useState<string | null>(null);
+  const { toast } = useToast();
 
   useEffect(() => {
     loadOrders();
@@ -35,36 +22,32 @@ const OrdersManagement: React.FC = () => {
 
   const loadOrders = async () => {
     try {
-      setIsLoading(true);
+      setLoading(true);
+      setApiError(null);
       const ordersData = await apiService.getOrders();
       setOrders(ordersData);
     } catch (error) {
       if (error instanceof APIError) {
-        toast({
-          title: "Ошибка",
-          description: error.status === 0 
-            ? "Сервер недоступен. Проверьте подключение к интернету."
-            : error.message,
-          variant: "destructive"
-        });
+        setApiError(error.message);
+      } else {
+        setApiError("Произошла неизвестная ошибка при загрузке заказов");
       }
+      setOrders([]);
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   };
 
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-  };
-
-  const handleStatusChange = async (orderId: string, newStatus: Order['status']) => {
+  const handleStatusChange = async (orderId: string, newStatus: string) => {
     try {
       await apiService.updateOrderStatus(orderId, newStatus);
+      setOrders(prev => prev.map(order => 
+        order.id === orderId ? { ...order, status: newStatus as Order['status'] } : order
+      ));
       toast({
-        title: "Статус обновлен",
-        description: "Статус заказа успешно обновлен",
+        title: "Успешно",
+        description: "Статус заказа обновлен"
       });
-      loadOrders();
     } catch (error) {
       if (error instanceof APIError) {
         toast({
@@ -77,17 +60,13 @@ const OrdersManagement: React.FC = () => {
   };
 
   const handleDeleteOrder = async (orderId: string) => {
-    if (!confirm('Вы уверены, что хотите удалить этот заказ?')) {
-      return;
-    }
-
     try {
       await apiService.deleteOrder(orderId);
+      setOrders(prev => prev.filter(order => order.id !== orderId));
       toast({
-        title: "Заказ удален",
-        description: "Заказ успешно удален",
+        title: "Успешно",
+        description: "Заказ удален"
       });
-      loadOrders();
     } catch (error) {
       if (error instanceof APIError) {
         toast({
@@ -99,130 +78,156 @@ const OrdersManagement: React.FC = () => {
     }
   };
 
-  const filteredOrders = orders.filter(order => {
-    const matchesSearch = order.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         order.user_id.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesStatus = selectedStatus === 'all' || order.status === selectedStatus;
-    return matchesSearch && matchesStatus;
-  });
-
-  const getStatusBadge = (status: Order['status']) => {
-    const statusConfig = {
-      processing: { variant: 'secondary' as const, label: 'В обработке' },
-      shipped: { variant: 'default' as const, label: 'Отправлен' },
-      delivered: { variant: 'default' as const, label: 'Доставлен' },
-      cancelled: { variant: 'destructive' as const, label: 'Отменен' }
-    };
-    
-    const config = statusConfig[status];
-    return (
-      <Badge variant={config.variant}>
-        {config.label}
-      </Badge>
-    );
+  const getStatusIcon = (status: string) => {
+    switch (status) {
+      case 'pending': return <Clock className="w-4 h-4" />;
+      case 'processing': return <Package className="w-4 h-4" />;
+      case 'shipped': return <Truck className="w-4 h-4" />;
+      case 'delivered': return <CheckCircle className="w-4 h-4" />;
+      case 'cancelled': return <XCircle className="w-4 h-4" />;
+      default: return <AlertCircle className="w-4 h-4" />;
+    }
   };
 
-  if (isLoading) {
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'pending': return 'bg-yellow-100 text-yellow-800';
+      case 'processing': return 'bg-blue-100 text-blue-800';
+      case 'shipped': return 'bg-purple-100 text-purple-800';
+      case 'delivered': return 'bg-green-100 text-green-800';
+      case 'cancelled': return 'bg-red-100 text-red-800';
+      default: return 'bg-gray-100 text-gray-800';
+    }
+  };
+
+  const getStatusText = (status: string) => {
+    switch (status) {
+      case 'pending': return 'Ожидает';
+      case 'processing': return 'Обрабатывается';
+      case 'shipped': return 'Отправлен';
+      case 'delivered': return 'Доставлен';
+      case 'cancelled': return 'Отменен';
+      default: return status;
+    }
+  };
+
+  if (loading) {
     return (
-      <div className="space-y-6 animate-fade-in-up">
-        <Card>
-          <CardContent className="p-8 text-center">
-            <p>Загрузка заказов...</p>
-          </CardContent>
-        </Card>
+      <div className="p-6">
+        <div className="text-center">
+          <p className="text-lg">Загрузка заказов...</p>
+        </div>
       </div>
     );
   }
 
+  if (apiError) {
+    return (
+      <ErrorPage
+        title="Ошибка загрузки заказов"
+        message={apiError}
+        onRetry={loadOrders}
+      />
+    );
+  }
+
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Управление заказами</CardTitle>
-        <CardDescription>Просмотр и управление всеми заказами</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <div className="flex gap-4 mb-6">
-          <form onSubmit={handleSearch} className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
-            <Input
-              placeholder="Поиск по ID заказа или пользователю..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10"
-            />
-          </form>
-          <select
-            value={selectedStatus}
-            onChange={(e) => setSelectedStatus(e.target.value)}
-            className="px-3 py-2 border rounded-md"
-          >
-            <option value="all">Все статусы</option>
-            <option value="processing">В обработке</option>
-            <option value="shipped">Отправлен</option>
-            <option value="delivered">Доставлен</option>
-            <option value="cancelled">Отменен</option>
-          </select>
+    <div className="p-6 space-y-6">
+      <h2 className="text-2xl font-bold">Управление заказами</h2>
+
+      {orders.length === 0 ? (
+        <div className="text-center py-12">
+          <Package size={48} className="mx-auto text-gray-400 mb-4" />
+          <h3 className="text-lg font-medium text-gray-500 mb-2">Нет заказов</h3>
+          <p className="text-sm text-gray-400">Заказы появятся здесь после их создания</p>
         </div>
-        
-        {filteredOrders.length > 0 ? (
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>ID заказа</TableHead>
-                <TableHead>Пользователь</TableHead>
-                <TableHead>Адрес доставки</TableHead>
-                <TableHead>Сумма</TableHead>
-                <TableHead>Статус</TableHead>
-                <TableHead>Дата</TableHead>
-                <TableHead>Действия</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {filteredOrders.map((order) => (
-                <TableRow key={order.id}>
-                  <TableCell className="font-medium">#{order.id}</TableCell>
-                  <TableCell>{order.user_id}</TableCell>
-                  <TableCell>
-                    <div className="text-sm">
-                      <div>{order.shipping_street}</div>
-                      <div className="text-gray-500">{order.shipping_city}, {order.shipping_postal_code}</div>
+      ) : (
+        <div className="space-y-4">
+          {orders.map((order) => (
+            <Card key={order.id}>
+              <CardHeader>
+                <div className="flex justify-between items-start">
+                  <div>
+                    <CardTitle className="flex items-center gap-2">
+                      Заказ #{order.id.slice(-8)}
+                      <Badge className={getStatusColor(order.status)}>
+                        <div className="flex items-center gap-1">
+                          {getStatusIcon(order.status)}
+                          {getStatusText(order.status)}
+                        </div>
+                      </Badge>
+                    </CardTitle>
+                    <p className="text-sm text-gray-600 mt-1">
+                      {new Date(order.createdAt).toLocaleDateString('ru-RU')} в {new Date(order.createdAt).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })}
+                    </p>
+                  </div>
+                  <div className="flex gap-2">
+                    <Select
+                      value={order.status}
+                      onValueChange={(value) => handleStatusChange(order.id, value)}
+                    >
+                      <SelectTrigger className="w-40">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="pending">Ожидает</SelectItem>
+                        <SelectItem value="processing">Обрабатывается</SelectItem>
+                        <SelectItem value="shipped">Отправлен</SelectItem>
+                        <SelectItem value="delivered">Доставлен</SelectItem>
+                        <SelectItem value="cancelled">Отменен</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      onClick={() => handleDeleteOrder(order.id)}
+                    >
+                      Удалить
+                    </Button>
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <h4 className="font-medium mb-2">Информация о клиенте</h4>
+                      <p className="text-sm text-gray-600">{order.customerName}</p>
+                      <p className="text-sm text-gray-600">{order.customerEmail}</p>
+                      <p className="text-sm text-gray-600">{order.customerPhone}</p>
                     </div>
-                  </TableCell>
-                  <TableCell>{order.total} ₽</TableCell>
-                  <TableCell>{getStatusBadge(order.status)}</TableCell>
-                  <TableCell>{new Date(order.created_at).toLocaleDateString()}</TableCell>
-                  <TableCell>
-                    <div className="flex gap-2">
-                      <select
-                        value={order.status}
-                        onChange={(e) => handleStatusChange(order.id, e.target.value as Order['status'])}
-                        className="text-sm px-2 py-1 border rounded"
-                      >
-                        <option value="processing">В обработке</option>
-                        <option value="shipped">Отправлен</option>
-                        <option value="delivered">Доставлен</option>
-                        <option value="cancelled">Отменен</option>
-                      </select>
-                      <Button
-                        size="sm"
-                        variant="destructive"
-                        onClick={() => handleDeleteOrder(order.id)}
-                      >
-                        Удалить
-                      </Button>
+                    <div>
+                      <h4 className="font-medium mb-2">Адрес доставки</h4>
+                      <p className="text-sm text-gray-600">{order.shippingAddress}</p>
                     </div>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        ) : (
-          <div className="text-center py-8 text-gray-500">
-            Заказы не найдены
-          </div>
-        )}
-      </CardContent>
-    </Card>
+                  </div>
+                  
+                  <div>
+                    <h4 className="font-medium mb-2">Товары</h4>
+                    <div className="space-y-2">
+                      {order.items.map((item, index) => (
+                        <div key={index} className="flex justify-between items-center py-2 px-4 bg-gray-50 rounded">
+                          <div>
+                            <p className="font-medium">{item.name}</p>
+                            <p className="text-sm text-gray-600">Количество: {item.quantity}</p>
+                          </div>
+                          <p className="font-medium">{item.price * item.quantity} ₽</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  
+                  <div className="flex justify-between items-center pt-4 border-t">
+                    <span className="font-medium">Итого:</span>
+                    <span className="text-xl font-bold">{order.total} ₽</span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      )}
+    </div>
   );
 };
 
