@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import Navbar from "@/components/Navbar";
 import ProductGrid from "@/components/ProductGrid";
@@ -57,7 +56,7 @@ const Catalog = () => {
       setFilteredProducts(productsData);
       
       // Устанавливаем максимальную цену на основе загруженных товаров
-      const maxPrice = Math.max(...productsData.map((p: any) => p.price));
+      const maxPrice = Math.max(...productsData.map((p: Product) => parseFloat(p.price)));
       setFilters(prev => ({
         ...prev,
         priceRange: [0, maxPrice]
@@ -111,7 +110,7 @@ const Catalog = () => {
     }
   }, [cartItems, cartKey, isLoggedIn]);
 
-  const maxPrice = products.length > 0 ? Math.max(...products.map(p => p.price)) : 10000;
+  const maxPrice = products.length > 0 ? Math.max(...products.map(p => parseFloat(p.price))) : 10000;
 
   const applyFiltersAndSort = () => {
     setLoading(true);
@@ -131,25 +130,26 @@ const Catalog = () => {
 
       // Фильтрация по категории
       if (filters.category !== 'all') {
-        result = result.filter(product => product.petType === filters.category);
+        result = result.filter(product => product.pet_type === filters.category);
       }
 
       // Фильтрация по типу товара
       if (filters.productType !== 'all') {
-        result = result.filter(product => product.productType === filters.productType);
+        result = result.filter(product => product.product_type === filters.productType);
       }
 
       // Фильтрация по цене
       result = result.filter(product => {
+        const price = parseFloat(product.price);
         const finalPrice = product.discount > 0 
-          ? product.price * (1 - product.discount / 100)
-          : product.price;
+          ? price * (1 - product.discount / 100)
+          : price;
         return finalPrice >= filters.priceRange[0] && finalPrice <= filters.priceRange[1];
       });
 
       // Фильтрация по новинкам
       if (filters.showOnlyNew) {
-        result = result.filter(product => product.new);
+        result = result.filter(product => product.is_new);
       }
 
       // Фильтрация по скидкам
@@ -159,7 +159,7 @@ const Catalog = () => {
 
       // Фильтрация по наличию
       if (filters.inStock) {
-        result = result.filter(product => product.inStock);
+        result = result.filter(product => product.in_stock);
       }
 
       // Сортировка
@@ -168,12 +168,12 @@ const Catalog = () => {
 
         switch (sort.field) {
           case 'price':
-            aValue = a.discount > 0 ? a.price * (1 - a.discount / 100) : a.price;
-            bValue = b.discount > 0 ? b.price * (1 - b.discount / 100) : b.price;
+            aValue = product.discount > 0 ? parseFloat(a.price) * (1 - a.discount / 100) : parseFloat(a.price);
+            bValue = product.discount > 0 ? parseFloat(b.price) * (1 - b.discount / 100) : parseFloat(b.price);
             break;
-          case 'dateAdded':
-            aValue = new Date(a.dateAdded);
-            bValue = new Date(b.dateAdded);
+          case 'created_at':
+            aValue = new Date(a.created_at);
+            bValue = new Date(b.created_at);
             break;
           case 'name':
             aValue = a.name.toLowerCase();

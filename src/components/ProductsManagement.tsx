@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -137,17 +138,17 @@ const ProductsManagement = () => {
     return {
       name: product.name,
       description: product.description,
-      price: product.price,
-      image_url: product.image,
+      price: parseFloat(product.price),
+      image_url: product.image_url,
       category: product.category,
-      pet_type: product.petType,
-      product_type: product.productType,
+      pet_type: product.pet_type,
+      product_type: product.product_type,
       discount: product.discount,
-      is_new: product.new,
-      in_stock: product.inStock,
+      is_new: product.is_new,
+      in_stock: product.in_stock,
       brand: product.brand,
       weight: product.weight,
-      specifications: Array.isArray(product.specifications) ? product.specifications.join('\n') : product.specifications
+      specifications: product.specifications
     };
   };
 
@@ -219,9 +220,9 @@ const ProductsManagement = () => {
               </div>
             </CardHeader>
             <CardContent className="space-y-3">
-              {product.image ? (
+              {product.image_url ? (
                 <img 
-                  src={product.image} 
+                  src={product.image_url} 
                   alt={product.name}
                   className="w-full h-32 object-cover rounded-md"
                 />
@@ -233,7 +234,7 @@ const ProductsManagement = () => {
               
               <div className="space-y-2">
                 <div className="flex justify-between items-center">
-                  <span className="font-semibold text-lg">{product.price} ₽</span>
+                  <span className="font-semibold text-lg">{parseFloat(product.price).toFixed(2)} ₽</span>
                   {product.discount > 0 && (
                     <Badge className="bg-red-100 text-red-800">-{product.discount}%</Badge>
                   )}
@@ -241,11 +242,19 @@ const ProductsManagement = () => {
                 
                 <div className="flex flex-wrap gap-1">
                   <Badge variant="secondary">{product.category}</Badge>
-                  {product.new && <Badge className="bg-green-100 text-green-800">Новинка</Badge>}
-                  {!product.inStock && <Badge variant="destructive">Нет в наличии</Badge>}
+                  {product.is_new && <Badge className="bg-green-100 text-green-800">Новинка</Badge>}
+                  {!product.in_stock && <Badge variant="destructive">Нет в наличии</Badge>}
                 </div>
                 
                 <p className="text-sm text-gray-600 line-clamp-2">{product.description}</p>
+                
+                {product.brand && (
+                  <p className="text-xs text-gray-500">Бренд: {product.brand}</p>
+                )}
+                
+                {product.weight && (
+                  <p className="text-xs text-gray-500">Вес: {product.weight}</p>
+                )}
               </div>
             </CardContent>
           </Card>

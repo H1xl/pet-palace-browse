@@ -2,19 +2,20 @@
 export interface Product {
   id: string;
   name: string;
-  price: number;
   description: string;
-  image?: string;
+  price: string; // API возвращает строку
+  image_url?: string;
   category: string;
-  petType: 'cat' | 'dog' | 'bird' | 'fish' | 'rodent';
-  productType: 'food' | 'toys' | 'accessories' | 'cages' | 'care' | 'medicine';
+  pet_type: 'cat' | 'dog' | 'bird' | 'fish' | 'rodent';
+  product_type: 'food' | 'toys' | 'accessories' | 'cages' | 'care' | 'medicine';
   discount: number;
-  new: boolean;
-  dateAdded: string;
-  inStock: boolean;
+  is_new: boolean;
+  in_stock: boolean;
   brand?: string;
   weight?: string;
-  specifications?: string[];
+  specifications?: Record<string, string> | string;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface CartItem extends Product {
@@ -31,6 +32,6 @@ export interface ProductFilters {
 }
 
 export interface ProductSort {
-  field: 'price' | 'dateAdded' | 'name';
+  field: 'price' | 'created_at' | 'name';
   direction: 'asc' | 'desc';
 }

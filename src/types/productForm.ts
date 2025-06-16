@@ -12,5 +12,5 @@ export interface ProductFormData {
   in_stock: boolean;
   brand?: string;
   weight?: string;
-  specifications?: string;
+  specifications?: Record<string, string> | string;
 }
