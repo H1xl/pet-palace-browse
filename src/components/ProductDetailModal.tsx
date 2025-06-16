@@ -5,6 +5,8 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Product } from '@/types/product';
 import { Cat, Dog, Bird, Fish, Mouse, Package2, ShoppingCart } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
+import { apiService, APIError } from '@/services/api';
 
 interface ProductDetailModalProps {
   product: Product | null;
@@ -21,7 +23,9 @@ const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
   onAddToCart,
   showAddToCart = false 
 }) => {
+  const { toast } = useToast();
   const [imageError, setImageError] = React.useState(false);
+  const [isAddingToCart, setIsAddingToCart] = React.useState(false);
 
   React.useEffect(() => {
     if (product) {
@@ -54,6 +58,42 @@ const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
 
   const handleImageError = () => {
     setImageError(true);
+  };
+
+  const handleAddToCartClick = async () => {
+    if (!apiService.isAuthenticated()) {
+      toast({
+        title: "Необходима авторизация",
+        description: "Для добавления товаров в корзину необходимо авторизоваться",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setIsAddingToCart(true);
+    
+    try {
+      await apiService.addToCart(product.id, 1);
+      toast({
+        title: "Товар добавлен в корзину",
+        description: `${product.name} был добавлен в вашу корзину.`
+      });
+      
+      // Вызываем callback для обновления состояния корзины в родительском компоненте
+      if (onAddToCart) {
+        onAddToCart(product);
+      }
+    } catch (error) {
+      if (error instanceof APIError) {
+        toast({
+          title: "Ошибка",
+          description: error.message,
+          variant: "destructive"
+        });
+      }
+    } finally {
+      setIsAddingToCart(false);
+    }
   };
 
   return (
@@ -119,11 +159,12 @@ const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
               
               {showAddToCart && product.inStock && (
                 <Button 
-                  onClick={() => onAddToCart?.(product)}
+                  onClick={handleAddToCartClick}
+                  disabled={isAddingToCart}
                   className="w-full flex items-center gap-2 transition-all duration-200 hover:scale-105"
                 >
                   <ShoppingCart size={18} />
-                  Добавить в корзину
+                  {isAddingToCart ? "Добавляем..." : "Добавить в корзину"}
                 </Button>
               )}
               

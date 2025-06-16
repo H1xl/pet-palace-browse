@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import Navbar from "@/components/Navbar";
 import ProductGrid from "@/components/ProductGrid";
@@ -5,26 +6,26 @@ import Footer from "@/components/Footer";
 import FiltersModal from "@/components/FiltersModal";
 import ProductDetailModal from "@/components/ProductDetailModal";
 import { Product, ProductFilters, ProductSort, CartItem } from "@/types/product";
-import { products } from "@/data/products";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Filter, Search, RotateCcw } from "lucide-react";
+import { apiService, APIError } from "@/services/api";
 
 const Catalog = () => {
   const [searchTerm, setSearchTerm] = useState("");
-  // DBPoint: READ - Загрузка товаров из базы данных
-  const [filteredProducts, setFilteredProducts] = useState<Product[]>(products);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [loading, setLoading] = useState(false);
+  const [isLoadingProducts, setIsLoadingProducts] = useState(true);
   const { toast } = useToast();
 
-  // DBPoint: READ - Получение текущего пользователя из сессии БД
-  const currentUser = localStorage.getItem('currentUser');
-  const isLoggedIn = !!currentUser;
-  const cartKey = currentUser ? `cartItems_${currentUser}` : 'cartItems_guest';
+  const currentUser = apiService.getCurrentUser();
+  const isLoggedIn = apiService.isAuthenticated();
+  const cartKey = currentUser ? `cartItems_${currentUser.id}` : 'cartItems_guest';
 
   const [filters, setFilters] = useState<ProductFilters>({
     category: 'all',
@@ -40,41 +41,90 @@ const Catalog = () => {
     direction: 'asc',
   });
 
-  const maxPrice = Math.max(...products.map(p => p.price));
+  // Загрузка товаров из API
+  useEffect(() => {
+    loadProducts();
+  }, []);
 
-  // DBPoint: READ - Загрузка корзины пользователя из БД
+  const loadProducts = async () => {
+    try {
+      setIsLoadingProducts(true);
+      const productsData = await apiService.getProducts();
+      setProducts(productsData);
+      setFilteredProducts(productsData);
+      
+      // Устанавливаем максимальную цену на основе загруженных товаров
+      const maxPrice = Math.max(...productsData.map((p: any) => p.price));
+      setFilters(prev => ({
+        ...prev,
+        priceRange: [0, maxPrice]
+      }));
+    } catch (error) {
+      if (error instanceof APIError) {
+        toast({
+          title: "Ошибка",
+          description: error.status === 0 
+            ? "Сервер недоступен. Показываем кэшированные данные."
+            : error.message,
+          variant: "destructive"
+        });
+      }
+      // Fallback к локальным данным при ошибке
+      const { products: fallbackProducts } = await import("@/data/products");
+      setProducts(fallbackProducts);
+      setFilteredProducts(fallbackProducts);
+      const maxPrice = Math.max(...fallbackProducts.map(p => p.price));
+      setFilters(prev => ({
+        ...prev,
+        priceRange: [0, maxPrice]
+      }));
+    } finally {
+      setIsLoadingProducts(false);
+    }
+  };
+
+  // Загрузка корзины из API
   useEffect(() => {
     if (isLoggedIn) {
+      loadCart();
+    } else {
       const savedCart = localStorage.getItem(cartKey);
       if (savedCart) {
         setCartItems(JSON.parse(savedCart));
       }
     }
-  }, [cartKey, isLoggedIn]);
+  }, [isLoggedIn, currentUser]);
 
-  // DBPoint: UPDATE - Сохранение корзины в БД
+  const loadCart = async () => {
+    if (!isLoggedIn) return;
+    
+    try {
+      const cartData = await apiService.getCart();
+      setCartItems(cartData);
+    } catch (error) {
+      // Fallback к localStorage при ошибке API
+      const savedCart = localStorage.getItem(cartKey);
+      if (savedCart) {
+        setCartItems(JSON.parse(savedCart));
+      }
+    }
+  };
+
+  // Сохранение корзины
   useEffect(() => {
     if (isLoggedIn) {
+      // Корзина сохраняется через API при добавлении товаров
+    } else {
       localStorage.setItem(cartKey, JSON.stringify(cartItems));
     }
   }, [cartItems, cartKey, isLoggedIn]);
 
-  useEffect(() => {
-    // Установим максимальную цену при первой загрузке
-    if (filters.priceRange[1] === 10000) {
-      setFilters(prev => ({
-        ...prev,
-        priceRange: [0, maxPrice]
-      }));
-    }
-  }, [maxPrice]);
+  const maxPrice = products.length > 0 ? Math.max(...products.map(p => p.price)) : 10000;
 
   const applyFiltersAndSort = () => {
     setLoading(true);
     
-    // Увеличенная задержка для анимации
     setTimeout(() => {
-      // DBPoint: READ - Фильтрация и сортировка товаров в БД
       let result = [...products];
 
       // Поиск
@@ -150,7 +200,7 @@ const Catalog = () => {
 
       setFilteredProducts(result);
       setLoading(false);
-    }, 300); // Увеличено до 300мс
+    }, 300);
   };
 
   const handleSearch = (e: React.FormEvent) => {
@@ -172,7 +222,6 @@ const Catalog = () => {
       direction: 'asc',
     });
     setSearchTerm('');
-    // Автоматически применяем сброс
     setTimeout(() => {
       setFilteredProducts(products);
     }, 100);
@@ -182,7 +231,7 @@ const Catalog = () => {
     setSelectedProduct(product);
   };
 
-  const handleAddToCart = (product: Product) => {
+  const handleAddToCart = async (product: Product) => {
     if (!isLoggedIn) {
       toast({
         title: "Необходима авторизация",
@@ -192,34 +241,66 @@ const Catalog = () => {
       return;
     }
 
-    // DBPoint: CREATE/UPDATE - Добавление товара в корзину в БД
-    setCartItems(prevItems => {
-      const existingItemIndex = prevItems.findIndex(item => item.id === product.id);
-      if (existingItemIndex > -1) {
-        const updatedItems = [...prevItems];
-        updatedItems[existingItemIndex] = {
-          ...updatedItems[existingItemIndex],
-          quantity: updatedItems[existingItemIndex].quantity + 1
-        };
-        return updatedItems;
+    try {
+      if (isLoggedIn) {
+        // Добавляем через API
+        await apiService.addToCart(product.id, 1);
+        await loadCart(); // Перезагружаем корзину
       } else {
-        return [...prevItems, { ...product, quantity: 1 }];
+        // Локальное добавление для гостей
+        setCartItems(prevItems => {
+          const existingItemIndex = prevItems.findIndex(item => item.id === product.id);
+          if (existingItemIndex > -1) {
+            const updatedItems = [...prevItems];
+            updatedItems[existingItemIndex] = {
+              ...updatedItems[existingItemIndex],
+              quantity: updatedItems[existingItemIndex].quantity + 1
+            };
+            return updatedItems;
+          } else {
+            return [...prevItems, { ...product, quantity: 1 }];
+          }
+        });
       }
-    });
 
-    toast({
-      title: "Товар добавлен в корзину",
-      description: `${product.name} был добавлен в вашу корзину.`
-    });
+      toast({
+        title: "Товар добавлен в корзину",
+        description: `${product.name} был добавлен в вашу корзину.`
+      });
+    } catch (error) {
+      if (error instanceof APIError) {
+        toast({
+          title: "Ошибка",
+          description: error.message,
+          variant: "destructive"
+        });
+      }
+    }
   };
 
-  // Проверяем, применены ли фильтры
   const hasActiveFilters = filters.category !== 'all' || 
     filters.productType !== 'all' || 
     filters.showOnlyNew || 
     filters.showOnlyDiscounted || 
     filters.inStock || 
     searchTerm.trim() !== '';
+
+  if (isLoadingProducts) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <Navbar 
+          cartItemCount={isLoggedIn ? cartItems.reduce((total, item) => total + item.quantity, 0) : 0} 
+          currentPage="catalog" 
+        />
+        <div className="container mx-auto px-6 py-8 flex-1 flex items-center justify-center">
+          <div className="text-center">
+            <p className="text-lg">Загрузка каталога...</p>
+          </div>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex flex-col hide-scrollbar-during-animation">
