@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from "@/hooks/use-toast";
@@ -8,10 +7,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { User, Mail, Phone, Lock, UserPlus, Eye, EyeOff, LogIn } from 'lucide-react';
+import { apiService, APIError } from '@/services/api';
 
 const Register = () => {
   const [formData, setFormData] = useState({
-    fullName: '',
+    full_name: '',
     username: '',
     email: '',
     phone: '',
@@ -21,14 +21,15 @@ const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [errors, setErrors] = useState<{[key: string]: string}>({});
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
 
   const validateForm = () => {
     const newErrors: {[key: string]: string} = {};
 
-    if (!formData.fullName.trim()) {
-      newErrors.fullName = 'ФИО обязательно для заполнения';
+    if (!formData.full_name.trim()) {
+      newErrors.full_name = 'ФИО обязательно для заполнения';
     }
 
     if (!formData.username.trim()) {
@@ -44,11 +45,11 @@ const Register = () => {
       newErrors.email = 'Некорректный формат email';
     }
 
-    const phoneRegex = /^[\+]?[1-9][\d]{10,14}$/;
-    if (!formData.phone.trim()) {
-      newErrors.phone = 'Телефон обязателен для заполнения';
-    } else if (!phoneRegex.test(formData.phone.replace(/\s/g, ''))) {
-      newErrors.phone = 'Некорректный формат телефона';
+    if (formData.phone) {
+      const phoneRegex = /^[\+]?[1-9][\d]{10,14}$/;
+      if (!phoneRegex.test(formData.phone.replace(/\s/g, ''))) {
+        newErrors.phone = 'Некорректный формат телефона';
+      }
     }
 
     if (!formData.password) {
@@ -67,25 +68,58 @@ const Register = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (validateForm()) {
-      // DBPoint: CREATE - Регистрация нового пользователя в базе данных
+    if (!validateForm()) {
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      await apiService.register({
+        full_name: formData.full_name,
+        username: formData.username,
+        email: formData.email,
+        phone: formData.phone || undefined,
+        password: formData.password,
+      });
+
       toast({
-        title: "Регистрация недоступна",
-        description: "Функция регистрации будет доступна после подключения к базе данных",
-        variant: "destructive"
+        title: "Регистрация успешна",
+        description: "Аккаунт создан. Теперь вы можете войти в систему.",
       });
       
-      // Переход на главную страницу
-      navigate('/');
+      navigate('/login');
+    } catch (error) {
+      if (error instanceof APIError) {
+        if (error.status === 0) {
+          toast({
+            title: "Сервер недоступен",
+            description: "Не удается подключиться к серверу. Проверьте подключение к интернету и попробуйте позже.",
+            variant: "destructive"
+          });
+        } else {
+          toast({
+            title: "Ошибка регистрации",
+            description: error.message,
+            variant: "destructive"
+          });
+        }
+      } else {
+        toast({
+          title: "Ошибка",
+          description: "Произошла неизвестная ошибка",
+          variant: "destructive"
+        });
+      }
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const handleChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
-    // Очищаем ошибку при изменении поля
     if (errors[field]) {
       setErrors(prev => ({ ...prev, [field]: '' }));
     }
@@ -113,13 +147,13 @@ const Register = () => {
                   <Input 
                     type="text" 
                     placeholder="ФИО" 
-                    value={formData.fullName} 
-                    onChange={(e) => handleChange('fullName', e.target.value)}
+                    value={formData.full_name} 
+                    onChange={(e) => handleChange('full_name', e.target.value)}
                     className="border-0 p-0 focus-visible:ring-0 focus-visible:ring-offset-0"
                     required
                   />
                 </div>
-                {errors.fullName && <p className="text-red-500 text-sm">{errors.fullName}</p>}
+                {errors.full_name && <p className="text-red-500 text-sm">{errors.full_name}</p>}
               </div>
 
               <div className="space-y-2">
@@ -161,7 +195,6 @@ const Register = () => {
                     value={formData.phone} 
                     onChange={(e) => handleChange('phone', e.target.value)}
                     className="border-0 p-0 focus-visible:ring-0 focus-visible:ring-offset-0"
-                    required
                   />
                 </div>
                 {errors.phone && <p className="text-red-500 text-sm">{errors.phone}</p>}
@@ -214,8 +247,9 @@ const Register = () => {
               <Button 
                 type="submit" 
                 className="w-full bg-pet-blue hover:bg-blue-600 transition-all duration-200 hover:scale-105 btn-hover-effect"
+                disabled={isLoading}
               >
-                Зарегистрироваться
+                {isLoading ? 'Регистрация...' : 'Зарегистрироваться'}
               </Button>
             </form>
           </CardContent>

@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -9,75 +9,55 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Label } from '@/components/ui/label';
 import { Users, UserPlus, Edit2, Trash2, Shield, User, Search, Crown } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-
-interface UserData {
-  id: string;
-  fullName: string;
-  login: string;
-  email: string;
-  phone: string;
-  role: 'admin' | 'user';
-  registrationDate: string;
-  status: 'active' | 'blocked';
-}
+import { apiService, APIError } from '@/services/api';
 
 const UserManagement = () => {
   const { toast } = useToast();
   const [searchTerm, setSearchTerm] = useState('');
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
-  const [editingUser, setEditingUser] = useState<UserData | null>(null);
-
-  // Мокапные данные пользователей
-  const [users, setUsers] = useState<UserData[]>([
-    {
-      id: '1',
-      fullName: 'Иван Иванов',
-      login: 'admin',
-      email: 'admin@petshop.ru',
-      phone: '+7 (999) 123-45-67',
-      role: 'admin',
-      registrationDate: '2024-01-15',
-      status: 'active'
-    },
-    {
-      id: '2',
-      fullName: 'Мария Петрова',
-      login: 'maria_p',
-      email: 'maria@example.com',
-      phone: '+7 (999) 234-56-78',
-      role: 'user',
-      registrationDate: '2024-02-20',
-      status: 'active'
-    },
-    {
-      id: '3',
-      fullName: 'Алексей Сидоров',
-      login: 'alex_s',
-      email: 'alex@example.com',
-      phone: '+7 (999) 345-67-89',
-      role: 'user',
-      registrationDate: '2024-03-10',
-      status: 'blocked'
-    }
-  ]);
-
+  const [users, setUsers] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [newUser, setNewUser] = useState({
-    fullName: '',
-    login: '',
+    full_name: '',
+    username: '',
     email: '',
     phone: '',
     role: 'user' as 'admin' | 'user',
     password: ''
   });
 
+  useEffect(() => {
+    loadUsers();
+  }, []);
+
+  const loadUsers = async () => {
+    try {
+      setIsLoading(true);
+      const usersData = await apiService.getUsers();
+      setUsers(usersData);
+    } catch (error) {
+      if (error instanceof APIError) {
+        toast({
+          title: "Ошибка",
+          description: error.status === 0 
+            ? "Сервер недоступен. Проверьте подключение к интернету."
+            : error.message,
+          variant: "destructive"
+        });
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const filteredUsers = users.filter(user =>
-    user.fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    user.login.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    user.email.toLowerCase().includes(searchTerm.toLowerCase())
+    user.full_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    user.username?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    user.email?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const handleCreateUser = () => {
-    if (!newUser.fullName || !newUser.login || !newUser.email || !newUser.password) {
+  const handleCreateUser = async () => {
+    if (!newUser.full_name || !newUser.username || !newUser.email || !newUser.password) {
       toast({
         title: "Ошибка",
         description: "Заполните все обязательные поля",
@@ -86,51 +66,94 @@ const UserManagement = () => {
       return;
     }
 
-    const user: UserData = {
-      id: Date.now().toString(),
-      ...newUser,
-      registrationDate: new Date().toISOString().split('T')[0],
-      status: 'active'
-    };
+    try {
+      await apiService.register({
+        full_name: newUser.full_name,
+        username: newUser.username,
+        email: newUser.email,
+        phone: newUser.phone || undefined,
+        password: newUser.password,
+      });
 
-    setUsers([...users, user]);
-    setNewUser({
-      fullName: '',
-      login: '',
-      email: '',
-      phone: '',
-      role: 'user',
-      password: ''
-    });
-    setIsCreateDialogOpen(false);
+      setNewUser({
+        full_name: '',
+        username: '',
+        email: '',
+        phone: '',
+        role: 'user',
+        password: ''
+      });
+      setIsCreateDialogOpen(false);
+      loadUsers();
 
-    toast({
-      title: "Пользователь создан",
-      description: `Пользователь ${user.fullName} успешно добавлен`
-    });
+      toast({
+        title: "Пользователь создан",
+        description: `Пользователь ${newUser.full_name} успешно добавлен`
+      });
+    } catch (error) {
+      if (error instanceof APIError) {
+        toast({
+          title: "Ошибка",
+          description: error.message,
+          variant: "destructive"
+        });
+      }
+    }
   };
 
-  const handleDeleteUser = (userId: string) => {
-    setUsers(users.filter(user => user.id !== userId));
-    toast({
-      title: "Пользователь удален",
-      description: "Пользователь успешно удален из системы"
-    });
+  const handleDeleteUser = async (userId: string) => {
+    try {
+      await apiService.deleteUser(userId);
+      loadUsers();
+      toast({
+        title: "Пользователь удален",
+        description: "Пользователь успешно удален из системы"
+      });
+    } catch (error) {
+      if (error instanceof APIError) {
+        toast({
+          title: "Ошибка",
+          description: error.message,
+          variant: "destructive"
+        });
+      }
+    }
   };
 
-  const handleToggleUserStatus = (userId: string) => {
-    setUsers(users.map(user => 
-      user.id === userId 
-        ? { ...user, status: user.status === 'active' ? 'blocked' : 'active' }
-        : user
-    ));
+  const handleToggleUserStatus = async (userId: string, currentStatus: string) => {
+    const newStatus = currentStatus === 'active' ? 'blocked' : 'active';
     
-    const user = users.find(u => u.id === userId);
-    toast({
-      title: "Статус изменен",
-      description: `Пользователь ${user?.fullName} ${user?.status === 'active' ? 'заблокирован' : 'разблокирован'}`
-    });
+    try {
+      await apiService.updateUser(userId, { status: newStatus });
+      loadUsers();
+      
+      const user = users.find(u => u.id === userId);
+      toast({
+        title: "Статус изменен",
+        description: `Пользователь ${user?.full_name} ${newStatus === 'active' ? 'разблокирован' : 'заблокирован'}`
+      });
+    } catch (error) {
+      if (error instanceof APIError) {
+        toast({
+          title: "Ошибка",
+          description: error.message,
+          variant: "destructive"
+        });
+      }
+    }
   };
+
+  if (isLoading) {
+    return (
+      <div className="space-y-6 animate-fade-in-up">
+        <Card>
+          <CardContent className="p-8 text-center">
+            <p>Загрузка пользователей...</p>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6 animate-fade-in-up">
@@ -262,14 +285,14 @@ const UserManagement = () => {
                   <TableRow key={user.id}>
                     <TableCell>
                       <div>
-                        <div className="font-medium">{user.fullName}</div>
-                        <div className="text-sm text-gray-500">@{user.login}</div>
+                        <div className="font-medium">{user.full_name}</div>
+                        <div className="text-sm text-gray-500">@{user.username}</div>
                       </div>
                     </TableCell>
                     <TableCell>
                       <div className="text-sm">
                         <div>{user.email}</div>
-                        <div className="text-gray-500">{user.phone}</div>
+                        <div className="text-gray-500">{user.phone || 'Не указан'}</div>
                       </div>
                     </TableCell>
                     <TableCell>
@@ -292,13 +315,13 @@ const UserManagement = () => {
                         {user.status === 'active' ? 'Активен' : 'Заблокирован'}
                       </Badge>
                     </TableCell>
-                    <TableCell>{new Date(user.registrationDate).toLocaleDateString()}</TableCell>
+                    <TableCell>{new Date(user.created_at).toLocaleDateString()}</TableCell>
                     <TableCell>
                       <div className="flex gap-2">
                         <Button
                           size="sm"
                           variant="outline"
-                          onClick={() => handleToggleUserStatus(user.id)}
+                          onClick={() => handleToggleUserStatus(user.id, user.status)}
                         >
                           <Shield size={14} />
                         </Button>
@@ -306,7 +329,7 @@ const UserManagement = () => {
                           size="sm"
                           variant="destructive"
                           onClick={() => handleDeleteUser(user.id)}
-                          disabled={user.login === 'admin'}
+                          disabled={user.username === 'admin'}
                         >
                           <Trash2 size={14} />
                         </Button>

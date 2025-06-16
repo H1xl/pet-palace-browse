@@ -12,6 +12,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { apiService } from '@/services/api';
 
 interface NavbarProps {
   cartItemCount: number;
@@ -22,24 +23,16 @@ const Navbar = ({ cartItemCount, currentPage = '' }: NavbarProps) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isNavigating, setIsNavigating] = useState(false);
   const [progress, setProgress] = useState(0);
+  const [currentUser, setCurrentUser] = useState<any>(null);
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Get current user from localStorage
-  const currentUser = localStorage.getItem('currentUser');
-  const isLoggedIn = !!currentUser;
-
-  // Load user's cart
   useEffect(() => {
-    if (!cartItemCount) {
-      const cartKey = currentUser ? `cartItems_${currentUser}` : 'cartItems_guest';
-      const savedCart = localStorage.getItem(cartKey);
-      if (savedCart) {
-        const parsedCart = JSON.parse(savedCart);
-        cartItemCount = parsedCart.reduce((total: number, item: any) => total + item.quantity, 0);
-      }
-    }
-  }, [currentUser, cartItemCount]);
+    const user = apiService.getCurrentUser();
+    setCurrentUser(user);
+  }, [location]);
+
+  const isLoggedIn = apiService.isAuthenticated();
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -54,14 +47,15 @@ const Navbar = ({ cartItemCount, currentPage = '' }: NavbarProps) => {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem('currentUser');
+    apiService.logout();
+    setCurrentUser(null);
     navigate('/');
-    window.location.reload(); // Reload to update auth state
+    window.location.reload();
   };
 
   const navigateWithProgress = (path: string) => {
     if (path === location.pathname) {
-      return; // Skip if already on the page
+      return;
     }
     
     setIsNavigating(true);
@@ -129,7 +123,7 @@ const Navbar = ({ cartItemCount, currentPage = '' }: NavbarProps) => {
                   {isLoggedIn ? (
                     <>
                       <div className="px-2 py-1.5 text-sm font-semibold">
-                        Аккаунт: {currentUser}
+                        Аккаунт: {currentUser?.username || currentUser?.email}
                       </div>
                       <DropdownMenuSeparator />
                       <DropdownMenuItem asChild>

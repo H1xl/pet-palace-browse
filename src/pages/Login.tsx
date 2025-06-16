@@ -9,9 +9,10 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { User, Lock, LogIn, Eye, EyeOff, UserPlus } from 'lucide-react';
+import { apiService, APIError } from '@/services/api';
 
 const Login = () => {
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -19,12 +20,11 @@ const Login = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     setProgress(30);
     
-    // Имитируем задержку и показываем прогресс
     const interval = setInterval(() => {
       setProgress((prev) => {
         if (prev >= 90) {
@@ -35,47 +35,45 @@ const Login = () => {
       });
     }, 200);
     
-    setTimeout(() => {
-      clearInterval(interval);
+    try {
       setProgress(100);
+      const response = await apiService.login({ email, password });
       
-      // DBPoint: READ - Проверка пользователя в базе данных
-      const validUsers = [
-        { username: 'admin', password: 'admin' },
-        { username: 'client', password: 'client' },
-        { username: 'client1', password: 'client1' }
-      ];
+      toast({
+        title: "Успешный вход",
+        description: response.user.role === 'admin' 
+          ? "Вы вошли как администратор" 
+          : "Вы вошли как клиент",
+      });
+      navigate('/profile');
+    } catch (error) {
+      clearInterval(interval);
+      setProgress(0);
       
-      // DBPoint: READ - Проверка зарегистрированных пользователей из БД
-      const registeredUsers = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
-      const registeredUser = registeredUsers.find((user: any) => 
-        user.username === username && user.password === password
-      );
-      
-      const foundUser = validUsers.find(
-        user => user.username === username && user.password === password
-      ) || registeredUser;
-      
-      if (foundUser) {
-        // DBPoint: CREATE/UPDATE - Сессия пользователя в БД
-        localStorage.setItem('currentUser', username);
-        toast({
-          title: "Успешный вход",
-          description: username === 'admin' 
-            ? "Вы вошли как администратор" 
-            : "Вы вошли как клиент",
-        });
-        navigate('/profile');
+      if (error instanceof APIError) {
+        if (error.status === 0) {
+          toast({
+            title: "Сервер недоступен",
+            description: "Не удается подключиться к серверу. Проверьте подключение к интернету и попробуйте позже.",
+            variant: "destructive"
+          });
+        } else {
+          toast({
+            title: "Ошибка входа",
+            description: error.message,
+            variant: "destructive"
+          });
+        }
       } else {
         toast({
-          title: "Ошибка входа",
-          description: "Неверное имя пользователя или пароль",
+          title: "Ошибка",
+          description: "Произошла неизвестная ошибка",
           variant: "destructive"
         });
-        setIsLoading(false);
-        setProgress(0);
       }
-    }, 800);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -107,10 +105,10 @@ const Login = () => {
                   <div className="flex items-center border rounded-md px-3 py-2 bg-white transition-all duration-200 focus-within:ring-2 focus-within:ring-pet-blue focus-within:border-pet-blue">
                     <User size={18} className="text-gray-500 mr-2" />
                     <Input 
-                      type="text" 
-                      placeholder="Имя пользователя" 
-                      value={username} 
-                      onChange={(e) => setUsername(e.target.value)}
+                      type="email" 
+                      placeholder="Email" 
+                      value={email} 
+                      onChange={(e) => setEmail(e.target.value)}
                       className="border-0 p-0 focus-visible:ring-0 focus-visible:ring-offset-0"
                       required
                     />
