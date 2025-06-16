@@ -1,4 +1,3 @@
-
 const API_BASE_URL = 'http://localhost:9090/api';
 
 export interface User {
@@ -104,7 +103,19 @@ class APIService {
 
   getCurrentUser(): User | null {
     const userData = localStorage.getItem('currentUser');
-    return userData ? JSON.parse(userData) : null;
+    if (!userData) {
+      return null;
+    }
+    
+    try {
+      return JSON.parse(userData);
+    } catch (error) {
+      console.error('Invalid user data in localStorage, clearing...', error);
+      // Clear corrupted data
+      localStorage.removeItem('currentUser');
+      localStorage.removeItem('authToken');
+      return null;
+    }
   }
 
   isAuthenticated(): boolean {
@@ -129,7 +140,7 @@ class APIService {
     // Update current user data if updating own profile
     const currentUser = this.getCurrentUser();
     if (currentUser && currentUser.id === id) {
-      localStorage.setItem('currentUser', JSON.stringify(data.user));
+      localStorage.setItem('currentUser', JSON.stringify(data));
     }
     
     return data;
