@@ -199,8 +199,8 @@ const UserManagement = () => {
                     <Label htmlFor="fullName">ФИО *</Label>
                     <Input
                       id="fullName"
-                      value={newUser.fullName}
-                      onChange={(e) => setNewUser({...newUser, fullName: e.target.value})}
+                      value={newUser.full_name}
+                      onChange={(e) => setNewUser({...newUser, full_name: e.target.value})}
                       placeholder="Введите ФИО"
                     />
                   </div>
@@ -208,8 +208,8 @@ const UserManagement = () => {
                     <Label htmlFor="login">Логин *</Label>
                     <Input
                       id="login"
-                      value={newUser.login}
-                      onChange={(e) => setNewUser({...newUser, login: e.target.value})}
+                      value={newUser.username}
+                      onChange={(e) => setNewUser({...newUser, username: e.target.value})}
                       placeholder="Введите логин"
                     />
                   </div>

@@ -70,7 +70,7 @@ const ProfileEditor = ({ user, onCancel, onSuccess }: ProfileEditorProps) => {
         title: "Профиль обновлен",
         description: "Данные профиля успешно сохранены",
       });
-      onSuccess(response.user);
+      onSuccess(response);
     } catch (error) {
       if (error instanceof APIError) {
         toast({
