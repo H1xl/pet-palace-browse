@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
@@ -147,8 +146,8 @@ const Cart = () => {
             <div className="lg:col-span-2 space-y-4">
               {cartItems.map((item, index) => {
                 const itemPrice = item.discount > 0 
-                  ? item.price * (1 - item.discount / 100)
-                  : item.price;
+                  ? parseFloat(item.price) * (1 - item.discount / 100)
+                  : parseFloat(item.price);
                   
                 return (
                   <Card key={item.id} className="animate-fade-in transition-all duration-200 hover:shadow-md" style={{ animationDelay: `${index * 100}ms` }}>
@@ -232,7 +231,7 @@ const Cart = () => {
                         {/* Общая стоимость за товар */}
                         <div className="text-right">
                           <p className="font-bold text-lg">
-                            {Math.round(parseFloat(itemPrice.toString()) * item.quantity)} ₽
+                            {Math.round(itemPrice * item.quantity)} ₽
                           </p>
                         </div>
                       </div>
