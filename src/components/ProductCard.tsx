@@ -49,24 +49,24 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onClick }) => {
         {product.discount > 0 && (
           <Badge className="absolute top-6 left-6 bg-pet-orange animate-scale-in z-20">-{product.discount}%</Badge>
         )}
-        {product.new && (
+        {product.is_new && (
           <Badge className="absolute top-6 right-6 bg-pet-blue animate-scale-in z-20">Новинка</Badge>
         )}
-        {!product.inStock && (
+        {!product.in_stock && (
           <Badge className="absolute top-6 left-6 bg-gray-500 animate-scale-in z-20">Нет в наличии</Badge>
         )}
         
         <div className="h-48 flex items-center justify-center mb-4 overflow-hidden rounded-md bg-gray-100 group-hover:bg-gray-50 transition-colors duration-200">
-          {product.image && !imageError ? (
+          {product.image_url && !imageError ? (
             <img 
-              src={product.image} 
+              src={product.image_url} 
               alt={product.name} 
               className="object-cover w-full h-full transition-transform duration-300 hover:scale-110"
               onError={handleImageError}
             />
           ) : (
             <div className="flex items-center justify-center w-full h-full">
-              {getCategoryIcon(product.petType)}
+              {getCategoryIcon(product.pet_type)}
             </div>
           )}
         </div>
@@ -79,14 +79,14 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onClick }) => {
           {product.discount > 0 ? (
             <>
               <span className="text-xl font-bold text-pet-blue">
-                {Math.round(product.price * (1 - product.discount / 100))} ₽
+                {Math.round(parseFloat(product.price) * (1 - product.discount / 100))} ₽
               </span>
               <span className="text-sm text-gray-400 line-through">
-                {product.price} ₽
+                {parseFloat(product.price)} ₽
               </span>
             </>
           ) : (
-            <span className="text-xl font-bold text-pet-blue">{product.price} ₽</span>
+            <span className="text-xl font-bold text-pet-blue">{parseFloat(product.price)} ₽</span>
           )}
         </div>
         <p className="text-sm text-gray-600 line-clamp-2">{product.description}</p>

@@ -53,8 +53,8 @@ const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
   };
 
   const finalPrice = product.discount > 0 
-    ? Math.round(product.price * (1 - product.discount / 100))
-    : product.price;
+    ? Math.round(parseFloat(product.price) * (1 - product.discount / 100))
+    : parseFloat(product.price);
 
   const handleImageError = () => {
     setImageError(true);
@@ -107,16 +107,16 @@ const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
           {/* Изображение и основная информация */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 opacity-0 animate-fade-in-up" style={{ animationDelay: '100ms', animationFillMode: 'forwards' }}>
             <div className="relative group">
-              {product.image && !imageError ? (
+              {product.image_url && !imageError ? (
                 <img 
-                  src={product.image} 
+                  src={product.image_url} 
                   alt={product.name} 
                   className="w-full h-64 object-cover rounded-lg transition-transform duration-300 hover:scale-105"
                   onError={handleImageError}
                 />
               ) : (
                 <div className="w-full h-64 bg-gray-100 rounded-lg flex items-center justify-center">
-                  {getCategoryIcon(product.petType)}
+                  {getCategoryIcon(product.pet_type)}
                 </div>
               )}
               
@@ -125,10 +125,10 @@ const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
                 {product.discount > 0 && (
                   <Badge className="bg-pet-orange animate-scale-in">-{product.discount}%</Badge>
                 )}
-                {product.new && (
+                {product.is_new && (
                   <Badge className="bg-pet-blue animate-scale-in">Новинка</Badge>
                 )}
-                {!product.inStock && (
+                {!product.in_stock && (
                   <Badge className="bg-gray-500 animate-scale-in">Нет в наличии</Badge>
                 )}
               </div>
@@ -136,7 +136,7 @@ const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
             
             <div className="space-y-4">
               <div className="flex items-center gap-2">
-                {getCategoryIcon(product.petType)}
+                {getCategoryIcon(product.pet_type)}
                 <span className="text-sm text-gray-500">{product.category}</span>
               </div>
               
@@ -144,7 +144,7 @@ const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
                 <div className="flex items-baseline gap-2">
                   <span className="text-2xl font-bold text-pet-blue">{finalPrice} ₽</span>
                   {product.discount > 0 && (
-                    <span className="text-lg text-gray-400 line-through">{product.price} ₽</span>
+                    <span className="text-lg text-gray-400 line-through">{parseFloat(product.price)} ₽</span>
                   )}
                 </div>
                 
@@ -157,7 +157,7 @@ const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
                 )}
               </div>
               
-              {showAddToCart && product.inStock && (
+              {showAddToCart && product.in_stock && (
                 <Button 
                   onClick={handleAddToCartClick}
                   disabled={isAddingToCart}
@@ -168,7 +168,7 @@ const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
                 </Button>
               )}
               
-              {!product.inStock && (
+              {!product.in_stock && (
                 <Button disabled className="w-full">
                   Нет в наличии
                 </Button>
@@ -183,14 +183,14 @@ const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
           </div>
           
           {/* Характеристики */}
-          {product.specifications && product.specifications.length > 0 && (
+          {product.specifications && typeof product.specifications === 'object' && Object.keys(product.specifications).length > 0 && (
             <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: '400ms', animationFillMode: 'forwards' }}>
               <h3 className="text-lg font-semibold mb-3">Характеристики</h3>
               <ul className="space-y-2">
-                {product.specifications.map((spec, index) => (
+                {Object.entries(product.specifications).map(([key, value], index) => (
                   <li key={index} className="flex items-start gap-2 opacity-0 animate-fade-in-up" style={{ animationDelay: `${500 + index * 100}ms`, animationFillMode: 'forwards' }}>
                     <span className="w-2 h-2 bg-pet-blue rounded-full mt-2 flex-shrink-0"></span>
-                    <span className="text-gray-700">{spec}</span>
+                    <span className="text-gray-700">{key}: {value}</span>
                   </li>
                 ))}
               </ul>

@@ -28,10 +28,11 @@ const CartPreview: React.FC<CartPreviewProps> = ({
 }) => {
   const totalItems = cartItems.reduce((total, item) => total + item.quantity, 0);
   const subtotal = cartItems.reduce((total, item) => {
-    const price = item.discount > 0 
-      ? Math.round(item.price * (1 - item.discount / 100)) 
-      : item.price;
-    return total + (price * item.quantity);
+    const price = parseFloat(item.price);
+    const finalPrice = item.discount > 0 
+      ? Math.round(price * (1 - item.discount / 100)) 
+      : price;
+    return total + (finalPrice * item.quantity);
   }, 0);
 
   return (
@@ -64,7 +65,7 @@ const CartPreview: React.FC<CartPreviewProps> = ({
               <div key={item.id} className="flex gap-4 py-2 border-b">
                 <div className="w-16 h-16 overflow-hidden rounded-md shrink-0">
                   <img 
-                    src={item.image} 
+                    src={item.image_url || '/placeholder.svg'} 
                     alt={item.name} 
                     className="object-cover w-full h-full"
                   />
@@ -75,14 +76,14 @@ const CartPreview: React.FC<CartPreviewProps> = ({
                     {item.discount > 0 ? (
                       <>
                         <span className="text-sm font-semibold text-pet-blue">
-                          {Math.round(item.price * (1 - item.discount / 100))} ₽
+                          {Math.round(parseFloat(item.price) * (1 - item.discount / 100))} ₽
                         </span>
                         <span className="text-xs text-gray-400 line-through">
-                          {item.price} ₽
+                          {parseFloat(item.price)} ₽
                         </span>
                       </>
                     ) : (
-                      <span className="text-sm font-semibold text-pet-blue">{item.price} ₽</span>
+                      <span className="text-sm font-semibold text-pet-blue">{parseFloat(item.price)} ₽</span>
                     )}
                   </div>
                   <div className="flex items-center gap-2 mt-2">
