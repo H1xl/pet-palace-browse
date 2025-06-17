@@ -19,7 +19,7 @@ const About = () => {
               О нашем зоомагазине
             </h1>
             <p className="text-xl md:text-2xl max-w-3xl mx-auto animate-fade-in-up animate-delay-300">
-              Мы заботимся о ваших питомцах уже более 10 лет, предоставляя качественные товары и профессиональные услуги
+              Мы заботимся о ваших питомцах уже более 5 лет, предоставляя качественные товары
             </p>
           </div>
         </div>
@@ -30,7 +30,7 @@ const About = () => {
             <div className="animate-slide-in-left animate-delay-400">
               <h2 className="text-3xl font-bold mb-6">Наша история</h2>
               <p className="text-gray-600 mb-4">
-                Зоомагазин "ПетДом" был основан в 2014 году группой энтузиастов, которые любят животных и понимают, 
+                Зоомагазин "Сытый зверь" был основан в 2019 году группой энтузиастов, которые любят животных и понимают, 
                 насколько важно обеспечить наших четвероногих друзей всем необходимым для счастливой и здоровой жизни.
               </p>
               <p className="text-gray-600 mb-4">
@@ -44,7 +44,7 @@ const About = () => {
             </div>
             <div className="animate-slide-in-right animate-delay-500">
               <img 
-                src="https://images.unsplash.com/photo-1601758228041-f3b2795255f1?auto=format&fit=crop&w=800&q=80" 
+                src="https://miska.ru/upload/resize_cache/iblock/3a1/585_410_1/e3pm08n0f8d5pls4g5fuy9z6ux4297n4.jpg" 
                 alt="Зоомагазин" 
                 className="rounded-lg shadow-xl w-full h-auto"
               />
@@ -93,45 +93,6 @@ const About = () => {
           </div>
         </div>
 
-        {/* Услуги */}
-        <div className="container mx-auto px-6 py-16">
-          <h2 className="text-3xl font-bold text-center mb-12 animate-slide-in-down animate-delay-200">
-            Наши услуги
-          </h2>
-          
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <div className="flex items-start space-x-4 animate-slide-in-left animate-delay-300">
-              <div className="bg-pet-orange p-2 rounded-lg">
-                <Shield className="h-6 w-6 text-white" />
-              </div>
-              <div>
-                <h3 className="text-lg font-semibold mb-2">Гарантия качества</h3>
-                <p className="text-gray-600">Предоставляем гарантию на все товары и готовы заменить некачественный товар</p>
-              </div>
-            </div>
-
-            <div className="flex items-start space-x-4 animate-slide-in-up animate-delay-400">
-              <div className="bg-pet-orange p-2 rounded-lg">
-                <Truck className="h-6 w-6 text-white" />
-              </div>
-              <div>
-                <h3 className="text-lg font-semibold mb-2">Быстрая доставка</h3>
-                <p className="text-gray-600">Доставляем заказы по городу в день заказа или на следующий день</p>
-              </div>
-            </div>
-
-            <div className="flex items-start space-x-4 animate-slide-in-right animate-delay-500">
-              <div className="bg-pet-orange p-2 rounded-lg">
-                <Phone className="h-6 w-6 text-white" />
-              </div>
-              <div>
-                <h3 className="text-lg font-semibold mb-2">Консультации</h3>
-                <p className="text-gray-600">Наши специалисты всегда готовы проконсультировать по уходу за питомцами</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
         {/* Контакты */}
         <div className="bg-pet-blue text-white py-16">
           <div className="container mx-auto px-6 text-center">
@@ -141,7 +102,7 @@ const About = () => {
             <div className="grid md:grid-cols-3 gap-8 animate-fade-in-up animate-delay-300">
               <div>
                 <h3 className="text-xl font-semibold mb-2">Адрес</h3>
-                <p>г. Москва, ул. Примерная, д. 123</p>
+                <p>г. Ставрополь, ул. Серова, д. 138</p>
               </div>
               <div>
                 <h3 className="text-xl font-semibold mb-2">Телефон</h3>
@@ -149,7 +110,7 @@ const About = () => {
               </div>
               <div>
                 <h3 className="text-xl font-semibold mb-2">Email</h3>
-                <p>info@petdom.ru</p>
+                <p>sitiy-zver@mail.ru</p>
               </div>
             </div>
           </div>
