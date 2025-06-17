@@ -1,3 +1,4 @@
+
 const API_BASE_URL = 'http://localhost:9090/api';
 
 export interface User {
@@ -63,6 +64,7 @@ export interface Order {
   shipping_postal_code: string;
   created_at: string;
   updated_at: string;
+  items?: OrderItem[];
 }
 
 export interface OrderItem {
@@ -74,16 +76,20 @@ export interface OrderItem {
   created_at: string;
 }
 
-// Enhanced CartItem for API responses that includes product information
+// Cart item structure based on actual API response
 export interface CartItem {
-  id: string;
-  user_id?: string;
-  session_id?: string;
+  cart_item_id: string;
   product_id: string;
   quantity: number;
-  created_at: string;
-  updated_at: string;
-  // Product information for display (when returned from API)
+  product_name: string;
+  product_price: number;
+  product_image_url?: string;
+  // Map to expected interface properties
+  id?: string;
+  user_id?: string;
+  session_id?: string;
+  created_at?: string;
+  updated_at?: string;
   name?: string;
   description?: string;
   price?: number;
@@ -103,9 +109,15 @@ export interface Session {
 }
 
 export interface CreateOrderData {
+  total: number;
   shipping_street: string;
   shipping_city: string;
   shipping_postal_code: string;
+  items: {
+    product_id: string;
+    quantity: number;
+    price: number;
+  }[];
 }
 
 export interface ProductFilters {
@@ -205,29 +217,24 @@ class APIService {
     }
   }
 
-  // Auth endpoints
+  // Auth endpoints - updated to match actual API
   async register(userData: RegisterData) {
-    return this.request('/auth/register', {
+    return this.request('/users/register', {
       method: 'POST',
       body: JSON.stringify(userData),
     });
   }
 
   async login(credentials: LoginCredentials) {
-    const data = await this.request('/auth/login', {
+    const data = await this.request('/users/login', {
       method: 'POST',
       body: JSON.stringify(credentials),
     });
     if (data?.token) {
       localStorage.setItem('authToken', data.token);
-      // Получаем данные пользователя после успешного входа
-      try {
-        const user = await this.getCurrentUserFromServer();
-        localStorage.setItem('currentUser', JSON.stringify(user));
-        return { token: data.token, user };
-      } catch (error) {
-        console.warn('Не удалось получить данные пользователя после входа:', error);
-        return data;
+      if (data.user) {
+        localStorage.setItem('currentUser', JSON.stringify(data.user));
+        return { token: data.token, user: data.user };
       }
     }
     return data;
@@ -239,7 +246,12 @@ class APIService {
   }
 
   async getCurrentUserFromServer(): Promise<User> {
-    return this.request('/users/me');
+    // Since there's no /users/me endpoint, get from stored data or fetch user by ID
+    const currentUser = this.getCurrentUser();
+    if (currentUser) {
+      return this.getUserById(currentUser.id);
+    }
+    throw new APIError('Пользователь не найден', 404);
   }
 
   getCurrentUser(): User | null {
@@ -262,7 +274,7 @@ class APIService {
     return !!localStorage.getItem('authToken');
   }
 
-  // User endpoints (для совместимости с существующим кодом)
+  // User endpoints
   async getUsers(): Promise<User[]> {
     return this.request('/users');
   }
@@ -278,11 +290,12 @@ class APIService {
     });
     
     const currentUser = this.getCurrentUser();
-    if (currentUser && currentUser.id === id) {
-      localStorage.setItem('currentUser', JSON.stringify(data));
+    if (currentUser && currentUser.id === id && data.user) {
+      localStorage.setItem('currentUser', JSON.stringify(data.user));
+      return data.user;
     }
     
-    return data;
+    return data.user || data;
   }
 
   async deleteUser(id: string) {
@@ -307,17 +320,19 @@ class APIService {
   }
 
   async createProduct(productData: any) {
-    return this.request('/products', {
+    const response = await this.request('/products', {
       method: 'POST',
       body: JSON.stringify(productData),
     });
+    return response.product || response;
   }
 
   async updateProduct(id: string, productData: any) {
-    return this.request(`/products/${id}`, {
+    const response = await this.request(`/products/${id}`, {
       method: 'PUT',
       body: JSON.stringify(productData),
     });
+    return response.product || response;
   }
 
   async deleteProduct(id: string) {
@@ -332,7 +347,7 @@ class APIService {
   }
 
   async getMyOrders(): Promise<Order[]> {
-    return this.request('/orders');
+    return this.request('/orders/my');
   }
 
   async getOrderById(id: string): Promise<Order> {
@@ -340,17 +355,19 @@ class APIService {
   }
 
   async createOrder(orderData: CreateOrderData): Promise<Order> {
-    return this.request('/orders', {
+    const response = await this.request('/orders', {
       method: 'POST',
       body: JSON.stringify(orderData),
     });
+    return response;
   }
 
   async updateOrderStatus(id: string, status: string) {
-    return this.request(`/orders/${id}/status`, {
+    const response = await this.request(`/orders/${id}/status`, {
       method: 'PUT',
       body: JSON.stringify({ status }),
     });
+    return response.order || response;
   }
 
   async deleteOrder(id: string) {
@@ -359,28 +376,44 @@ class APIService {
     });
   }
 
-  // Cart endpoints
+  // Cart endpoints - updated to match actual API structure
   async getCart(sessionId?: string): Promise<CartItem[]> {
-    const params = sessionId ? `?session_id=${sessionId}` : '';
-    return this.request(`/cart${params}`);
+    const cartItems = await this.request('/cart');
+    // Transform API response to expected format
+    return cartItems.map((item: any) => ({
+      id: item.cart_item_id,
+      cart_item_id: item.cart_item_id,
+      product_id: item.product_id,
+      quantity: item.quantity,
+      created_at: '',
+      updated_at: '',
+      name: item.product_name,
+      price: item.product_price,
+      image_url: item.product_image_url,
+      product_name: item.product_name,
+      product_price: item.product_price,
+      product_image_url: item.product_image_url
+    }));
   }
 
   async addToCart(productId: string, quantity: number): Promise<CartItem> {
-    return this.request('/cart', {
+    const response = await this.request('/cart', {
       method: 'POST',
       body: JSON.stringify({ product_id: productId, quantity }),
     });
+    return response.cartItem || response;
   }
 
   async updateCartItem(id: string, quantity: number) {
-    return this.request(`/cart/${id}`, {
+    const response = await this.request(`/cart/${id}`, {
       method: 'PUT',
       body: JSON.stringify({ quantity }),
     });
+    return response.cartItem || response;
   }
 
-  async removeFromCart(productId: string) {
-    return this.request(`/cart/${productId}`, {
+  async removeFromCart(cartItemId: string) {
+    return this.request(`/cart/${cartItemId}`, {
       method: 'DELETE',
     });
   }
