@@ -4,16 +4,18 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import ErrorPage from './ErrorPage';
-import { Order } from '@/services/api'; // Use API Order type
+import { Order } from '@/services/api';
 import { apiService, APIError } from '@/services/api';
 import { useToast } from '@/hooks/use-toast';
-import { Package, Clock, CheckCircle, XCircle, Truck, AlertCircle } from 'lucide-react';
+import { Package, Clock, CheckCircle, XCircle, Truck, AlertCircle, ChevronDown, ChevronUp } from 'lucide-react';
 
 const OrdersManagement = () => {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [apiError, setApiError] = useState<string | null>(null);
+  const [expandedOrders, setExpandedOrders] = useState<Set<string>>(new Set());
   const { toast } = useToast();
 
   useEffect(() => {
@@ -36,6 +38,38 @@ const OrdersManagement = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const loadOrderItems = async (orderId: string) => {
+    try {
+      const orderWithItems = await apiService.getOrderById(orderId);
+      setOrders(prev => prev.map(order => 
+        order.id === orderId ? { ...order, items: orderWithItems.items } : order
+      ));
+    } catch (error) {
+      if (error instanceof APIError) {
+        toast({
+          title: "Ошибка",
+          description: "Не удалось загрузить товары заказа",
+          variant: "destructive"
+        });
+      }
+    }
+  };
+
+  const toggleOrderExpansion = (orderId: string) => {
+    const newExpanded = new Set(expandedOrders);
+    if (newExpanded.has(orderId)) {
+      newExpanded.delete(orderId);
+    } else {
+      newExpanded.add(orderId);
+      // Загружаем товары заказа, если они еще не загружены
+      const order = orders.find(o => o.id === orderId);
+      if (order && !order.items) {
+        loadOrderItems(orderId);
+      }
+    }
+    setExpandedOrders(newExpanded);
   };
 
   const handleStatusChange = async (orderId: string, newStatus: string) => {
@@ -196,10 +230,53 @@ const OrdersManagement = () => {
                       <p className="text-sm text-gray-600">{order.shipping_city}, {order.shipping_postal_code}</p>
                     </div>
                   </div>
+
+                  {/* Товары в заказе */}
+                  <Collapsible>
+                    <CollapsibleTrigger 
+                      className="flex items-center gap-2 text-sm font-medium text-blue-600 hover:text-blue-800"
+                      onClick={() => toggleOrderExpansion(order.id)}
+                    >
+                      {expandedOrders.has(order.id) ? (
+                        <>
+                          <ChevronUp size={16} />
+                          Скрыть товары
+                        </>
+                      ) : (
+                        <>
+                          <ChevronDown size={16} />
+                          Показать товары
+                        </>
+                      )}
+                    </CollapsibleTrigger>
+                    <CollapsibleContent className="mt-3">
+                      {order.items ? (
+                        <div className="space-y-2 p-4 bg-gray-50 rounded-lg">
+                          {order.items.map((item) => (
+                            <div key={item.id} className="flex justify-between items-center py-2 border-b border-gray-200 last:border-b-0">
+                              <div>
+                                <p className="font-medium">ID товара: {item.product_id}</p>
+                                <p className="text-sm text-gray-600">
+                                  Количество: {item.quantity} × {Math.round(item.price)} ₽
+                                </p>
+                              </div>
+                              <p className="font-semibold">
+                                {Math.round(item.price * item.quantity)} ₽
+                              </p>
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <div className="p-4 bg-gray-50 rounded-lg text-center">
+                          <p className="text-sm text-gray-500">Загрузка товаров...</p>
+                        </div>
+                      )}
+                    </CollapsibleContent>
+                  </Collapsible>
                   
                   <div className="flex justify-between items-center pt-4 border-t">
                     <span className="font-medium">Итого:</span>
-                    <span className="text-xl font-bold">{order.total} ₽</span>
+                    <span className="text-xl font-bold">{Math.round(order.total)} ₽</span>
                   </div>
                 </div>
               </CardContent>
