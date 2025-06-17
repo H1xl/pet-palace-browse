@@ -3,7 +3,7 @@ export interface Product {
   id: string;
   name: string;
   description: string;
-  price: string; // API возвращает строку
+  price: number; // Changed from string to number to match API
   image_url?: string;
   category: string;
   pet_type: 'cat' | 'dog' | 'bird' | 'fish' | 'rodent';
@@ -18,8 +18,14 @@ export interface Product {
   updated_at: string;
 }
 
-export interface CartItem extends Product {
+export interface CartItem {
+  id: string;
+  user_id?: string;
+  session_id?: string;
+  product_id: string;
   quantity: number;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface ProductFilters {

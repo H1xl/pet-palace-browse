@@ -1,10 +1,11 @@
+
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import ErrorPage from './ErrorPage';
-import { Order } from '@/types/order';
+import { Order } from '@/services/api'; // Use API Order type
 import { apiService, APIError } from '@/services/api';
 import { useToast } from '@/hooks/use-toast';
 import { Package, Clock, CheckCircle, XCircle, Truck, AlertCircle } from 'lucide-react';
@@ -79,7 +80,6 @@ const OrdersManagement = () => {
 
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case 'pending': return <Clock className="w-4 h-4" />;
       case 'processing': return <Package className="w-4 h-4" />;
       case 'shipped': return <Truck className="w-4 h-4" />;
       case 'delivered': return <CheckCircle className="w-4 h-4" />;
@@ -90,7 +90,6 @@ const OrdersManagement = () => {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'pending': return 'bg-yellow-100 text-yellow-800';
       case 'processing': return 'bg-blue-100 text-blue-800';
       case 'shipped': return 'bg-purple-100 text-purple-800';
       case 'delivered': return 'bg-green-100 text-green-800';
@@ -101,7 +100,6 @@ const OrdersManagement = () => {
 
   const getStatusText = (status: string) => {
     switch (status) {
-      case 'pending': return 'Ожидает';
       case 'processing': return 'Обрабатывается';
       case 'shipped': return 'Отправлен';
       case 'delivered': return 'Доставлен';
@@ -157,7 +155,7 @@ const OrdersManagement = () => {
                       </Badge>
                     </CardTitle>
                     <p className="text-sm text-gray-600 mt-1">
-                      {new Date(order.createdAt).toLocaleDateString('ru-RU')} в {new Date(order.createdAt).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })}
+                      {new Date(order.created_at).toLocaleDateString('ru-RU')} в {new Date(order.created_at).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })}
                     </p>
                   </div>
                   <div className="flex gap-2">
@@ -169,7 +167,6 @@ const OrdersManagement = () => {
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="pending">Ожидает</SelectItem>
                         <SelectItem value="processing">Обрабатывается</SelectItem>
                         <SelectItem value="shipped">Отправлен</SelectItem>
                         <SelectItem value="delivered">Доставлен</SelectItem>
@@ -191,28 +188,12 @@ const OrdersManagement = () => {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <h4 className="font-medium mb-2">Информация о клиенте</h4>
-                      <p className="text-sm text-gray-600">{order.customerName}</p>
-                      <p className="text-sm text-gray-600">{order.customerEmail}</p>
-                      <p className="text-sm text-gray-600">{order.customerPhone}</p>
+                      <p className="text-sm text-gray-600">Пользователь ID: {order.user_id}</p>
                     </div>
                     <div>
                       <h4 className="font-medium mb-2">Адрес доставки</h4>
-                      <p className="text-sm text-gray-600">{order.shippingAddress}</p>
-                    </div>
-                  </div>
-                  
-                  <div>
-                    <h4 className="font-medium mb-2">Товары</h4>
-                    <div className="space-y-2">
-                      {order.items.map((item, index) => (
-                        <div key={index} className="flex justify-between items-center py-2 px-4 bg-gray-50 rounded">
-                          <div>
-                            <p className="font-medium">{item.name}</p>
-                            <p className="text-sm text-gray-600">Количество: {item.quantity}</p>
-                          </div>
-                          <p className="font-medium">{item.price * item.quantity} ₽</p>
-                        </div>
-                      ))}
+                      <p className="text-sm text-gray-600">{order.shipping_street}</p>
+                      <p className="text-sm text-gray-600">{order.shipping_city}, {order.shipping_postal_code}</p>
                     </div>
                   </div>
                   

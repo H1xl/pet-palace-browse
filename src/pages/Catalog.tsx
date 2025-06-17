@@ -4,7 +4,8 @@ import ProductGrid from "@/components/ProductGrid";
 import Footer from "@/components/Footer";
 import FiltersModal from "@/components/FiltersModal";
 import ProductDetailModal from "@/components/ProductDetailModal";
-import { Product, ProductFilters, ProductSort, CartItem } from "@/types/product";
+import { Product, ProductFilters, ProductSort } from "@/types/product";
+import { CartItem } from "@/services/api"; // Use API CartItem type
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -56,7 +57,7 @@ const Catalog = () => {
       setFilteredProducts(productsData);
       
       // Устанавливаем максимальную цену на основе загруженных товаров
-      const maxPrice = Math.max(...productsData.map((p: Product) => parseFloat(p.price)));
+      const maxPrice = Math.max(...productsData.map((p: Product) => p.price)); // Changed from parseFloat
       setFilters(prev => ({
         ...prev,
         priceRange: [0, maxPrice]
@@ -110,7 +111,7 @@ const Catalog = () => {
     }
   }, [cartItems, cartKey, isLoggedIn]);
 
-  const maxPrice = products.length > 0 ? Math.max(...products.map(p => parseFloat(p.price))) : 10000;
+  const maxPrice = products.length > 0 ? Math.max(...products.map(p => p.price)) : 10000; // Changed from parseFloat
 
   const applyFiltersAndSort = () => {
     setLoading(true);
@@ -140,7 +141,7 @@ const Catalog = () => {
 
       // Фильтрация по цене
       result = result.filter(product => {
-        const price = parseFloat(product.price);
+        const price = product.price; // Already a number
         const finalPrice = product.discount > 0 
           ? price * (1 - product.discount / 100)
           : price;
@@ -168,8 +169,8 @@ const Catalog = () => {
 
         switch (sort.field) {
           case 'price':
-            aValue = a.discount > 0 ? parseFloat(a.price) * (1 - a.discount / 100) : parseFloat(a.price);
-            bValue = b.discount > 0 ? parseFloat(b.price) * (1 - b.discount / 100) : parseFloat(b.price);
+            aValue = a.discount > 0 ? a.price * (1 - a.discount / 100) : a.price; // Already numbers
+            bValue = b.discount > 0 ? b.price * (1 - b.discount / 100) : b.price;
             break;
           case 'created_at':
             aValue = new Date(a.created_at);
@@ -241,7 +242,7 @@ const Catalog = () => {
       } else {
         // Локальное добавление для гостей
         setCartItems(prevItems => {
-          const existingItemIndex = prevItems.findIndex(item => item.id === product.id);
+          const existingItemIndex = prevItems.findIndex(item => item.product_id === product.id);
           if (existingItemIndex > -1) {
             const updatedItems = [...prevItems];
             updatedItems[existingItemIndex] = {
@@ -250,7 +251,14 @@ const Catalog = () => {
             };
             return updatedItems;
           } else {
-            return [...prevItems, { ...product, quantity: 1 }];
+            return [...prevItems, { 
+              id: crypto.randomUUID(),
+              product_id: product.id, 
+              quantity: 1,
+              user_id: currentUser?.id,
+              created_at: new Date().toISOString(),
+              updated_at: new Date().toISOString()
+            }];
           }
         });
       }

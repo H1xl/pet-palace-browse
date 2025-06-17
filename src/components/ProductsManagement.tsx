@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -138,7 +137,7 @@ const ProductsManagement = () => {
     return {
       name: product.name,
       description: product.description,
-      price: parseFloat(product.price),
+      price: product.price, // Already a number
       image_url: product.image_url,
       category: product.category,
       pet_type: product.pet_type,
@@ -234,7 +233,7 @@ const ProductsManagement = () => {
               
               <div className="space-y-2">
                 <div className="flex justify-between items-center">
-                  <span className="font-semibold text-lg">{parseFloat(product.price).toFixed(2)} ₽</span>
+                  <span className="font-semibold text-lg">{product.price.toFixed(2)} ₽</span>
                   {product.discount > 0 && (
                     <Badge className="bg-red-100 text-red-800">-{product.discount}%</Badge>
                   )}

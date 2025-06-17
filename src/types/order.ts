@@ -1,28 +1,27 @@
 
-import { Product } from './product';
-
 export interface OrderItem {
   id: string;
-  name: string;
-  price: number;
+  order_id: string;
+  product_id: string;
   quantity: number;
+  price: number;
+  created_at: string;
+}
+
+export interface Order {
+  id: string;
+  user_id: string;
+  total: number;
+  status: 'processing' | 'shipped' | 'delivered' | 'cancelled';
+  shipping_street: string;
+  shipping_city: string;
+  shipping_postal_code: string;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface ShippingAddress {
   street: string;
   city: string;
   postalCode: string;
-}
-
-export interface Order {
-  id: string;
-  userId: string;
-  items: OrderItem[];
-  total: number;
-  status: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
-  createdAt: string;
-  customerName: string;
-  customerEmail: string;
-  customerPhone: string;
-  shippingAddress: string; // API returns string, not object
 }

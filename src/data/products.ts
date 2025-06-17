@@ -4,7 +4,7 @@ export const products: Product[] = [
   {
     id: '1',
     name: 'Корм для собак Royal Canin Adult',
-    price: '2500.00',
+    price: 2500.00,
     description: 'Полнорационный сухой корм для взрослых собак средних пород',
     image_url: 'https://images.unsplash.com/photo-1589941013453-ec89f33b5e95?w=300&h=300&fit=crop',
     category: 'Корм для собак',
@@ -27,7 +27,7 @@ export const products: Product[] = [
   {
     id: '2',
     name: 'Игрушка-мышка для кошек',
-    price: '450.00',
+    price: 450.00,
     description: 'Мягкая игрушка-мышка с кошачьей мятой для активных игр',
     image_url: 'https://images.unsplash.com/photo-1574144611937-0df059b5ef3e?w=300&h=300&fit=crop',
     category: 'Игрушки для кошек',
@@ -49,7 +49,7 @@ export const products: Product[] = [
   {
     id: '3',
     name: 'Клетка для попугаев средних размеров',
-    price: '8900.00',
+    price: 8900.00,
     description: 'Просторная клетка для попугаев с удобными жердочками и кормушками',
     image_url: 'https://images.unsplash.com/photo-1452570053594-1b985d6ea890?w=300&h=300&fit=crop',
     category: 'Клетки для птиц',
@@ -71,7 +71,7 @@ export const products: Product[] = [
   {
     id: '4',
     name: 'Корм для рыб Tropical',
-    price: '680.00',
+    price: 680.00,
     description: 'Универсальный корм в хлопьях для тропических рыб',
     image_url: 'https://images.unsplash.com/photo-1524704654690-b56c05c78a00?w=300&h=300&fit=crop',
     category: 'Корм для рыб',
@@ -94,7 +94,7 @@ export const products: Product[] = [
   {
     id: '5',
     name: 'Лоток для грызунов с наполнителем',
-    price: '1200.00',
+    price: 1200.00,
     description: 'Удобный лоток для грызунов с впитывающим наполнителем',
     category: 'Аксессуары для грызунов',
     pet_type: 'rodent',
@@ -115,7 +115,7 @@ export const products: Product[] = [
   {
     id: '6',
     name: 'Шампунь для собак гипоаллергенный',
-    price: '890.00',
+    price: 890.00,
     description: 'Мягкий гипоаллергенный шампунь для чувствительной кожи собак',
     image_url: 'https://images.unsplash.com/photo-1601758228041-f3b2795255f1?w=300&h=300&fit=crop',
     category: 'Уход за собаками',
@@ -135,11 +135,10 @@ export const products: Product[] = [
     created_at: '2024-01-30T00:00:00.000Z',
     updated_at: '2024-01-30T00:00:00.000Z'
   },
-  // Новые 20 товаров
   {
     id: '7',
     name: 'Корм для кошек Whiskas с курицей',
-    price: '1800.00',
+    price: 1800.00,
     description: 'Сбалансированный корм для взрослых кошек с курицей',
     image_url: 'https://images.unsplash.com/photo-1583337130417-3346a1be7dee?w=300&h=300&fit=crop',
     category: 'Корм для кошек',
@@ -161,7 +160,7 @@ export const products: Product[] = [
   {
     id: '8',
     name: 'Мячик для собак резиновый',
-    price: '320.00',
+    price: 320.00,
     description: 'Прочный резиновый мячик для активных игр с собакой',
     image_url: 'https://images.unsplash.com/photo-1551717743-49959800b1f6?w=300&h=300&fit=crop',
     category: 'Игрушки для собак',
@@ -182,7 +181,7 @@ export const products: Product[] = [
   {
     id: '9',
     name: 'Домик для кошек мягкий',
-    price: '2400.00',
+    price: 2400.00,
     description: 'Уютный мягкий домик для отдыха кошек',
     image_url: 'https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?w=300&h=300&fit=crop',
     category: 'Домики для кошек',
@@ -203,7 +202,7 @@ export const products: Product[] = [
   {
     id: '10',
     name: 'Корм для птиц зерновая смесь',
-    price: '450.00',
+    price: 450.00,
     description: 'Питательная зерновая смесь для декоративных птиц',
     image_url: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=300&h=300&fit=crop',
     category: 'Корм для птиц',
@@ -225,7 +224,7 @@ export const products: Product[] = [
   {
     id: '11',
     name: 'Переноска для собак средних пород',
-    price: '3200.00',
+    price: 3200.00,
     description: 'Комфортная переноска для транспортировки собак',
     image_url: 'https://images.unsplash.com/photo-1583512603805-3cc6b41f3edb?w=300&h=300&fit=crop',
     category: 'Переноски для собак',
@@ -246,7 +245,7 @@ export const products: Product[] = [
   {
     id: '12',
     name: 'Когтеточка для кошек угловая',
-    price: '1650.00',
+    price: 1650.00,
     description: 'Угловая когтеточка из натурального сизаля',
     image_url: 'https://images.unsplash.com/photo-1606583292399-ab27a6df58b0?w=300&h=300&fit=crop',
     category: 'Аксессуары для кошек',
@@ -267,7 +266,7 @@ export const products: Product[] = [
   {
     id: '13',
     name: 'Витамины для собак Beaphar',
-    price: '780.00',
+    price: 780.00,
     description: 'Мультивитаминный комплекс для укрепления здоровья собак',
     category: 'Витамины для собак',
     pet_type: 'dog',
@@ -287,7 +286,7 @@ export const products: Product[] = [
   {
     id: '14',
     name: 'Аквариум прямоугольный 50л',
-    price: '4500.00',
+    price: 4500.00,
     description: 'Стеклянный аквариум с LED подсветкой',
     image_url: 'https://images.unsplash.com/photo-1520637836862-4d197d17c155?w=300&h=300&fit=crop',
     category: 'Аквариумы',
@@ -308,7 +307,7 @@ export const products: Product[] = [
   {
     id: '15',
     name: 'Колесо для хомяков',
-    price: '560.00',
+    price: 560.00,
     description: 'Бесшумное беговое колесо для грызунов',
     image_url: 'https://images.unsplash.com/photo-1425082661705-1834bfd09dca?w=300&h=300&fit=crop',
     category: 'Игрушки для грызунов',
@@ -329,7 +328,7 @@ export const products: Product[] = [
   {
     id: '16',
     name: 'Ошейник для кошек с колокольчиком',
-    price: '280.00',
+    price: 280.00,
     description: 'Мягкий ошейник с безопасной застежкой',
     image_url: 'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=300&h=300&fit=crop',
     category: 'Ошейники для кошек',
@@ -350,7 +349,7 @@ export const products: Product[] = [
   {
     id: '17',
     name: 'Корм для собак крупных пород',
-    price: '3200.00',
+    price: 3200.00,
     description: 'Специализированный корм для крупных пород собак',
     image_url: 'https://images.unsplash.com/photo-1601758124510-52d02ddb7cbd?w=300&h=300&fit=crop',
     category: 'Корм для собак',
@@ -372,7 +371,7 @@ export const products: Product[] = [
   {
     id: '18',
     name: 'Игровой комплекс для птиц',
-    price: '1800.00',
+    price: 1800.00,
     description: 'Многоуровневый игровой комплекс с лестницами и качелями',
     image_url: 'https://images.unsplash.com/photo-1551717743-49959800b1f6?w=300&h=300&fit=crop',
     category: 'Игрушки для птиц',
@@ -393,7 +392,7 @@ export const products: Product[] = [
   {
     id: '19',
     name: 'Миска для кошек двойная',
-    price: '490.00',
+    price: 490.00,
     description: 'Двойная миска из нержавеющей стали',
     image_url: 'https://images.unsplash.com/photo-1591769225440-811ad7d6eab3?w=300&h=300&fit=crop',
     category: 'Миски для кошек',
@@ -414,7 +413,7 @@ export const products: Product[] = [
   {
     id: '20',
     name: 'Поводок для собак светоотражающий',
-    price: '650.00',
+    price: 650.00,
     description: 'Прочный поводок с светоотражающими элементами',
     image_url: 'https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=300&h=300&fit=crop',
     category: 'Поводки для собак',
@@ -435,7 +434,7 @@ export const products: Product[] = [
   {
     id: '21',
     name: 'Наполнитель для кошачьего туалета',
-    price: '380.00',
+    price: 380.00,
     description: 'Комкующийся наполнитель с контролем запаха',
     category: 'Наполнители',
     pet_type: 'cat',
@@ -456,7 +455,7 @@ export const products: Product[] = [
   {
     id: '22',
     name: 'Лакомство для собак с мясом',
-    price: '420.00',
+    price: 420.00,
     description: 'Мягкие лакомства для дрессировки и поощрения',
     image_url: 'https://images.unsplash.com/photo-1583337130417-3346a1be7dee?w=300&h=300&fit=crop',
     category: 'Лакомства для собак',
@@ -478,7 +477,7 @@ export const products: Product[] = [
   {
     id: '23',
     name: 'Декорации для аквариума',
-    price: '850.00',
+    price: 850.00,
     description: 'Набор декоративных элементов для оформления аквариума',
     image_url: 'https://images.unsplash.com/photo-1520637736862-4d197d17c155?w=300&h=300&fit=crop',
     category: 'Декорации для аквариума',
@@ -499,7 +498,7 @@ export const products: Product[] = [
   {
     id: '24',
     name: 'Домик для грызунов деревянный',
-    price: '1200.00',
+    price: 1200.00,
     description: 'Натуральный деревянный домик для хомяков и морских свинок',
     image_url: 'https://images.unsplash.com/photo-1425082661705-1834bfd09dca?w=300&h=300&fit=crop',
     category: 'Домики для грызунов',
@@ -520,7 +519,7 @@ export const products: Product[] = [
   {
     id: '25',
     name: 'Спрей от блох для кошек',
-    price: '520.00',
+    price: 520.00,
     description: 'Эффективный спрей для защиты от блох и клещей',
     category: 'Средства от паразитов',
     pet_type: 'cat',
@@ -541,7 +540,7 @@ export const products: Product[] = [
   {
     id: '26',
     name: 'Комбинезон для собак зимний',
-    price: '1850.00',
+    price: 1850.00,
     description: 'Теплый зимний комбинезон для прогулок в холодную погоду',
     image_url: 'https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=300&h=300&fit=crop',
     category: 'Одежда для собак',
