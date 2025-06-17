@@ -28,7 +28,7 @@ const CartPreview: React.FC<CartPreviewProps> = ({
 }) => {
   const totalItems = cartItems.reduce((total, item) => total + item.quantity, 0);
   const subtotal = cartItems.reduce((total, item) => {
-    const price = parseFloat(item.price);
+    const price = item.price; // Already a number
     const finalPrice = item.discount > 0 
       ? Math.round(price * (1 - item.discount / 100)) 
       : price;
@@ -76,14 +76,14 @@ const CartPreview: React.FC<CartPreviewProps> = ({
                     {item.discount > 0 ? (
                       <>
                         <span className="text-sm font-semibold text-pet-blue">
-                          {Math.round(parseFloat(item.price) * (1 - item.discount / 100))} ₽
+                          {Math.round(item.price * (1 - item.discount / 100))} ₽
                         </span>
                         <span className="text-xs text-gray-400 line-through">
-                          {parseFloat(item.price)} ₽
+                          {item.price} ₽
                         </span>
                       </>
                     ) : (
-                      <span className="text-sm font-semibold text-pet-blue">{parseFloat(item.price)} ₽</span>
+                      <span className="text-sm font-semibold text-pet-blue">{item.price} ₽</span>
                     )}
                   </div>
                   <div className="flex items-center gap-2 mt-2">

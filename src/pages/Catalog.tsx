@@ -4,8 +4,7 @@ import ProductGrid from "@/components/ProductGrid";
 import Footer from "@/components/Footer";
 import FiltersModal from "@/components/FiltersModal";
 import ProductDetailModal from "@/components/ProductDetailModal";
-import { Product, ProductFilters, ProductSort } from "@/types/product";
-import { CartItem } from "@/services/api"; // Use API CartItem type
+import { Product, ProductFilters, ProductSort, CartItem } from "@/types/product";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -57,7 +56,7 @@ const Catalog = () => {
       setFilteredProducts(productsData);
       
       // Устанавливаем максимальную цену на основе загруженных товаров
-      const maxPrice = Math.max(...productsData.map((p: Product) => p.price)); // Changed from parseFloat
+      const maxPrice = Math.max(...productsData.map((p: Product) => p.price));
       setFilters(prev => ({
         ...prev,
         priceRange: [0, maxPrice]
@@ -111,7 +110,7 @@ const Catalog = () => {
     }
   }, [cartItems, cartKey, isLoggedIn]);
 
-  const maxPrice = products.length > 0 ? Math.max(...products.map(p => p.price)) : 10000; // Changed from parseFloat
+  const maxPrice = products.length > 0 ? Math.max(...products.map(p => p.price)) : 10000;
 
   const applyFiltersAndSort = () => {
     setLoading(true);
@@ -257,7 +256,16 @@ const Catalog = () => {
               quantity: 1,
               user_id: currentUser?.id,
               created_at: new Date().toISOString(),
-              updated_at: new Date().toISOString()
+              updated_at: new Date().toISOString(),
+              // Product information for display
+              name: product.name,
+              description: product.description,
+              price: product.price,
+              image_url: product.image_url,
+              category: product.category,
+              discount: product.discount,
+              is_new: product.is_new,
+              in_stock: product.in_stock
             }];
           }
         });

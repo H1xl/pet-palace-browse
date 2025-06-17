@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
@@ -65,8 +66,8 @@ const Cart = () => {
   const calculateTotal = () => {
     return cartItems.reduce((total, item) => {
       const itemPrice = item.discount > 0 
-        ? parseFloat(item.price) * (1 - item.discount / 100)
-        : parseFloat(item.price);
+        ? item.price * (1 - item.discount / 100) // price is already a number
+        : item.price;
       return total + (itemPrice * item.quantity);
     }, 0);
   };
@@ -146,8 +147,8 @@ const Cart = () => {
             <div className="lg:col-span-2 space-y-4">
               {cartItems.map((item, index) => {
                 const itemPrice = item.discount > 0 
-                  ? parseFloat(item.price) * (1 - item.discount / 100)
-                  : parseFloat(item.price);
+                  ? item.price * (1 - item.discount / 100) // price is already a number
+                  : item.price;
                   
                 return (
                   <Card key={item.id} className="animate-fade-in transition-all duration-200 hover:shadow-md" style={{ animationDelay: `${index * 100}ms` }}>
@@ -180,7 +181,7 @@ const Cart = () => {
                             {item.discount > 0 && (
                               <>
                                 <span className="text-sm text-gray-400 line-through">
-                                  {parseFloat(item.price)} ₽
+                                  {item.price} ₽
                                 </span>
                                 <Badge className="bg-pet-orange text-xs">
                                   -{item.discount}%

@@ -3,7 +3,7 @@ export interface Product {
   id: string;
   name: string;
   description: string;
-  price: number; // Changed from string to number to match API
+  price: number;
   image_url?: string;
   category: string;
   pet_type: 'cat' | 'dog' | 'bird' | 'fish' | 'rodent';
@@ -13,11 +13,12 @@ export interface Product {
   in_stock: boolean;
   brand?: string;
   weight?: string;
-  specifications?: Record<string, string> | string;
+  specifications?: object; // Changed to match API
   created_at: string;
   updated_at: string;
 }
 
+// Extended CartItem that includes product information for display
 export interface CartItem {
   id: string;
   user_id?: string;
@@ -26,6 +27,15 @@ export interface CartItem {
   quantity: number;
   created_at: string;
   updated_at: string;
+  // Product information for display
+  name: string;
+  description: string;
+  price: number;
+  image_url?: string;
+  category: string;
+  discount: number;
+  is_new: boolean;
+  in_stock: boolean;
 }
 
 export interface ProductFilters {
