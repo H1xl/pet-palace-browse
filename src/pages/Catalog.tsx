@@ -250,14 +250,18 @@ const Catalog = () => {
             };
             return updatedItems;
           } else {
-            return [...prevItems, { 
-              id: crypto.randomUUID(),
-              product_id: product.id, 
+            const newCartItem: CartItem = {
+              cart_item_id: crypto.randomUUID(),
+              product_id: product.id,
               quantity: 1,
+              product_name: product.name,
+              product_price: product.price,
+              product_image_url: product.image_url,
+              // Optional properties for backward compatibility
+              id: crypto.randomUUID(),
               user_id: currentUser?.id,
               created_at: new Date().toISOString(),
               updated_at: new Date().toISOString(),
-              // Product information for display
               name: product.name,
               description: product.description,
               price: product.price,
@@ -266,7 +270,8 @@ const Catalog = () => {
               discount: product.discount,
               is_new: product.is_new,
               in_stock: product.in_stock
-            }];
+            };
+            return [...prevItems, newCartItem];
           }
         });
       }
