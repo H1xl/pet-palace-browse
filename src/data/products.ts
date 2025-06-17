@@ -151,8 +151,8 @@ export const products: Product[] = [
     brand: 'Whiskas',
     weight: '10 кг',
     specifications: {
-      'С курицей': true,
-      'Для взрослых кошек': true,
+      'С курицей': 'да',
+      'Для взрослых кошек': 'да',
       'Особенности': 'Витамины и минералы'
     },
     created_at: '2024-02-20T00:00:00.000Z',
