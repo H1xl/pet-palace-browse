@@ -22,6 +22,7 @@ const Catalog = () => {
   const [loading, setLoading] = useState(false);
   const [isLoadingProducts, setIsLoadingProducts] = useState(true);
   const [apiError, setApiError] = useState<string | null>(null);
+  const [addingToCart, setAddingToCart] = useState<string | null>(null);
   const { toast } = useToast();
 
   const currentUser = apiService.getCurrentUser();
@@ -233,7 +234,13 @@ const Catalog = () => {
       return;
     }
 
+    if (addingToCart === product.id) {
+      return; // Предотвращаем повторные клики
+    }
+
     try {
+      setAddingToCart(product.id);
+      
       if (isLoggedIn) {
         // Добавляем через API
         await apiService.addToCart(product.id, 1);
@@ -288,6 +295,8 @@ const Catalog = () => {
           variant: "destructive"
         });
       }
+    } finally {
+      setAddingToCart(null);
     }
   };
 
@@ -448,6 +457,7 @@ const Catalog = () => {
         onClose={() => setSelectedProduct(null)}
         onAddToCart={handleAddToCart}
         showAddToCart={isLoggedIn}
+        addingToCart={addingToCart === selectedProduct?.id}
       />
       
       <div className="opacity-0 animate-fade-in animate-delay-300">

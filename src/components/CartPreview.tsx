@@ -20,6 +20,7 @@ import { useNavigate } from 'react-router-dom';
 const CartPreview = () => {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [loading, setLoading] = useState(false);
+  const [updating, setUpdating] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
 
@@ -46,7 +47,10 @@ const CartPreview = () => {
   }, [isLoggedIn]);
 
   const handleRemoveFromCart = async (cartItemId: string) => {
+    if (updating) return;
+    
     try {
+      setUpdating(true);
       await apiService.removeFromCart(cartItemId);
       setCartItems(prev => prev.filter(item => item.cart_item_id !== cartItemId));
       toast({
@@ -61,16 +65,21 @@ const CartPreview = () => {
           variant: "destructive"
         });
       }
+    } finally {
+      setUpdating(false);
     }
   };
 
   const handleUpdateQuantity = async (cartItemId: string, quantity: number) => {
+    if (updating) return;
+    
     if (quantity <= 0) {
       handleRemoveFromCart(cartItemId);
       return;
     }
 
     try {
+      setUpdating(true);
       await apiService.updateCartItem(cartItemId, quantity);
       setCartItems(prev => 
         prev.map(item => 
@@ -85,6 +94,8 @@ const CartPreview = () => {
           variant: "destructive"
         });
       }
+    } finally {
+      setUpdating(false);
     }
   };
 
@@ -156,7 +167,7 @@ const CartPreview = () => {
                       size="icon" 
                       className="h-7 w-7 rounded-full" 
                       onClick={() => handleUpdateQuantity(item.cart_item_id, Math.max(1, item.quantity - 1))}
-                      disabled={item.quantity <= 1}
+                      disabled={item.quantity <= 1 || updating}
                     >
                       -
                     </Button>
@@ -166,6 +177,7 @@ const CartPreview = () => {
                       size="icon" 
                       className="h-7 w-7 rounded-full" 
                       onClick={() => handleUpdateQuantity(item.cart_item_id, item.quantity + 1)}
+                      disabled={updating}
                     >
                       +
                     </Button>
@@ -174,6 +186,7 @@ const CartPreview = () => {
                       size="icon" 
                       className="ml-auto h-8 w-8 text-gray-400 hover:text-destructive" 
                       onClick={() => handleRemoveFromCart(item.cart_item_id)}
+                      disabled={updating}
                     >
                       <Trash2 size={16} />
                     </Button>

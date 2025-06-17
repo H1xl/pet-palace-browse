@@ -17,11 +17,6 @@ const Cart = () => {
   const [loading, setLoading] = useState(true);
   const [apiError, setApiError] = useState<string | null>(null);
   const [checkoutLoading, setCheckoutLoading] = useState(false);
-  const [shippingData, setShippingData] = useState({
-    street: '',
-    city: '',
-    postal_code: ''
-  });
   const { toast } = useToast();
   const navigate = useNavigate();
 
@@ -99,7 +94,10 @@ const Cart = () => {
 
   const clearCart = async () => {
     try {
-      await apiService.clearCart();
+      // Удаляем каждый товар отдельно вместо использования clearCart API
+      for (const item of cartItems) {
+        await apiService.removeFromCart(item.cart_item_id);
+      }
       setCartItems([]);
       toast({
         title: "Корзина очищена",
@@ -142,23 +140,14 @@ const Cart = () => {
       return;
     }
 
-    if (!shippingData.street || !shippingData.city || !shippingData.postal_code) {
-      toast({
-        title: "Заполните адрес доставки",
-        description: "Все поля адреса обязательны для заполнения",
-        variant: "destructive"
-      });
-      return;
-    }
-
     try {
       setCheckoutLoading(true);
       
       const orderData: CreateOrderData = {
         total: calculateTotal(),
-        shipping_street: shippingData.street,
-        shipping_city: shippingData.city,
-        shipping_postal_code: shippingData.postal_code,
+        shipping_street: "Не указан",
+        shipping_city: "Не указан", 
+        shipping_postal_code: "000000",
         items: cartItems.map(item => ({
           product_id: item.product_id,
           quantity: item.quantity,
@@ -167,7 +156,11 @@ const Cart = () => {
       };
 
       await apiService.createOrder(orderData);
-      await apiService.clearCart();
+      
+      // Очищаем корзину после успешного создания заказа
+      for (const item of cartItems) {
+        await apiService.removeFromCart(item.cart_item_id);
+      }
       setCartItems([]);
       
       toast({
@@ -341,39 +334,6 @@ const Cart = () => {
             
             {/* Оформление заказа */}
             <div className="space-y-4">
-              {/* Адрес доставки */}
-              <Card className="animate-fade-in">
-                <CardHeader>
-                  <CardTitle>Адрес доставки</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div>
-                    <label className="text-sm font-medium">Улица и дом</label>
-                    <Input
-                      placeholder="ул. Примерная, д. 1"
-                      value={shippingData.street}
-                      onChange={(e) => setShippingData(prev => ({ ...prev, street: e.target.value }))}
-                    />
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium">Город</label>
-                    <Input
-                      placeholder="Москва"
-                      value={shippingData.city}
-                      onChange={(e) => setShippingData(prev => ({ ...prev, city: e.target.value }))}
-                    />
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium">Почтовый индекс</label>
-                    <Input
-                      placeholder="123456"
-                      value={shippingData.postal_code}
-                      onChange={(e) => setShippingData(prev => ({ ...prev, postal_code: e.target.value }))}
-                    />
-                  </div>
-                </CardContent>
-              </Card>
-
               {/* Итоговая информация */}
               <Card className="animate-fade-in">
                 <CardHeader>

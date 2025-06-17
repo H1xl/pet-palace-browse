@@ -11,8 +11,22 @@ import { apiService, APIError } from '@/services/api';
 import { useToast } from '@/hooks/use-toast';
 import { Package, Clock, CheckCircle, XCircle, Truck, AlertCircle, ChevronDown, ChevronUp } from 'lucide-react';
 
+interface OrderItemWithProduct {
+  id: string;
+  order_id: string;
+  product_id: string;
+  quantity: number;
+  price: number;
+  created_at: string;
+  product_name?: string;
+}
+
+interface OrderWithProducts extends Order {
+  items?: OrderItemWithProduct[];
+}
+
 const OrdersManagement = () => {
-  const [orders, setOrders] = useState<Order[]>([]);
+  const [orders, setOrders] = useState<OrderWithProducts[]>([]);
   const [loading, setLoading] = useState(true);
   const [apiError, setApiError] = useState<string | null>(null);
   const [expandedOrders, setExpandedOrders] = useState<Set<string>>(new Set());
@@ -43,8 +57,28 @@ const OrdersManagement = () => {
   const loadOrderItems = async (orderId: string) => {
     try {
       const orderWithItems = await apiService.getOrderById(orderId);
+      
+      // Загружаем информацию о товарах для каждого элемента заказа
+      const itemsWithProducts = await Promise.all(
+        orderWithItems.items?.map(async (item: any) => {
+          try {
+            const product = await apiService.getProductById(item.product_id);
+            return {
+              ...item,
+              product_name: product.name
+            };
+          } catch (error) {
+            console.error(`Error loading product ${item.product_id}:`, error);
+            return {
+              ...item,
+              product_name: 'Товар не найден'
+            };
+          }
+        }) || []
+      );
+
       setOrders(prev => prev.map(order => 
-        order.id === orderId ? { ...order, items: orderWithItems.items } : order
+        order.id === orderId ? { ...order, items: itemsWithProducts } : order
       ));
     } catch (error) {
       if (error instanceof APIError) {
@@ -219,15 +253,10 @@ const OrdersManagement = () => {
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 gap-4">
                     <div>
                       <h4 className="font-medium mb-2">Информация о клиенте</h4>
                       <p className="text-sm text-gray-600">Пользователь ID: {order.user_id}</p>
-                    </div>
-                    <div>
-                      <h4 className="font-medium mb-2">Адрес доставки</h4>
-                      <p className="text-sm text-gray-600">{order.shipping_street}</p>
-                      <p className="text-sm text-gray-600">{order.shipping_city}, {order.shipping_postal_code}</p>
                     </div>
                   </div>
 
@@ -255,7 +284,8 @@ const OrdersManagement = () => {
                           {order.items.map((item) => (
                             <div key={item.id} className="flex justify-between items-center py-2 border-b border-gray-200 last:border-b-0">
                               <div>
-                                <p className="font-medium">ID товара: {item.product_id}</p>
+                                <p className="font-medium">{item.product_name || 'Загрузка...'}</p>
+                                <p className="text-xs text-gray-400 opacity-70">ID: {item.product_id}</p>
                                 <p className="text-sm text-gray-600">
                                   Количество: {item.quantity} × {Math.round(item.price)} ₽
                                 </p>
