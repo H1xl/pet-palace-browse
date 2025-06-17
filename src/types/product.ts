@@ -1,4 +1,3 @@
-
 export interface Product {
   id: string;
   name: string;
@@ -27,15 +26,15 @@ export interface CartItem {
   quantity: number;
   created_at: string;
   updated_at: string;
-  // Product information for display
-  name: string;
-  description: string;
-  price: number;
+  // Product information for display (optional, may not always be present)
+  name?: string;
+  description?: string;
+  price?: number;
   image_url?: string;
-  category: string;
-  discount: number;
-  is_new: boolean;
-  in_stock: boolean;
+  category?: string;
+  discount?: number;
+  is_new?: boolean;
+  in_stock?: boolean;
 }
 
 export interface ProductFilters {
