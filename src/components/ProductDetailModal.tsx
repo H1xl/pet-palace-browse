@@ -53,8 +53,8 @@ const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
   };
 
   const finalPrice = product.discount > 0 
-    ? Math.round(parseFloat(product.price) * (1 - product.discount / 100))
-    : parseFloat(product.price);
+    ? Math.round(product.price * (1 - product.discount / 100))
+    : product.price;
 
   const handleImageError = () => {
     setImageError(true);
@@ -144,7 +144,7 @@ const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
                 <div className="flex items-baseline gap-2">
                   <span className="text-2xl font-bold text-pet-blue">{finalPrice} ₽</span>
                   {product.discount > 0 && (
-                    <span className="text-lg text-gray-400 line-through">{parseFloat(product.price)} ₽</span>
+                    <span className="text-lg text-gray-400 line-through">{product.price} ₽</span>
                   )}
                 </div>
                 

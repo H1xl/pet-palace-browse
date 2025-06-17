@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -137,7 +138,7 @@ const ProductsManagement = () => {
     return {
       name: product.name,
       description: product.description,
-      price: product.price, // Already a number
+      price: product.price,
       image_url: product.image_url,
       category: product.category,
       pet_type: product.pet_type,
@@ -147,7 +148,7 @@ const ProductsManagement = () => {
       in_stock: product.in_stock,
       brand: product.brand,
       weight: product.weight,
-      specifications: product.specifications
+      specifications: product.specifications as Record<string, string> | undefined
     };
   };
 

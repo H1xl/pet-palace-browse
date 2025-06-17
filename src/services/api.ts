@@ -1,4 +1,3 @@
-
 const API_BASE_URL = 'http://localhost:9090/api';
 
 export interface User {
@@ -75,6 +74,7 @@ export interface OrderItem {
   created_at: string;
 }
 
+// Enhanced CartItem for API responses that includes product information
 export interface CartItem {
   id: string;
   user_id?: string;
@@ -83,6 +83,15 @@ export interface CartItem {
   quantity: number;
   created_at: string;
   updated_at: string;
+  // Product information for display (when returned from API)
+  name?: string;
+  description?: string;
+  price?: number;
+  image_url?: string;
+  category?: string;
+  discount?: number;
+  is_new?: boolean;
+  in_stock?: boolean;
 }
 
 export interface Session {

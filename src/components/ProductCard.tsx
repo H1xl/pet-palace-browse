@@ -79,14 +79,14 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onClick }) => {
           {product.discount > 0 ? (
             <>
               <span className="text-xl font-bold text-pet-blue">
-                {Math.round(parseFloat(product.price) * (1 - product.discount / 100))} ₽
+                {Math.round(product.price * (1 - product.discount / 100))} ₽
               </span>
               <span className="text-sm text-gray-400 line-through">
-                {parseFloat(product.price)} ₽
+                {product.price} ₽
               </span>
             </>
           ) : (
-            <span className="text-xl font-bold text-pet-blue">{parseFloat(product.price)} ₽</span>
+            <span className="text-xl font-bold text-pet-blue">{product.price} ₽</span>
           )}
         </div>
         <p className="text-sm text-gray-600 line-clamp-2">{product.description}</p>
