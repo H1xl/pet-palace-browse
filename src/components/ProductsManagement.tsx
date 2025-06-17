@@ -234,7 +234,7 @@ const ProductsManagement = () => {
               
               <div className="space-y-2">
                 <div className="flex justify-between items-center">
-                  <span className="font-semibold text-lg">{product.price.toFixed(2)} ₽</span>
+                  <span className="font-semibold text-lg">{Number(product.price).toFixed(2)} ₽</span>
                   {product.discount > 0 && (
                     <Badge className="bg-red-100 text-red-800">-{product.discount}%</Badge>
                   )}
