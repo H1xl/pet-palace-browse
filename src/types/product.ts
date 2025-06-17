@@ -1,3 +1,4 @@
+
 export interface Product {
   id: string;
   name: string;
@@ -17,16 +18,20 @@ export interface Product {
   updated_at: string;
 }
 
-// Extended CartItem that includes product information for display
+// Updated CartItem interface to match API structure
 export interface CartItem {
-  id: string;
-  user_id?: string;
-  session_id?: string;
+  cart_item_id: string;
   product_id: string;
   quantity: number;
-  created_at: string;
-  updated_at: string;
-  // Product information for display (optional, may not always be present)
+  product_name: string;
+  product_price: number;
+  product_image_url?: string;
+  // Optional properties for backward compatibility
+  id?: string;
+  user_id?: string;
+  session_id?: string;
+  created_at?: string;
+  updated_at?: string;
   name?: string;
   description?: string;
   price?: number;
