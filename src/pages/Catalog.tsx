@@ -168,8 +168,8 @@ const Catalog = () => {
 
         switch (sort.field) {
           case 'price':
-            aValue = product.discount > 0 ? parseFloat(a.price) * (1 - a.discount / 100) : parseFloat(a.price);
-            bValue = product.discount > 0 ? parseFloat(b.price) * (1 - b.discount / 100) : parseFloat(b.price);
+            aValue = a.discount > 0 ? parseFloat(a.price) * (1 - a.discount / 100) : parseFloat(a.price);
+            bValue = b.discount > 0 ? parseFloat(b.price) * (1 - b.discount / 100) : parseFloat(b.price);
             break;
           case 'created_at':
             aValue = new Date(a.created_at);

@@ -66,8 +66,8 @@ const Cart = () => {
   const calculateTotal = () => {
     return cartItems.reduce((total, item) => {
       const itemPrice = item.discount > 0 
-        ? item.price * (1 - item.discount / 100)
-        : item.price;
+        ? parseFloat(item.price) * (1 - item.discount / 100)
+        : parseFloat(item.price);
       return total + (itemPrice * item.quantity);
     }, 0);
   };
@@ -156,9 +156,9 @@ const Cart = () => {
                       <div className="flex gap-4">
                         {/* Изображение товара */}
                         <div className="w-20 h-20 bg-gray-100 rounded-md overflow-hidden flex-shrink-0">
-                          {item.image ? (
+                          {item.image_url ? (
                             <img 
-                              src={item.image} 
+                              src={item.image_url} 
                               alt={item.name} 
                               className="w-full h-full object-cover"
                             />
@@ -181,7 +181,7 @@ const Cart = () => {
                             {item.discount > 0 && (
                               <>
                                 <span className="text-sm text-gray-400 line-through">
-                                  {item.price} ₽
+                                  {parseFloat(item.price)} ₽
                                 </span>
                                 <Badge className="bg-pet-orange text-xs">
                                   -{item.discount}%
@@ -232,7 +232,7 @@ const Cart = () => {
                         {/* Общая стоимость за товар */}
                         <div className="text-right">
                           <p className="font-bold text-lg">
-                            {Math.round(itemPrice * item.quantity)} ₽
+                            {Math.round(parseFloat(itemPrice.toString()) * item.quantity)} ₽
                           </p>
                         </div>
                       </div>

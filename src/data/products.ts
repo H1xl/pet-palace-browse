@@ -121,14 +121,14 @@ export const products: Product[] = [
     category: 'Уход за собаками',
     pet_type: 'dog',
     product_type: 'care',
-    discount: 5,
+    discount: 0,
     is_new: false,
     in_stock: true,
     brand: 'VetCare',
     weight: '500 мл',
     specifications: {
-      'Гипоаллергенная формула': true,
-      'Без парабенов и сульфатов': true,
+      'Гипоаллергенная формула': 'да',
+      'Без парабенов и сульфатов': 'да',
       'Особенности': 'Частое использование',
       'Аромат': 'Приятный'
     },
